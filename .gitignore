@@ -1,0 +1,12 @@
+*.pyc
+*~
+*.egg-info
+build/
+dist/
+*.eggs
+MANIFEST
+.DS_Store
+.coverage
+.cache
+data
+config.json

@@ -1,0 +1,12 @@
+{
+  "country": "togo",
+  "bounding_box": [1.09725, 6.05520, 1.34582, 6.30915],
+  "zoom": 12,
+  "classes": [
+    { "name": "Roads", "filter": ["has", "highway"] },
+    { "name": "Buildings", "filter": ["has", "building"] }
+  ],
+  "imagery": "http://a.tiles.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}.jpg?access_token=ACCESS_TOKEN",
+  "background_ratio": 1,
+  "ml_type": "classification"
+}

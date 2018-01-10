@@ -1,0 +1,11 @@
+{
+  "country": "portugal",
+  "bounding_box": [0, 0, 1, 1],
+  "zoom": 16,
+  "classes": [
+    { "name": "Substation", "filter": ["==", "power", "substation"] }
+  ],
+  "imagery": "http://a.tiles.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}.jpg",
+  "background_ratio": 1,
+  "ml_type": "classification"
+}

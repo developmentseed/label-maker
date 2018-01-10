@@ -1,0 +1,34 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/python:3.5
+
+    working_directory: ~/label-maker
+    steps:
+      - checkout
+      - run:
+          name: Installing Dependencies
+          command: |
+            sudo apt-get update
+            sudo apt-get install libgdal-dev
+            sudo pip install numpy==1.13.3
+            sudo pip install -r requirements.txt
+            sudo pip install -r requirements-dev.txt
+      - run:
+          name: Pylint
+          command: pylint ~/label-maker/label_maker --rcfile=~/label-maker/.config/pylintrc
+      - run:
+          name: Unit Tests
+          command: python -m unittest -v
+      - run:
+          name: Integration Tests
+          command: |
+            sudo pip install .
+            mkdir integration
+            cp test/fixtures/integration/portugal-z17.mbtiles integration/portugal-z17.mbtiles
+            cp -r test/fixtures/integration/tiles integration/tiles
+            label-maker labels --dest integration --config test/fixtures/integration/config.integration.json > stdout
+            python test/verify-labels.py
+            label-maker package --dest integration --config test/fixtures/integration/config.integration.json
+            python test/verify-package.py
