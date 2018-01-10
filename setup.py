@@ -21,7 +21,7 @@ setup(
     author_email='',
     version=__version__,
     description='Data preparation for satellite machine learning',
-    url='https://github.com/',
+    url='https://github.com/developmentseed/label-maker/',
     license='MIT',
     classifiers=[
         'Intended Audience :: Developers',
