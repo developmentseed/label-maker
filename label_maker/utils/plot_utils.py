@@ -1,3 +1,4 @@
+#pylint: disable-msg=too-many-arguments
 """
 plot_utils.py
 
@@ -9,6 +10,8 @@ Code helpful for plotting segmentation model results
 from itertools import product
 
 import numpy as np
+import matplotlib as mpl
+mpl.use('Agg')
 import matplotlib.pyplot as plt
 
 
@@ -85,7 +88,7 @@ def _convert_imgs_to_gray(rgb_arr):
     return np.dot(rgb_arr[..., :3], [0.299, 0.587, 0.114])
 
 
-def plot_img_arrays(images, masks, img_a=0.25, mask_a=1.):
+def plot_segmentation(images, masks, img_a=0.25, mask_a=1.):
     """Helper to plot images and predicted segmentation masks overlayed
 
     Parameters

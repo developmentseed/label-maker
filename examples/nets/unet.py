@@ -20,8 +20,7 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.layers import (Input, Conv2D, MaxPooling2D, concatenate,
                           UpSampling2D)
 
-from label_maker.examples.utils import plot_segmentation
-
+from label_maker.utils import plot_utils
 
 def load_data(data_dir, zero_mean=True, unit_var=True):
     """Helper to load data and print basic information"""
@@ -159,7 +158,7 @@ if __name__ == '__main__':
     # Define some training parameters
     K.set_image_data_format('channels_last')  # Ensure image format is right
     img_rows, img_cols, n_bands = 256, 256, 3
-    epochs = 3
+    epochs = 2
     batch_size = 16
     start_time = dt.now().strftime("%m%d_%H%M%S")
 
