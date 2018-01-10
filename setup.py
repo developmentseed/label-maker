@@ -17,16 +17,16 @@ dependency_links = [x.strip().replace('git+', '') for x in all_reqs if 'git+' no
 
 setup(
     name='label-maker',
-    author='',
-    author_email='',
+    author='Drew Bollinger',
+    author_email='drew@developmentseed.org',
     version=__version__,
     description='Data preparation for satellite machine learning',
     url='https://github.com/developmentseed/label-maker/',
     license='MIT',
     classifiers=[
         'Intended Audience :: Developers',
-        'License :: Freeware',
-        'Programming Language :: Python :: 3.6',
+        'License :: OSI Approved :: MIT License',
+        'Programming Language :: Python :: 3.6'
     ],
     keywords='',
     entry_points={
