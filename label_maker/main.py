@@ -8,6 +8,7 @@ from os import makedirs, path as op
 
 from cerberus import Validator
 
+from label_maker import __file__
 from label_maker.version import __version__
 from label_maker.download import download_mbtiles
 from label_maker.label import make_labels
@@ -18,17 +19,20 @@ from label_maker.validate import schema
 
 logger = logging.getLogger(__name__)
 
+
 def parse_args(args):
     """Create an argument parser with subcommands"""
     desc = 'label_maker (v%s)' % __version__
     dhf = argparse.ArgumentDefaultsHelpFormatter
     parser = argparse.ArgumentParser(description=desc)
+    config_fpath = op.join(op.dirname(__file__), '..', 'config.json')
 
     pparser = argparse.ArgumentParser(add_help=False)
-    pparser.add_argument('--version', help='Print version and exit', action='version', version=__version__)
+    pparser.add_argument('--version', help='Print version and exit',
+                         action='version', version=__version__)
     pparser.add_argument('--log', default=2, type=int,
                          help='0:all, 1:debug, 2:info, 3:warning, 4:error, 5:critical')
-    pparser.add_argument('-c', '--config', default='config.json', type=str,
+    pparser.add_argument('-c', '--config', default=config_fpath, type=str,
                          help='location of config.json file')
     pparser.add_argument('-d', '--dest', default='data', type=str,
                          help='directory for storing output files')
