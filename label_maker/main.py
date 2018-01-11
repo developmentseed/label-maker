@@ -18,6 +18,7 @@ from label_maker.validate import schema
 
 logger = logging.getLogger(__name__)
 
+
 def parse_args(args):
     """Create an argument parser with subcommands"""
     desc = 'label_maker (v%s)' % __version__
@@ -25,7 +26,8 @@ def parse_args(args):
     parser = argparse.ArgumentParser(description=desc)
 
     pparser = argparse.ArgumentParser(add_help=False)
-    pparser.add_argument('--version', help='Print version and exit', action='version', version=__version__)
+    pparser.add_argument('--version', help='Print version and exit',
+                         action='version', version=__version__)
     pparser.add_argument('--log', default=2, type=int,
                          help='0:all, 1:debug, 2:info, 3:warning, 4:error, 5:critical')
     pparser.add_argument('-c', '--config', default='config.json', type=str,

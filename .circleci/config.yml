@@ -32,3 +32,9 @@ jobs:
             python test/verify-labels.py
             label-maker package --dest integration --config test/fixtures/integration/config.integration.json
             python test/verify-package.py
+
+            # Retest that `label-maker labels` works, but from outside the module directory
+            cd ~
+            label-maker labels --dest label-maker/integration --config label-maker/test/fixtures/integration/config.integration.json > stdout
+            cd ~/label-maker            
+            python test/verify-labels.py

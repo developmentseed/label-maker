@@ -16,6 +16,7 @@ from mercantile import tiles, feature, Tile
 from PIL import Image, ImageDraw
 from tilepie import tilereduce
 
+import label_maker
 from label_maker.filter import create_filter
 
 # declare a global accumulator so the workers will have access
@@ -61,9 +62,13 @@ def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, **kw
         print('Retiling QA Tiles to zoom level {} (takes a bit)'.format(zoom))
         filtered_geo = op.join(dest_folder, '{}.geojson'.format(country))
         ps = Popen(['tippecanoe-decode', '-c', '-f', mbtiles_file], stdout=PIPE)
-        run(['python', 'label_maker/stream_filter.py', json.dumps(bounding_box)], stdin=ps.stdout, stdout=open(filtered_geo, 'w'))
+        stream_filter_fpath = op.join(op.dirname(label_maker.__file__), 'stream_filter.py')
+        run(['python', stream_filter_fpath, json.dumps(bounding_box)],
+            stdin=ps.stdout, stdout=open(filtered_geo, 'w'))
         ps.wait()
-        run(['tippecanoe', '--no-feature-limit', '--no-tile-size-limit', '-P', '-l', 'osm', '-f', '-z', str(zoom), '-Z', str(zoom), '-o', mbtiles_file_zoomed, filtered_geo])
+        run(['tippecanoe', '--no-feature-limit', '--no-tile-size-limit', '-P',
+             '-l', 'osm', '-f', '-z', str(zoom), '-Z', str(zoom), '-o',
+             mbtiles_file_zoomed, filtered_geo])
 
     # Call tilereduce
     print('Determining labels for each tile')

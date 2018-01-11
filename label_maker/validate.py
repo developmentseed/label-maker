@@ -1,7 +1,11 @@
 """Expose a schema for use with cerberus for config validation"""
+import os.path as op
+import label_maker
 
 countries = []
-with open('label_maker/countries.txt') as f:
+module_dir = op.dirname(label_maker.__file__)  # Get module home directory
+
+with open(op.join(module_dir, 'countries.txt')) as f:
     lines = f.readlines()
     for line in lines:
         countries.append(line.strip())
