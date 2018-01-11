@@ -23,7 +23,7 @@ Before playing with SageMaker, we need to get the training dataset prepared usin
 
 We're using the same configuration from [another walkthrough](../examples/walkthrough-classification-aws.md) with changes to location:
 - `country` and `bounding_box`: changed to indicated the location in Cambodia to download data from.
-- `zoom`: Buildings in Cambodia have quite a variety in size, so zoom 15 (roughly 5m resolution) will allow us to
+- `zoom`: Buildings in Cambodia have quite a variety in size, so zoom 15 (roughly 5m resolution) will allow us spot building(s) in the tile.
 
 
 # Training dataset generation
@@ -70,10 +70,17 @@ Once you have your p2 instance notebook set up, you are ready to train a classif
 
 # Train the model with MXNet on AWS SageMaker
 Training a LeNet building classifier using MXNet Estimator:
-- Prepare your own training script, and you could use our `mx_lenet_sagemaker.py` here, just slightly modify it; You could see and follow from the [Jupyter Notebook we prepared](https://github.com/developmentseed/ml-data-generation/blob/mx_net/examples/nets/SageMaker_mx-lenet.ipynb).
+- Prepare your own training script, and you could use our `mx_lenet_sagemaker.py` here, just slightly modify it; You could see and follow from the [Jupyter Notebook we prepared](https://github.com/developmentseed/label-maker/blob/sagemaker_mxnet/examples/nets/SageMaker_mx-lenet.ipynb).
 - Run the script on SageMaker via an MXNet Estimator, use the script Jupyter Notebook `SageMaker_mx-lenet.ipynb` directly.
-  - Inside of the MXNet estimator you need to have you entry-point, which is the prepared script `mx_lenet_sagemaker.py`;
+  - Inside of the MXNet estimator you need to have you entry-point, which is the prepared script `mx_lenet_sagemaker.py` in the first cell of the notebook;
   - Your SageMaker `role`, and it could be obtained by `get_execution_role`;
   - The `train_instance_type`, we used and also recommend GPU instance `ml.p2.xlarge"` here;
   - The `train_instance_count` is equal to 1, which means we are gonna train this LeNet on only one machine. Apparently, you could train the model by multiple machines through SageMaker.
   - Pass your training data to `mxnet_estimator.fit()` from a S3 bucket.
+
+  Sagemaker makes it easy to deploy the trained model too, you only need to add following code to the notebook.
+  ```python
+  predictor = mxnet_estimator.deploy(initial_instance_count=1,
+                                     instance_type='ml.p2.xlarge')
+  ```
+  But we would not recommend deploying a trained model by using ml.p2.xlarge, it would be very pricy. 
