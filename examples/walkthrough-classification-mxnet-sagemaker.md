@@ -11,11 +11,11 @@ Before playing with SageMaker, we need to get the training dataset prepared usin
 {
   "country": "cambodia",
   "bounding_box": [104.17785644531249,11.170318336920309,105.260009765625,12.098409789924855],
-  "zoom": 15,
+  "zoom": 17,
   "classes": [
     { "name": "Buildings", "filter": ["has", "building"] }
   ],
-  "imagery": "http://a.tiles.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}.jpg?access_token=ACCESS_TOKEN",
+  "imagery": "https://c.tiles.mapbox.com/v4/digitalglobe.2lnpeioh/{z}/{x}/{y}@2x.jpg??access_token=ACCESS_TOKEN",https://a.tiles.mapbox.com/v4/digitalglobe.2lnpeioh.json?
   "background_ratio": 1,
   "ml_type": "classification"
 }
@@ -83,4 +83,4 @@ Training a LeNet building classifier using MXNet Estimator:
   predictor = mxnet_estimator.deploy(initial_instance_count=1,
                                      instance_type='ml.p2.xlarge')
   ```
-  But we would not recommend deploying a trained model by using ml.p2.xlarge, it would be very pricy. 
+  But we would not recommend deploying a trained model by using ml.p2.xlarge, it would be very pricy.
