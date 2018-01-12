@@ -38,7 +38,7 @@ $ label-maker labels --dest Vietnam_building --config Vietnam.json
 These commands will download and retile the OpenStreetMap QA tiles and use it to create our label data as `labels.npz`. We'll also get a file for inspection `classifcation.geojson`:
 
 <p align="center">
-<img src="images/Vietnam_tiles.png" width="400" />
+<img src="images/Vietnam_tiles.png" width="500" />
 </p>
 
 _Purple building tile labels overlaid over [Mapbox Satellite Imagery](https://www.mapbox.com/maps/satellite/)_
@@ -52,7 +52,7 @@ $ label-maker preview -n 10 --dest Vietnam_building --config Vietnam.json
 Example satellite images will be at `Vietnam_building/examples`, and here we're showing three tiles here.
 
 <p align="center">
-<img src="images/Vietnam_Buildings.png" width="400" />
+<img src="images/Vietnam_Buildings.png" width="700" />
 </p>
 
 When you're ready, download all 2290 imagery tiles and package it into our final file, if you wanna download less tiles you could adjust the bounding box above in the json file:
@@ -70,7 +70,7 @@ Here are few steps to follow if you are interested in using it to train an image
 - Log in your account, and go to the [sagemaker home page](https://console.aws.amazon.com/sagemaker/)
 - Create a Notebook Instance!
 <p align="center">
-<img src="images/sagemaker.png" width="400" />
+<img src="images/sagemaker.png" width="700" />
 </p>
 
 Click on `Create notebook Instance`. You will have three instance options, `ml.t2.medium`, `ml.m4.xlarge` and `ml.p2.xlarge`, to choose from. We recommend you to use the p2 machine (a gpu machine) to train this image classification.
