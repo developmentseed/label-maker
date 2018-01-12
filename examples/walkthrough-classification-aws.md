@@ -1,10 +1,12 @@
 # Example Use: Creating a Neural Network to Find Populated Areas in Tanzania
 
-Let's create a neural network to detect populated areas in Tanzania. Because there may not be a suitable dataset for this, let's use this repo to create our own. Afterwards we can use it to train a simple classifier with the data (with instructions on how to use it with custom architectures).
+Let's create a neural network to detect populated areas in Tanzania. Because there may not be a suitable dataset for this, let's use Label Maker to create our own. Afterwards we can use it to train a simple classifier with the data (with instructions on how to use it with custom architectures).
 
 ## Creating Training Data
 
-First we need to define our desired data by setting up a `config.json` file. You can read more specifics about each property in the [README](../README.md#configuration).
+First [install label-maker and tippecanoe](https://github.com/developmentseed/label-maker#installation).
+
+Then we need to define our desired data by setting up a `config.json` file. You can read more specifics about each property in the [README](../README.md#configuration).
 
 ```json
 {
