@@ -46,7 +46,7 @@ Before running any commands, it is necessary to create a `config.json` file to s
 - `imagery`: A template string for a tiled imagery service. Note that you will generally need an API key to obtain images and there may be associated costs. The above example requires a [Mapbox access token](https://www.mapbox.com/help/how-access-tokens-work/)
 - `background_ratio`: For single-class classification problems, we need to download images with no matching class. We will download `background_ratio` times the number of images matching the one class.
 - `ml_type`: One of `"classification"`, `"object-detection"`, or `"segmentation"`. For the final label numpy arrays (`y_train` and `y_test`), we will produce a different label depending upon the `type`.
-  -`"classification"`: An array of the same length as `classes`. Each array value will be either `1` or `0` based on whether it matches the class at the same index
+  - `"classification"`: An array of the same length as `classes`. Each array value will be either `1` or `0` based on whether it matches the class at the same index
   - `"object-detection"`: An array of bounding boxes of the form `[xmin, ymin, width, height, class_index]`. In this case, the values are not latitude and longitude values but pixel values measured from the upper left-hand corner. Each feature is tested against each class so if a feature matches two or more classes, it will have the corresponding number of bounding boxes created.
   - `"segmentation"`: An array of shape `(256, 256)` with values matching the class_index label at that position. The classes are applied sequentially according to `config.json` so latter classes will be written over earlier class labels.
 
