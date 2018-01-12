@@ -89,4 +89,4 @@ Training a LeNet building classifier using MXNet Estimator:
   - Pass your training data to `mxnet_estimator.fit()` from a S3 bucket.
   - By mxnet_estimator.deploy() now you are using the Sagemaker MXNet model server to host your trained model.
 
-  Now you are ready to read or download images from your S3 bucket using [Boto3](https://boto3.readthedocs.io/en/latest/) like we show in the ipython notebook.
+  Now you are ready to read or download test tiles from your S3 bucket using [Boto3](https://boto3.readthedocs.io/en/latest/) like we show in the ipython notebook, and make a prediction from your trained model.
