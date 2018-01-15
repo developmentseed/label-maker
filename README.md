@@ -7,7 +7,7 @@ The tool downloads [OpenStreetMap QA Tile]((https://osmlab.github.io/osm-qa-tile
 _satellite imagery from [Mapbox](https://www.mapbox.com/) and [Digital Globe](https://www.digitalglobe.com/)_
 
 ## Requirements
-- [Python](https://www.python.org/)
+- [Python 3.6](https://www.python.org/)
 - [tippecanoe](https://github.com/mapbox/tippecanoe)
 
 ## Installation
