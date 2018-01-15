@@ -66,30 +66,25 @@ We'll use the final file `Vietnam_building/data.npz` to start training the model
 
 # Setup Amazon Sagemaker
 Here are few steps to follow if you are interested in using it to train an image classification with MXNet:
-- You could go to your [AWS console](https://console.aws.amazon.com);
-- Log in your account, and go to the [sagemaker home page](https://console.aws.amazon.com/sagemaker/)
+- Go to your [AWS console](https://console.aws.amazon.com)
+- Log in your account and go to the [Sagemaker home page](https://console.aws.amazon.com/sagemaker/)
 - Create a Notebook Instance!
 <p align="center">
 <img src="images/sagemaker.png" width="700" />
 </p>
 
-Click on `Create notebook Instance`. You will have three instance options, `ml.t2.medium`, `ml.m4.xlarge` and `ml.p2.xlarge`, to choose from. We recommend you to use the p2 machine (a gpu machine) to train this image classification.
+Click on `Create notebook Instance`. You will have three instance options, `ml.t2.medium`, `ml.m4.xlarge` and `ml.p2.xlarge` to choose from. We recommend you use the p2 machine (a GPU machine) to train this image classification.
 
 Once you have your p2 instance notebook set up, you are ready to train a classifier. Specifically, you are going to learn how to plug your own script into Amazon SageMaker MXNet Estimator and train the classifier we prepared for detecting buildings in images.
 
-
 # Train the model with MXNet on AWS SageMaker
-
 Training a LeNet building classifier using MXNet Estimator:
-
-- Prepare your own training script, and you could use our `mx_lenet_sagemaker.py` here, just slightly modify it; You could see and follow from the [Jupyter Notebook we prepared](https://github.com/developmentseed/label-maker/blob/sagemaker_mxnet/examples/nets/SageMaker_mx-lenet.ipynb).
-
-- Run the script on SageMaker via an MXNet Estimator, use the script Jupyter Notebook `SageMaker_mx-lenet.ipynb` directly.
-  - Inside of the MXNet estimator you need to have you entry-point, which is the prepared script `mx_lenet_sagemaker.py` in the first cell of the notebook; By executing the cell you will save a `mx_lenet_sagemaker.py` to hour current notebook directory in your SageMaker instance machine.
-  - Your SageMaker `role`, and it could be obtained by `get_execution_role`;
-  - The `train_instance_type`, we used and also recommend GPU instance `ml.p2.xlarge"` here;
-  - The `train_instance_count` is equal to 1, which means we are gonna train this LeNet on only one machine. Apparently, you could train the model by multiple machines through SageMaker.
+- Upload the [`SageMaker_mx-lenet.ipynb` notebook](nets/`SageMaker_mx-lenet.ipynb`). You can make updates to the first cell, `mx_lenet_sagemaker.py`, to customize the network architecture.
+- The second cell in the notebook calls the first script as the entry-point to running SageMaker. By executing the cell you will save a `mx_lenet_sagemaker.py` to the current notebook directory in your SageMaker instance machine. We call the estimator with the following arguments:
+  - The prepared script in the notebook: `mx_lenet_sagemaker.py`:
+  - Your SageMaker `role` and it can be obtained with `get_execution_role`
+  - The `train_instance_type`, we used and also recommend GPU instance `ml.p2.xlarge` here
+  - The `train_instance_count` is equal to 1, which means we are going to train this LeNet on only one machine. You can also train the model with multiple machines using SageMaker.
   - Pass your training data to `mxnet_estimator.fit()` from a S3 bucket.
-  - By mxnet_estimator.deploy() now you are using the Sagemaker MXNet model server to host your trained model.
-
-  Now you are ready to read or download test tiles from your S3 bucket using [Boto3](https://boto3.readthedocs.io/en/latest/) like we show in the ipython notebook, and make a prediction from your trained model.
+  - Using `mxnet_estimator.deploy()`, now you are using the Sagemaker MXNet model server to host your trained model.
+- Now you are ready to read or download test tiles from your S3 bucket using [Boto3](https://boto3.readthedocs.io/en/latest/) like we show in the ipython notebook, and make a prediction from your trained model.
