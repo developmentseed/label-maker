@@ -79,7 +79,7 @@ Once you have your p2 instance notebook set up, you are ready to train a classif
 
 # Train the model with MXNet on AWS SageMaker
 Training a LeNet building classifier using MXNet Estimator:
-- Upload the [`SageMaker_mx-lenet.ipynb` notebook](nets/`SageMaker_mx-lenet.ipynb`). You can make updates to the first cell, `mx_lenet_sagemaker.py`, to customize the network architecture.
+- Upload the [`SageMaker_mx-lenet.ipynb` notebook](https://github.com/developmentseed/label-maker/blob/master/examples/nets/SageMaker_mx-lenet.ipynb). You can make updates to the first cell, `mx_lenet_sagemaker.py`, to customize the network architecture.
 - The second cell in the notebook calls the first script as the entry-point to running SageMaker. By executing the cell you will save a `mx_lenet_sagemaker.py` to the current notebook directory in your SageMaker instance machine. We call the estimator with the following arguments:
   - The prepared script in the notebook: `mx_lenet_sagemaker.py`:
   - Your SageMaker `role` and it can be obtained with `get_execution_role`
