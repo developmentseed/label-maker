@@ -1,6 +1,0 @@
-{
-    "ImageId": "ami-78994d02",
-    "KeyName": "YOUR_KEY",
-    "SecurityGroups": ["YOUR_SECURITY_GROUP"],
-    "InstanceType": "g3.4xlarge"
-}
