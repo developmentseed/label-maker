@@ -17,6 +17,7 @@ from PIL import Image, ImageDraw
 from tilepie import tilereduce
 
 import label_maker
+from label_maker.utils import class_match
 from label_maker.filter import create_filter
 
 # declare a global accumulator so the workers will have access
@@ -73,7 +74,8 @@ def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, spar
     # Call tilereduce
     print('Determining labels for each tile')
     mbtiles_to_reduce = mbtiles_file_zoomed
-    tilereduce(dict(zoom=zoom, source=mbtiles_to_reduce, bbox=bounding_box, args=dict(ml_type=ml_type, classes=classes)),
+    tilereduce(dict(zoom=zoom, source=mbtiles_to_reduce, bbox=bounding_box,
+                    args=dict(ml_type=ml_type, classes=classes)),
                _mapper, _callback, _done)
 
     # Add empty labels to any tiles which didn't have data
@@ -87,22 +89,26 @@ def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, spar
     # Print a summary of the labels
     _tile_results_summary(ml_type, classes)
 
-    # if the --sparse flag is provided, limit the total labels to write
-    def class_test(value):
-        """Determine if a label matches a given class index"""
-        if ml_type == 'object-detection':
-            return len(value)
-        elif ml_type == 'segmentation':
-            return np.sum(value) > 0
-        elif ml_type == 'classification':
-            return value[0] == 0
-        return None
+    # If the --sparse flag is provided, limit the total background tiles to write
     if sparse:
-        tile_results = {k: v for k, v in tile_results.items() if class_test(v)}
+        pos_examples, neg_examples = [], []
+        for k in tile_results.keys():
+            if class_match(ml_type, tile_results[k], 1):
+                pos_examples.append(k)
+            else:
+                neg_examples.append(k)
+
+        # TODO: Add ability to set proportion of negative examples here
+        n_neg_ex = int(1. * len(pos_examples))
+        # Choose random subset of negative examples
+        neg_examples = np.random.choice(neg_examples, n_neg_ex, replace=False).tolist()
+
+        tile_results = {k: tile_results.get(k) for k in pos_examples + neg_examples}
+        print('Using sparse mode; subselected {} background tiles'.format(n_neg_ex))
 
     # write out labels as numpy arrays
     labels_file = op.join(dest_folder, 'labels.npz')
-    print('Write out labels to {}'.format(labels_file))
+    print('Writing out labels to {}'.format(labels_file))
     np.savez(labels_file, **tile_results)
 
     # write out labels as GeoJSON or PNG
@@ -110,7 +116,8 @@ def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, spar
         features = []
         for tile, label in tile_results.items():
             feat = feature(Tile(*[int(t) for t in tile.split('-')]))
-            features.append(Feature(geometry=feat['geometry'], properties=dict(label=label.tolist())))
+            features.append(Feature(geometry=feat['geometry'],
+                                    properties=dict(label=label.tolist())))
         json.dump(fc(features), open(op.join(dest_folder, 'classification.geojson'), 'w'))
     elif ml_type == 'object-detection':
         label_folder = op.join(dest_folder, 'labels')
