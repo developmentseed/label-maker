@@ -20,15 +20,16 @@ def _overlay_images(ax, img, mask, vmin, vmax, img_a, mask_a):
 
     assert img.shape[:2] == mask.shape[:2], 'Arrays must have same width/height'
 
+    # Add image
     im_img = ax.imshow(img, cmap=plt.get_cmap('gray'), alpha=img_a,
-                       interpolation='nearest')#, extent=extent)
+                       interpolation='nearest')
+    # Add mask with `inferno` colormap
     im_mask = ax.imshow(mask, cmap=plt.cm.inferno, alpha=mask_a,
-                        interpolation='nearest', vmin=vmin, vmax=vmax)#, extent=extent)
-
+                        interpolation='nearest', vmin=vmin, vmax=vmax)
     return im_img, im_mask
 
 
-def _subplot_grid(images, masks, vmin=0, vmax=1, img_a=0.5, mask_a=1):
+def _subplot_grid(images, masks, vmin=0., vmax=1., img_a=0.5, mask_a=1.):
     """Given a set of images and masks, plot them all overlayed"""
 
     assert len(images) == len(masks), 'Arrays must have same width/height'
@@ -40,14 +41,16 @@ def _subplot_grid(images, masks, vmin=0, vmax=1, img_a=0.5, mask_a=1):
         ax = axes[inds[0], inds[1]]
         _, im_mask = _overlay_images(ax, images[iter_i], masks[iter_i],
                                      vmin, vmax, img_a, mask_a)
-        ax.axis('off')
+        ax.axis('off')  # Turn off axis spines, not needed for images
 
     # Add colorbar to right side of subplots
-    fig.subplots_adjust(left=0.025, right=0.9)
+    fig.subplots_adjust(left=0.025, right=0.9, wspace=0.1, hspace=0.1)
     cbar_ax = fig.add_axes([0.905, 0.3, 0.015, 0.4]) # Left, top, width, height
     cbar = fig.colorbar(im_mask, cax=cbar_ax)
     cbar.solids.set_edgecolor('face')
     cbar_ax.set_ylabel('Probability', rotation=270, fontsize=10, labelpad=12)
+
+    # Set tick properties
     cbar_ax.locator_params(nbins=4)
     cbar_ax.tick_params(axis='both', labelsize=8)
 
@@ -88,7 +91,7 @@ def _convert_imgs_to_gray(rgb_arr):
     return np.dot(rgb_arr[..., :3], [0.299, 0.587, 0.114])
 
 
-def plot_segmentation(images, masks, img_a=0.25, mask_a=1.):
+def plot_overlays(images, masks, img_a=0.25, mask_a=1., set_clims=True):
     """Helper to plot images and predicted segmentation masks overlayed
 
     Parameters
@@ -109,8 +112,11 @@ def plot_segmentation(images, masks, img_a=0.25, mask_a=1.):
         Figure containing images and segmentation masks overlayed
     """
 
-    # Get prediction percentiles for scaling the colorbar
-    vmin, vmax = np.percentile(masks, [0.5, 99.5])
+    if set_clims:
+        # Get prediction percentiles for scaling the colorbar
+        vmin, vmax = np.percentile(masks, [0.5, 99.5])
+    else:
+        vmin, vmax = np.min(masks), np.max(masks)
 
     fig = _subplot_grid(images, masks.squeeze(), vmin, vmax, img_a=img_a,
                         mask_a=mask_a)
