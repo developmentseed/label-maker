@@ -22,7 +22,7 @@ from label_maker.filter import create_filter
 # declare a global accumulator so the workers will have access
 tile_results = dict()
 
-def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, **kwargs):
+def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, sparse, **kwargs):
     """Create label data from OSM QA tiles for specified classes
 
     Perform the following operations:
@@ -80,11 +80,25 @@ def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, **kw
     empty_label = _create_empty_label(ml_type, classes)
     for tile in tiles(*bounding_box, [zoom]):
         index = '-'.join([str(i) for i in tile])
+        global tile_results
         if tile_results.get(index) is None:
             tile_results[index] = empty_label
 
     # Print a summary of the labels
     _tile_results_summary(ml_type, classes)
+
+    # if the --sparse flag is provided, limit the total labels to write
+    def class_test(value):
+        """Determine if a label matches a given class index"""
+        if ml_type == 'object-detection':
+            return len(value)
+        elif ml_type == 'segmentation':
+            return np.sum(value) > 0
+        elif ml_type == 'classification':
+            return value[0] == 0
+        return None
+    if sparse:
+        tile_results = {k: v for k, v in tile_results.items() if class_test(v)}
 
     # write out labels as numpy arrays
     labels_file = op.join(dest_folder, 'labels.npz')
