@@ -93,14 +93,13 @@ def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, spar
     if sparse:
         pos_examples, neg_examples = [], []
         for k in tile_results.keys():
-            if class_match(ml_type, tile_results[k], 1):
-                pos_examples.append(k)
-            else:
+            if class_match(ml_type, tile_results[k], 0):
                 neg_examples.append(k)
+            else:
+                pos_examples.append(k)
 
-        # TODO: Add ability to set proportion of negative examples here
-        n_neg_ex = int(1. * len(pos_examples))
         # Choose random subset of negative examples
+        n_neg_ex = int(kwargs['background_ratio'] * len(pos_examples))
         neg_examples = np.random.choice(neg_examples, n_neg_ex, replace=False).tolist()
 
         tile_results = {k: tile_results.get(k) for k in pos_examples + neg_examples}
