@@ -44,8 +44,8 @@ def package_directory(dest_folder, classes, imagery, ml_type, seed=False, train_
     # find maximum number of features in advance so numpy shapes match
     if ml_type == 'object-detection':
         max_features = 0
-        for tile in tiles.files:
-            features = len(tiles[tile][0])
+        for tile in labels.files:
+            features = len(labels[tile])
             if features > max_features:
                 max_features = features
 
