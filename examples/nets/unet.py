@@ -12,42 +12,42 @@ import os.path as op
 from datetime import datetime as dt
 
 import numpy as np
+from scipy.ndimage.filters import gaussian_filter1d
 import keras
 from keras import backend as K
 from keras.optimizers import Adam
-from keras.callbacks import ModelCheckpoint
 from keras.preprocessing.image import ImageDataGenerator
 from keras.layers import (Input, Conv2D, MaxPooling2D, concatenate,
-                          UpSampling2D)
+                          UpSampling2D, Cropping2D)
 
-from label_maker.utils import plot_utils
+from label_maker.utils.plot_utils import plot_overlays
+
 
 def load_data(data_dir, zero_mean=True, unit_var=True):
     """Helper to load data and print basic information"""
     # Load data, preshuffled and split between train and test sets
-    npz = np.load(op.join(data_dir, 'data.npz'))
-    x_train, y_train = npz['x_train'], npz['y_train']
-    x_test, y_test = npz['x_test'], npz['y_test']
-
-    # If needed
-    if zero_mean:
-        mean = np.mean(x_train, axis=(0, 1))
-        x_train -= mean
-        y_train -= mean
-    if unit_var:
-        std = np.std(x_train, axis=(0, 1))
-        x_train /= std
-        y_train /= std
-
-    # Set mask images as 0-1 (to match model's sigmoid output)
-    x_test /= 255
-    y_test /= 255
+    npz = np.load(op.join(data_dir, 'data_SA_segmentation.npz'))
+    x_train = npz['x_train'].astype(np.float)
+    x_test = npz['x_test'].astype(np.float)
+    y_train = npz['y_train'].astype(np.float)
+    y_test = npz['y_test'].astype(np.float)
 
     print('Loaded {} training examples and {} testing examples'.format(
         x_train.shape[0], x_test.shape[0]))
 
     return x_train, y_train, x_test, y_test
 
+
+def expand_mask(Y_mask, sigma=1):
+    """Widen single-pixel-wide segmentation masks"""
+
+    # Seg maps are 1 pix wide; need to give roads some width
+    # Use gaussian filter as poor man's way to accomplish this
+    Y_mask_expanded = gaussian_filter1d(Y_mask, sigma=sigma, axis=1)
+    Y_mask_expanded = gaussian_filter1d(Y_mask_expanded, sigma=sigma, axis=2)
+    Y_mask_expanded[Y_mask_expanded > 0.1] = 1
+
+    return Y_mask_expanded
 
 def get_f1_score(y_true, y_pred, smooth=1.):
     """Non-binary F1 Score (aka Sorenson-Dice) coeff
@@ -63,7 +63,7 @@ def get_f1_score(y_true, y_pred, smooth=1.):
     y_true_f = K.flatten(y_true)
     y_pred_f = K.flatten(y_pred)
     intersection = K.sum(y_true_f * y_pred_f)
-    total = K.sum(y_true_f + y_pred_f)
+    total = K.sum(K.square(y_true_f) + K.square(y_pred_f))
 
     return (2. * intersection + smooth) / (total + smooth)
 
@@ -73,7 +73,7 @@ def get_f1_dist(y_true, y_pred):
     return -1 * get_f1_score(y_true, y_pred)
 
 
-def get_unet(input_shape, kernel_size=3, strides=1, pool_size=2):
+def get_unet(input_shape, strides=1, pool_size=2):
     """Return vanilla u-net model ready for training.
 
     Parameters
@@ -81,8 +81,6 @@ def get_unet(input_shape, kernel_size=3, strides=1, pool_size=2):
     input_shape: iterable
         Should be tuple, list, or array specifying (img_width,
         img_height, n_channels). Keras will prepend batch dimension
-    kernel_size: int or tuple
-        Size of kernel for 2D convolutions. Should be 2 or 3 (default).
     strides: int or tuple
         Size of stride for 2D convolutions. Default is 1.
     pool_size: tuple
@@ -93,8 +91,8 @@ def get_unet(input_shape, kernel_size=3, strides=1, pool_size=2):
     unet_model: Keras.models.Model
         Compiled model ready for training.
     """
-    conv_params = dict(activation='relu', kernel_size=kernel_size,
-                       strides=strides, padding='same',
+    conv_params = dict(activation='relu', kernel_size=2,
+                       strides=strides, padding='valid',
                        kernel_initializer='he_uniform')
 
     inputs = Input(input_shape)
@@ -109,36 +107,21 @@ def get_unet(input_shape, kernel_size=3, strides=1, pool_size=2):
 
     conv3 = Conv2D(128, **conv_params)(pool2)
     conv3 = Conv2D(128, **conv_params)(conv3)
-    pool3 = MaxPooling2D(pool_size=pool_size)(conv3)
 
-    conv4 = Conv2D(256, **conv_params)(pool3)
-    conv4 = Conv2D(256, **conv_params)(conv4)
-    pool4 = MaxPooling2D(pool_size=pool_size)(conv4)
+    up4 = concatenate([UpSampling2D(size=pool_size)(conv3),
+                       Cropping2D([(2, 3), (2, 3)])(conv2)])
+    conv4 = Conv2D(64, **conv_params)(up4)
+    conv4 = Conv2D(64, **conv_params)(conv4)
 
-    conv5 = Conv2D(512, **conv_params)(pool4)
-    conv5 = Conv2D(512, **conv_params)(conv5)
+    up5 = concatenate([UpSampling2D(size=pool_size)(conv4),
+                       Cropping2D([(9, 10), (9, 10)])(conv1)])
+    conv5 = Conv2D(32, **conv_params)(up5)
+    conv5 = Conv2D(32, **conv_params)(conv5)
 
-    # Upsample with same kernel size as pooling layer
-    up6 = concatenate([UpSampling2D(size=pool_size)(conv5), conv4])
-    conv6 = Conv2D(256, **conv_params)(up6)
-    conv6 = Conv2D(256, **conv_params)(conv6)
+    conv6 = Conv2D(1, kernel_size=1, activation='sigmoid')(conv5)
 
-    up7 = concatenate([UpSampling2D(size=pool_size)(conv6), conv3])
-    conv7 = Conv2D(128, **conv_params)(up7)
-    conv7 = Conv2D(128, **conv_params)(conv7)
-
-    up8 = concatenate([UpSampling2D(size=pool_size)(conv7), conv2])
-    conv8 = Conv2D(64, **conv_params)(up8)
-    conv8 = Conv2D(64, **conv_params)(conv8)
-
-    up9 = concatenate([UpSampling2D(size=pool_size)(conv8), conv1])
-    conv9 = Conv2D(32, **conv_params)(up9)
-    conv9 = Conv2D(32, **conv_params)(conv9)
-
-    conv10 = Conv2D(1, kernel_size=1, activation='sigmoid')(conv9)
-
-    unet_model = keras.models.Model(inputs=inputs, outputs=conv10)
-    unet_model.compile(optimizer=Adam(lr=1e-4), loss=get_f1_dist,
+    unet_model = keras.models.Model(inputs=inputs, outputs=conv6)
+    unet_model.compile(optimizer=Adam(lr=5e-4), loss=get_f1_dist,
                        metrics=[get_f1_score])
 
     return unet_model
@@ -151,6 +134,8 @@ if __name__ == '__main__':
     ###################################
     npz_dir = op.join(os.environ['BUILDS_DIR'], 'label-maker', 'data')
     X_train, Y_train, X_test, Y_test = load_data(npz_dir)
+    Y_train = expand_mask(Y_train)
+    Y_test = expand_mask(Y_test)
 
     ###################################
     # Create the model
@@ -158,39 +143,62 @@ if __name__ == '__main__':
     # Define some training parameters
     K.set_image_data_format('channels_last')  # Ensure image format is right
     img_rows, img_cols, n_bands = 256, 256, 3
-    epochs = 2
-    batch_size = 16
+    epochs = 5
+    batch_size = 32
+    cb = 11  # Crop border (to make size of Y masks match size of predictions)
     start_time = dt.now().strftime("%m%d_%H%M%S")
+    Y_train = Y_train[:, cb:-cb, cb:-cb, :]
+    Y_test = Y_test[:, cb:-cb, cb:-cb, :]
 
     model = get_unet(input_shape=(img_rows, img_cols, n_bands))
 
-    # Define callbacks to save the model after each epoch
-    #ckpt_fpath = op.join(start_time + '_L{val_loss:.2f}_E{epoch:02d}.hdf5')
-    #callbacks_list = [ModelCheckpoint(ckpt_fpath, monitor='val_loss',
-    #                                  save_best_only=True)]
     ###################################
     # Train model
     ###################################
     # Define image generator
     datagen = ImageDataGenerator(
-        #rescale=1./255, # Use this if not using standardizing loaded data
-        horizontal_flip=True, vertical_flip=True)
+        #rescale=1./255, # Use this if you don't standardize data
+        featurewise_center=True,
+        featurewise_std_normalization=True,
+        horizontal_flip=True,
+        vertical_flip=True,
+        zoom_range=(1, 1.1))
+    datagen.fit(X_train)
 
     # Fit the model on the batches generated by datagen.flow().
     model.fit_generator(datagen.flow(X_train, Y_train, batch_size=batch_size),
                         steps_per_epoch=int(X_train.shape[0] / batch_size),
                         epochs=epochs,
-                        validation_data=(X_test, Y_test),
+                        validation_data=datagen.flow(X_test, Y_test, batch_size=batch_size),
+                        validation_steps=int(X_test.shape[0] / batch_size),
                         verbose=1)
 
-    final_score = model.evaluate(X_test, Y_test, verbose=0)
-    print('Final test loss: {:0.4f}'.format(final_score[0]))
+    print('Training complete')
 
     ###################################
     # Plot results
     ###################################
-    n_preds = 9
-    seg_preds = model.predict(Y_test[:n_preds, ...])
-    seg_plot = plot_segmentation(X_test[:n_preds, ...], seg_preds, img_a=0.25,
-                                 mask_a=1)
-    seg_plot.savefig(op.join(os.environ['Builds'], 'label-maker', 'data'))
+    n_preds = 9  # Number of images to show
+
+    # Plot segmentation predictions
+    # Use same generator so preprocessing is identical
+    X_test_plot, Y_test_plot = np.copy(X_test[:n_preds, ...]), np.copy(Y_test[:n_preds, ...])
+    X_test_plot -= datagen.mean
+    X_test_plot /= datagen.std
+
+    seg_preds = model.predict(X_test_plot)
+
+    seg_plot = plot_overlays(X_test[:n_preds, cb:-cb, cb:-cb, :],
+                             seg_preds, img_a=0.5, mask_a=0.5)
+    seg_plot.savefig(op.join(os.environ['BUILDS_DIR'], 'label-maker',
+                             'examples', 'images', 'seg_prediction.png'), dpi=150)
+
+    # Plot original mask and original images
+    mask_plot = plot_overlays(X_test[:n_preds, cb:-cb, cb:-cb, :],
+                              Y_test_plot, 0.75, 0.5, False)
+    mask_plot.savefig(op.join(os.environ['BUILDS_DIR'], 'label-maker',
+                              'examples', 'images', 'seg_labels.png'), dpi=150)
+    orig_plot = plot_overlays(X_test[:n_preds, cb:-cb, cb:-cb, :],
+                              Y_test_plot, 1, 0.01, False)
+    orig_plot.savefig(op.join(os.environ['BUILDS_DIR'], 'label-maker',
+                              'examples', 'images', 'seg_orig_images.png'), dpi=150)
