@@ -36,7 +36,7 @@ Ruins: 1 tiles
 Parking: 1 tiles
 Roads: 8 tiles
 Total tiles: 9
-Write out labels to integration/labels.npz
+Writing out labels to integration/labels.npz
 """
 
 with open('stdout', 'r') as output:
