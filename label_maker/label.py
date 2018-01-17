@@ -176,7 +176,9 @@ def _mapper(x, y, z, data, args):
                 for i, cl in enumerate(classes):
                     ff = create_filter(cl.get('filter'))
                     if ff(feat):
-                        geo = shape(feat['geometry']).buffer(cl.get('buffer', 0.1), 4)
+                        geo = shape(feat['geometry'])
+                        if cl.get('buffer'):
+                            geo = geo.buffer(cl.get('buffer'), 4)
                         bb = _pixel_bbox(geo.bounds) + [i + 1]
                         bboxes = np.append(bboxes, np.array([bb]), axis=0)
             return ('{!s}-{!s}-{!s}'.format(x, y, z), bboxes)
@@ -187,7 +189,9 @@ def _mapper(x, y, z, data, args):
                     ff = create_filter(cl.get('filter'))
                     if ff(feat):
                         feat['geometry']['coordinates'] = _convert_coordinates(feat['geometry']['coordinates'])
-                        geo = shape(feat['geometry']).buffer(cl.get('buffer', 0.1), 4)
+                        geo = shape(feat['geometry'])
+                        if cl.get('buffer'):
+                            geo = geo.buffer(cl.get('buffer'), 4)
                         geos.append((mapping(geo), i + 1))
             result = rasterize(geos, out_shape=(256, 256))
             return ('{!s}-{!s}-{!s}'.format(x, y, z), result)
