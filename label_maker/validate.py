@@ -13,7 +13,8 @@ with open(op.join(module_dir, 'countries.txt')) as f:
 class_schema = {
     'type': 'dict',
     'schema': {'name': {'type': 'string', 'required': True},
-               'filter': {'type': 'list', 'required': True}}
+               'filter': {'type': 'list', 'required': True},
+               'buffer': {'type': 'integer'}}
 }
 
 lat_schema = {'type': 'float', 'min': -90, 'max': 90}
