@@ -1,10 +1,11 @@
-# pylint: disable=too-many-locals, unused-argument, too-many-arguments
+# pylint: disable=unused-argument
 """Generate an .npz file containing arrays for training machine learning algorithms"""
 
 from os import path as op
 from urllib.parse import urlparse
 import numpy as np
 from PIL import Image
+
 
 def package_directory(dest_folder, classes, imagery, ml_type, seed=False, train_size=0.8, **kwargs):
     """Generate an .npz file containing arrays for training machine learning algorithms
