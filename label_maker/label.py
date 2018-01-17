@@ -9,7 +9,7 @@ from functools import partial
 import numpy as np
 import mapbox_vector_tile
 import pyproj
-from shapely.geometry import shape
+from shapely.geometry import shape, mapping
 from rasterio.features import rasterize
 from geojson import Feature, FeatureCollection as fc
 from mercantile import tiles, feature, Tile
@@ -187,7 +187,8 @@ def _mapper(x, y, z, data, args):
                     ff = create_filter(cl.get('filter'))
                     if ff(feat):
                         feat['geometry']['coordinates'] = _convert_coordinates(feat['geometry']['coordinates'])
-                        geos.append((feat['geometry'], i + 1))
+                        geo = shape(feat['geometry']).buffer(cl.get('buffer', 0))
+                        geos.append((mapping(geo), i + 1))
             result = rasterize(geos, out_shape=(256, 256))
             return ('{!s}-{!s}-{!s}'.format(x, y, z), result)
     return ('{!s}-{!s}-{!s}'.format(x, y, z), np.array())
