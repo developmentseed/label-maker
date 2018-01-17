@@ -29,13 +29,12 @@ jobs:
             cp test/fixtures/integration/portugal-z17.mbtiles integration/portugal-z17.mbtiles
             cp -r test/fixtures/integration/tiles integration/tiles
 
+            # Test `label-maker labels --sparse`; must be run before `label-maker labels` so `verify-package.py` passes
+            label-maker labels --dest integration --config test/fixtures/integration/config.integration_sparse.json --sparse > stdout_sparse
+            python test/verify-sparse-labels.py
             # Test `label-maker labels`
             label-maker labels --dest integration --config test/fixtures/integration/config.integration.json > stdout
             python test/verify-labels.py
-            # Test `label-maker labels --sparse`
-            mkdir integration/sparse
-            label-maker labels --dest integration/sparse --config test/fixtures/integration/config.integration_sparse.json --sparse > stdout_sparse
-            python test/verify-sparse-labels.py
             # Test `label-maker package`
             label-maker package --dest integration --config test/fixtures/integration/config.integration.json
             python test/verify-package.py
