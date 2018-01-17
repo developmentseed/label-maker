@@ -1,4 +1,4 @@
-# pylint: disable=too-many-locals, unused-argument
+# pylint: disable=unused-argument
 """Produce imagery examples for specified classes"""
 
 from os import path as op
