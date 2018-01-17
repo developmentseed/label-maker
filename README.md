@@ -41,8 +41,9 @@ Before running any commands, it is necessary to create a `config.json` file to s
 - `bounding_box`: The bounding box to create images from. This should be given in the form: `[xmin, ymin, xmax, ymax]` as longitude and latitude values between `[-180, 180]` and `[-90, 90]` respectively. Values should use the WGS84 datum, with longitude and latitude units of decimal degrees.
 - `zoom`: The [zoom level](http://wiki.openstreetmap.org/wiki/Zoom_levels) to create images as. This functions as a rough proxy for resolution. Values should be given as integers.
 - `classes`: An array of classes for machine learning training. Each class is defined as an object with two required properties:
-  - `name`: class name
+  - `name`: The class name
   - `filter`: A [Mapbox GL Filter](https://www.mapbox.com/mapbox-gl-js/style-spec#other-filter) to define any vector features matching this class. Filters are applied with the standalone [featureFilter](https://github.com/mapbox/mapbox-gl-js/tree/master/src/style-spec/feature_filter) from Mapbox GL JS.
+  - `buffer`: The number of pixels to buffer the geometry by. This is an optional parameter to buffer the label for `object-detection` and `segmentation` tasks. Accepts any number (positive or negative). It uses [Shapely `object.buffer`](https://shapely.readthedocs.io/en/latest/manual.html#object.buffer) to calculate the final geometry
 - `imagery`: A template string for a tiled imagery service. Note that you will generally need an API key to obtain images and there may be associated costs. The above example requires a [Mapbox access token](https://www.mapbox.com/help/how-access-tokens-work/)
 - `background_ratio`: For single-class classification problems, we need to download images with no matching class. We will download `background_ratio` times the number of images matching the one class.
 - `ml_type`: One of `"classification"`, `"object-detection"`, or `"segmentation"`. For the final label numpy arrays (`y_train` and `y_test`), we will produce a different label depending upon the `type`.
