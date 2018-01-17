@@ -176,7 +176,7 @@ def _mapper(x, y, z, data, args):
                 for i, cl in enumerate(classes):
                     ff = create_filter(cl.get('filter'))
                     if ff(feat):
-                        geo = shape(feat['geometry'])
+                        geo = shape(feat['geometry']).buffer(cl.get('buffer', 0))
                         bb = _pixel_bbox(geo.bounds) + [i + 1]
                         bboxes = np.append(bboxes, np.array([bb]), axis=0)
             return ('{!s}-{!s}-{!s}'.format(x, y, z), bboxes)
