@@ -1,4 +1,4 @@
-# pylint: disable=too-many-locals, unused-argument, too-many-arguments
+# pylint: disable=unused-argument
 """Generate an .npz file containing arrays for training machine learning algorithms"""
 
 from os import path as op

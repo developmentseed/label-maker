@@ -1,4 +1,4 @@
-# pylint: disable=global-statement, too-many-locals, too-many-arguments, unused-argument, too-many-branches
+# pylint: disable=unused-argument
 """Create label data from OSM QA tiles for specified classes"""
 
 from os import makedirs, path as op
