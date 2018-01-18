@@ -21,7 +21,7 @@ for tile in labels.files:
 
 # our GeoJSON looks like the fixture
 expected_geojson = json.load(open('test/fixtures/integration/classification.geojson'))
-geojson = json.load(open('integration/classification.geojson'))
+geojson = json.load(open('integration-cl/classification.geojson'))
 
 for feature in geojson['features']:
     assert feature in expected_geojson['features']
@@ -36,7 +36,7 @@ Ruins: 1 tiles
 Parking: 1 tiles
 Roads: 8 tiles
 Total tiles: 9
-Write out labels to integration/labels.npz
+Write out labels to integration-cl/labels.npz
 """
 
 with open('stdout', 'r') as output:
