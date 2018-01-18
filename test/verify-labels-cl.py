@@ -15,7 +15,7 @@ expected_labels = {
     '62093-50163-17': np.array([0, 0, 0, 0, 1, 1, 1])
 }
 
-labels = np.load('integration/labels.npz')
+labels = np.load('integration-cl/labels.npz')
 for tile in labels.files:
     assert np.array_equal(expected_labels[tile], labels[tile])
 
