@@ -26,14 +26,22 @@ jobs:
           command: |
             sudo pip install .
 
-            # classification integration tests
+            ## Classification integration tests
             mkdir integration-cl
             cp test/fixtures/integration/portugal-z17.mbtiles integration-cl/portugal-z17.mbtiles
             cp -r test/fixtures/integration/tiles integration-cl/tiles
+
+            # Test `label-maker labels --sparse`; must be run before `label-maker labels` so `verify-package.py` passes
+            label-maker labels --dest integration-cl --config test/fixtures/integration/config.integration_sparse.json --sparse > stdout_sparse
+            python test/verify-sparse-labels.py
+            # Test `label-maker labels`
             label-maker labels --dest integration-cl --config test/fixtures/integration/config.integration.json > stdout
             python test/verify-labels-cl.py
+            # Test `label-maker package`
             label-maker package --dest integration-cl --config test/fixtures/integration/config.integration.json
             python test/verify-package-cl.py
+
+
 
             # segmentation integration tests
             mkdir integration-sg
