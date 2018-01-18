@@ -38,11 +38,7 @@ Ruins: 1 tiles
 Parking: 1 tiles
 Roads: 8 tiles
 Total tiles: 9
-<<<<<<< HEAD:test/verify-labels-cl.py
-Write out labels to integration-cl/labels.npz
-=======
-Writing out labels to integration/labels.npz
->>>>>>> 406e10dd921570e874addf78510c10430fde7bac:test/verify-labels.py
+Writing out labels to integration-cl/labels.npz
 """
 
 with open('stdout', 'r') as output:
