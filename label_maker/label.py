@@ -19,7 +19,6 @@ from tilepie import tilereduce
 import label_maker
 from label_maker.utils import class_match
 from label_maker.filter import create_filter
-from label_maker.utils import class_match
 
 # declare a global accumulator so the workers will have access
 tile_results = dict()
