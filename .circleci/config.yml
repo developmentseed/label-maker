@@ -49,4 +49,4 @@ jobs:
             python test/verify-labels-cl.py
 
       - store_artifacts:
-        path: ~/label-maker/integration-sg/labels/
+          path: ~/label-maker/integration-sg/labels/
