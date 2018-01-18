@@ -1,4 +1,4 @@
-# pylint: disable=unused-argument
+# pylint: disable=unused-argument,too-many-nested-blocks
 """Create label data from OSM QA tiles for specified classes"""
 
 from os import makedirs, path as op
@@ -9,7 +9,7 @@ from functools import partial
 import numpy as np
 import mapbox_vector_tile
 import pyproj
-from shapely.geometry import shape
+from shapely.geometry import shape, mapping
 from rasterio.features import rasterize
 from geojson import Feature, FeatureCollection as fc
 from mercantile import tiles, feature, Tile
@@ -197,6 +197,8 @@ def _mapper(x, y, z, data, args):
                     ff = create_filter(cl.get('filter'))
                     if ff(feat):
                         geo = shape(feat['geometry'])
+                        if cl.get('buffer'):
+                            geo = geo.buffer(cl.get('buffer'), 4)
                         bb = _pixel_bbox(geo.bounds) + [i + 1]
                         bboxes = np.append(bboxes, np.array([bb]), axis=0)
             return ('{!s}-{!s}-{!s}'.format(x, y, z), bboxes)
@@ -207,7 +209,10 @@ def _mapper(x, y, z, data, args):
                     ff = create_filter(cl.get('filter'))
                     if ff(feat):
                         feat['geometry']['coordinates'] = _convert_coordinates(feat['geometry']['coordinates'])
-                        geos.append((feat['geometry'], i + 1))
+                        geo = shape(feat['geometry'])
+                        if cl.get('buffer'):
+                            geo = geo.buffer(cl.get('buffer'), 4)
+                        geos.append((mapping(geo), i + 1))
             result = rasterize(geos, out_shape=(256, 256))
             return ('{!s}-{!s}-{!s}'.format(x, y, z), result)
     return ('{!s}-{!s}-{!s}'.format(x, y, z), np.array())
@@ -276,6 +281,10 @@ def _tile_results_summary(ml_type, classes):
         class_tile_counts = list(np.sum(labels, axis=0))
         for i, cl in enumerate(classes):
             print('{}: {} tiles'.format(cl.get('name'), int(class_tile_counts[i + 1])))
+    elif ml_type == 'segmentation':
+        for i, cl in enumerate(classes):
+            count = len([l for l in labels if class_match(ml_type, l, i + 1)])
+            print('{}: {} tiles'.format(cl.get('name'), count))
 
     print('Total tiles: {}'.format(len(all_tiles)))
 
