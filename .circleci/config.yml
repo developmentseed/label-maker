@@ -25,22 +25,34 @@ jobs:
           name: Integration Tests
           command: |
             sudo pip install .
-            mkdir integration
-            cp test/fixtures/integration/portugal-z17.mbtiles integration/portugal-z17.mbtiles
-            cp -r test/fixtures/integration/tiles integration/tiles
+
+            ## Classification integration tests
+            mkdir integration-cl
+            cp test/fixtures/integration/portugal-z17.mbtiles integration-cl/portugal-z17.mbtiles
+            cp -r test/fixtures/integration/tiles integration-cl/tiles
 
             # Test `label-maker labels --sparse`; must be run before `label-maker labels` so `verify-package.py` passes
-            label-maker labels --dest integration --config test/fixtures/integration/config.integration_sparse.json --sparse > stdout_sparse
+            label-maker labels --dest integration-cl --config test/fixtures/integration/config.integration_sparse.json --sparse > stdout_sparse
             python test/verify-sparse-labels.py
             # Test `label-maker labels`
-            label-maker labels --dest integration --config test/fixtures/integration/config.integration.json > stdout
-            python test/verify-labels.py
+            label-maker labels --dest integration-cl --config test/fixtures/integration/config.integration.json > stdout
+            python test/verify-labels-cl.py
             # Test `label-maker package`
-            label-maker package --dest integration --config test/fixtures/integration/config.integration.json
-            python test/verify-package.py
+            label-maker package --dest integration-cl --config test/fixtures/integration/config.integration.json
+            python test/verify-package-cl.py
+
+            # segmentation integration tests
+            mkdir integration-sg
+            cp test/fixtures/integration/portugal-z17.mbtiles integration-sg/portugal-z17.mbtiles
+            cp -r test/fixtures/integration/tiles integration-sg/tiles
+            label-maker labels --dest integration-sg --config test/fixtures/integration/config.integration.segmentation.json
+            python test/verify-labels-sg.py
 
             # Retest that `label-maker labels` works, but from outside the module directory
             cd ~
-            label-maker labels --dest label-maker/integration --config label-maker/test/fixtures/integration/config.integration.json > stdout
-            cd ~/label-maker            
-            python test/verify-labels.py
+            label-maker labels --dest label-maker/integration-cl --config label-maker/test/fixtures/integration/config.integration.json > stdout
+            cd ~/label-maker
+            python test/verify-labels-cl.py
+
+      - store_artifacts:
+          path: ~/label-maker/integration-sg/labels/

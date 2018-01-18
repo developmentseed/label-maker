@@ -14,7 +14,7 @@ class_schema = {
     'type': 'dict',
     'schema': {'name': {'type': 'string', 'required': True},
                'filter': {'type': 'list', 'required': True},
-               'buffer': {'type': 'integer'}}
+               'buffer': {'type': 'float'}}
 }
 
 lat_schema = {'type': 'float', 'min': -90, 'max': 90}
