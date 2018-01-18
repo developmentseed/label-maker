@@ -4,7 +4,6 @@ import numpy as np
 
 # our labels should look like this
 expected_labels = {
-    '62092-50162-17': np.array([1, 0, 0, 0, 0, 0, 0]),
     '62092-50163-17': np.array([0, 0, 0, 0, 0, 0, 1]),
     '62092-50164-17': np.array([0, 0, 0, 0, 0, 0, 1]),
     '62093-50162-17': np.array([0, 0, 0, 0, 0, 0, 1]),
@@ -16,8 +15,9 @@ expected_labels = {
 }
 
 labels = np.load('integration/labels.npz')
+assert len(labels.files) == len(expected_labels.keys())  # First check number of tiles
 for tile in labels.files:
-    assert np.array_equal(expected_labels[tile], labels[tile])
+    assert np.array_equal(expected_labels[tile], labels[tile])  # Now, content
 
 # our GeoJSON looks like the fixture
 expected_geojson = json.load(open('test/fixtures/integration/classification.geojson'))
