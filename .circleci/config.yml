@@ -41,8 +41,6 @@ jobs:
             label-maker package --dest integration-cl --config test/fixtures/integration/config.integration.json
             python test/verify-package-cl.py
 
-
-
             # segmentation integration tests
             mkdir integration-sg
             cp test/fixtures/integration/portugal-z17.mbtiles integration-sg/portugal-z17.mbtiles

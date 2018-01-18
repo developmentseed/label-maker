@@ -16,5 +16,7 @@ expected_sums = {
 }
 
 labels = np.load('integration-sg/labels.npz')
+assert len(labels.files) == len(expected_sums.keys())  # First check number of tiles
+
 for tile in labels.files:
     assert expected_sums[tile] == np.sum(labels[tile])
