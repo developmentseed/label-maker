@@ -4,7 +4,6 @@ import numpy as np
 
 # our labels should look like this
 expected_labels = {
-    '62092-50162-17': np.array([1, 0, 0, 0, 0, 0, 0]),
     '62092-50163-17': np.array([0, 0, 0, 0, 0, 0, 1]),
     '62092-50164-17': np.array([0, 0, 0, 0, 0, 0, 1]),
     '62093-50162-17': np.array([0, 0, 0, 0, 0, 0, 1]),
@@ -37,8 +36,9 @@ Ruins: 1 tiles
 Parking: 1 tiles
 Roads: 8 tiles
 Total tiles: 9
+Using sparse mode; subselected 0 background tiles
 Writing out labels to integration/labels.npz
 """
 
-with open('stdout', 'r') as output:
+with open('stdout_sparse', 'r') as output:
     assert expected_output == output.read()
