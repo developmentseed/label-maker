@@ -18,6 +18,7 @@ from tilepie import tilereduce
 
 import label_maker
 from label_maker.filter import create_filter
+from label_maker.utils import class_match
 
 # declare a global accumulator so the workers will have access
 tile_results = dict()
@@ -261,6 +262,10 @@ def _tile_results_summary(ml_type, classes):
         class_tile_counts = list(np.sum(labels, axis=0))
         for i, cl in enumerate(classes):
             print('{}: {} tiles'.format(cl.get('name'), int(class_tile_counts[i + 1])))
+    elif ml_type == 'segmentation':
+        for i, cl in enumerate(classes):
+            count = len([l for l in labels if class_match(ml_type, l, i + 1)])
+            print('{}: {} tiles'.format(cl.get('name'), count))
 
     print('Total tiles: {}'.format(len(all_tiles)))
 
