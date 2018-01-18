@@ -1,4 +1,4 @@
-# pylint: disable=unused-argument
+# pylint: disable=unused-argument,too-many-nested-blocks
 """Create label data from OSM QA tiles for specified classes"""
 
 from os import makedirs, path as op
