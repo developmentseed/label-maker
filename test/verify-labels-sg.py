@@ -18,27 +18,3 @@ expected_sums = {
 labels = np.load('integration-sg/labels.npz')
 for tile in labels.files:
     assert expected_sums[tile] == np.sum(labels[tile])
-
-# our command line output should look like this
-expected_output = """Determining labels for each tile
----
-Water Tower: 1 tiles
-Building: 1 tiles
-Farmland: 0 tiles
-Ruins: 1 tiles
-Parking: 1 tiles
-Roads: 8 tiles
-Total tiles: 9
-Write out labels to integration-sg/labels.npz
-Writing 62092-50163-17.png
-Writing 62092-50164-17.png
-Writing 62093-50164-17.png
-Writing 62094-50162-17.png
-Writing 62093-50162-17.png
-Writing 62094-50164-17.png
-Writing 62094-50163-17.png
-Writing 62093-50163-17.png
-"""
-
-with open('stdout', 'r') as output:
-    assert expected_output == output.read()
