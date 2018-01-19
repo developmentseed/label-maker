@@ -39,10 +39,13 @@ def parse_args(args):
     subparsers = parser.add_subparsers(dest='command')
 
     subparsers.add_parser('download', parents=[pparser], help='', formatter_class=dhf)
-    subparsers.add_parser('labels', parents=[pparser], help='', formatter_class=dhf)
+    l = subparsers.add_parser('labels', parents=[pparser], help='', formatter_class=dhf)
     p = subparsers.add_parser('preview', parents=[pparser], help='', formatter_class=dhf)
     subparsers.add_parser('images', parents=[pparser], help='', formatter_class=dhf)
     subparsers.add_parser('package', parents=[pparser], help='', formatter_class=dhf)
+
+    # labels has an optional parameter
+    l.add_argument('-s', '--sparse', action='store_true')
 
     # preview has an optional parameter
     p.add_argument('-n', '--number', default=5, type=int,
@@ -77,7 +80,8 @@ def cli():
     if cmd == 'download':
         download_mbtiles(dest_folder=dest_folder, **config)
     elif cmd == 'labels':
-        make_labels(dest_folder=dest_folder, **config)
+        sparse = args.get('sparse', False)
+        make_labels(dest_folder=dest_folder, sparse=sparse, **config)
     elif cmd == 'preview':
         number = args.get('number')
         preview(dest_folder=dest_folder, number=number, **config)
