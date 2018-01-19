@@ -1,3 +1,19 @@
-0.1 (2018-01-10)
-----------------
+0.2.0 (2018-01-19)
+------------------
+- Add optional 'buffer' property to classes to create more accurate
+object-detection or segmentation labels (#10).
+- Add --sparse flag to limit the size of labels.npz file (#16).
+- Add more globally ignored statements to pylint settings (#24).
+- Bug fix: correct a variable name in package.py which prevented
+  object-detection packaging from running (#19).
+
+
+0.1.2 (2018-01-11)
+------------------
+- Bug fix: resolve path issues which prevented it from working outside the
+  github cloned repository (#2).
+
+
+0.1.0 (2018-01-10)
+------------------
 - Initial Release
