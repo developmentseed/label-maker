@@ -6,6 +6,7 @@ from urllib.parse import urlparse
 import numpy as np
 from PIL import Image
 
+
 def package_directory(dest_folder, classes, imagery, ml_type, seed=False, train_size=0.8, **kwargs):
     """Generate an .npz file containing arrays for training machine learning algorithms
 
@@ -44,8 +45,8 @@ def package_directory(dest_folder, classes, imagery, ml_type, seed=False, train_
     # find maximum number of features in advance so numpy shapes match
     if ml_type == 'object-detection':
         max_features = 0
-        for tile in tiles.files:
-            features = len(tiles[tile][0])
+        for tile in labels.files:
+            features = len(labels[tile])
             if features > max_features:
                 max_features = features
 
