@@ -52,9 +52,9 @@ jobs:
             mkdir integration-od
             cp -r test/fixtures/integration/tiles integration-od/tiles
             cp test/fixtures/integration/portugal-z17.mbtiles integration-od/
-            label-maker labels -d integration-od -c test/fixtures/integration/config.integration.json
+            label-maker labels -d integration-od -c test/fixtures/integration/config.integration.object_detection.json
             python test/verify-labels-od.py
-            label-maker package -d integration-od -c test/fixtures/integration/config.integration.json
+            label-maker package -d integration-od -c test/fixtures/integration/config.integration.object_detection.json
             python test/verify-package-od.py
             
             # Retest that `label-maker labels` works, but from outside the module directory
