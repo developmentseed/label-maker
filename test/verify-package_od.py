@@ -1,6 +1,6 @@
 import numpy as np
 
-data = np.load('../integration-od/data.npz')
+data = np.load('integration-od/data.npz')
 
 assert np.sum(data['x_train']) == 144752757
 assert np.sum(data['x_test']) == 52758414
