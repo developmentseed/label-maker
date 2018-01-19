@@ -1,7 +1,7 @@
 """Validate that the output produced by integration testing on 'label-maker package' matches our expectations"""
 import numpy as np
 
-data = np.load('../integration-od/data.npz')
+data = np.load('integration-od/data.npz')
 
 assert np.sum(data['x_train']) == 144752757
 assert np.sum(data['x_test']) == 52758414
