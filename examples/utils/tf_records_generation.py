@@ -128,6 +128,8 @@ def main(_):
     df = df.sample(frac=1)
     train_df = df[:split_index]
     test_df = df[split_index:]
+    print("You have {} training tiles and {} test tiles ready".format(
+    len(set(train_df['filename'])), len(set(test_df['filename']))))
     # train_df.to_csv("train_df.csv")
     # test_df.to_csv("test_df.csv")
 
