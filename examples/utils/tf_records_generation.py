@@ -6,7 +6,7 @@ To use this code with Label Maker and Tensor Flow object detection API, this cod
 To create a correct training data set for Tensor Flow Object Detecrtion, we recommend you do:
 1. After running `label-maker images`, do `git clone https://github.com/tensorflow/models.git`
 2. Install TensorFlow object detection by following this: https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/installation.md
-3. From your Label Maker, copy `tiles` folder, this code `tf_records_generation.py` and `labels.py` to Tensorflow object detecrtion directory
+3. From your Label Maker, copy `tiles` folder, this code `tf_records_generation.py` and `labels.npz` to Tensorflow object detecrtion directory `tensorflow/models/research/`
 4. From directory `tensorflow/models/research/` simply runs:
 python3 tf_records_generation.py --label_input=labels.npz \
              --train_rd_path=data/train_buildings.record \
