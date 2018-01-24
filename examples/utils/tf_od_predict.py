@@ -95,7 +95,7 @@ if __name__ =='__main__':
     test_imgs = glob.glob(test_image_path + "/*.jpg")
 
     ############
-    #Load the frozen tensorflow model into memory
+    #Load the frozen tensorflow model 
     #############
 
     detection_graph = tf.Graph()
@@ -107,7 +107,7 @@ if __name__ =='__main__':
             tf.import_graph_def(od_graph_def, name='')
 
     ############
-    #Load the frozen tensorflow model into memory
+    #Load the label file
     #############
     label_map = label_map_util.load_labelmap(path_to_label)
     categories = label_map_util.convert_label_map_to_categories(label_map, max_num_classes=num_classes, use_display_name=True)
