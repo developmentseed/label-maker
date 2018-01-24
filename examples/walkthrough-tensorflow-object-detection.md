@@ -1,5 +1,7 @@
 # Example Use: A building object detection with Tensor Flow
 
+We have to walk through all these steps to be able to train a TensorFlow Object Detection and have this results:
+![vietnam_od_buildings](https://user-images.githubusercontent.com/14057932/35354064-0cd453f6-0117-11e8-8e6f-96f5619bcdf3.png)
 
 
 # Download Training dataset
@@ -130,4 +132,5 @@ python3 tf_od_predict.py --model_name=building_od_ssd_inference_graph \
 ```
 
 This code will read through all your test image in `test_images` folder, and output final prediction in the `test_images` too. You will see the final prediction like this:
+
 ![26011-14427-15](https://user-images.githubusercontent.com/14057932/35353614-b1709390-0115-11e8-8277-08768034006d.jpg) ![25989-14427-15](https://user-images.githubusercontent.com/14057932/35353624-bacf4846-0115-11e8-9fd0-b3c75cfaaa06.jpg)
