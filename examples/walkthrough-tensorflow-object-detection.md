@@ -6,7 +6,7 @@ We have to walk through all these steps to be able to train a TensorFlow Object 
 
 # Download Training dataset
 Vietnam has good image through Mapbox Satellite Imagery, so we are going to use the same configure JSON file we used for [another walkthrough](https://github.com/developmentseed/label-maker/blob/tf_object_detection/examples/walkthrough-classification-mxnet-sagemaker.md)
-- Install Label Maker by: `pip install label_maker` .
+- Install Label Maker by: `pip install label_maker`; install Pandas by `pip install pandas` and install [tippecanoe](https://github.com/mapbox/tippecanoe) .
 - Create vietnam_tf.json for `object-detection` like shown in following json file.
 ```json
 {
