@@ -274,8 +274,8 @@ def _tile_results_summary(ml_type, classes):
     if ml_type == 'object-detection':
         # for each class, show number of features and number of tiles
         for i, cl in enumerate(classes):
-            cl_features = len([bb for l in labels for bb in l if bb[4] == i])
-            cl_tiles = len([l for l in labels if len(list(filter(_bbox_class(i), l)))]) # pylint: disable=cell-var-from-loop
+            cl_features = len([bb for l in labels for bb in l if bb[4] == i + 1])
+            cl_tiles = len([l for l in labels if len(list(filter(_bbox_class(i+1), l)))]) # pylint: disable=cell-var-from-loop
             print('{}: {} features in {} tiles'.format(cl.get('name'), cl_features, cl_tiles))
     elif ml_type == 'classification':
         class_tile_counts = list(np.sum(labels, axis=0))

@@ -52,7 +52,7 @@ $ label-maker images --dest vietnam_building_tf --config vietnam_tf.json
 ```
 You will have 385 image tiles in your folder `vietnam_building_tf/tiles`You don't need to run `label-maker package` for this TensorFlow Object Detection task.
 
-Now, you are ready to set up Tensor Flow object detection API
+Now, you are ready to set up TensorFlow object detection API
 
 # Setup TensorFlow Object Detection API
 ### Install TensorFlow object detection:
@@ -63,7 +63,7 @@ Now, you are ready to set up Tensor Flow object detection API
 Tensorflow API supports a variety of file formats. TFRecord file format is a simple record-oriented binary format that many TensorFlow applications use. We have a python code [here on our github repo](TODO...After this branch merge) for you to create TFRecords from `labels.npz` that Label Maker created under `label-maker labels` command.
 
 Follow these steps to create TFRecards
-- Create the `tf_records_generation.py` under your Tensorflow object detection directory from [our github repo](), which is `models/research/object_detection/`.
+- Create the `tf_records_generation.py` under your Tensorflow object detection directory,which is `models/research/object_detection/`,  from [our github repo](), .
 - Copy and paste your `labels.npz` and `tiles` folder from `vietnam_building_tf` to TensorFlow Object Detection API directory `models/research/object_detection/` too.
 - From `models/research/object_detection/` directory run:
 ```shell
@@ -92,7 +92,7 @@ item {
 }
 
 ```
-- Go back to `ssd_inception_v2_coco.config` and chage all the `PATH_TO_BE_CONFIGURED` to the directory, e.g. at `fine_tune_checkpoint: "PATH_TO_BE_CONFIGURED/model.ckpt"` you will need to change `PATH_TO_BE_CONFIGURED` to `ssd_inception_v2_coco_2017_11_17` in the configure file. Don't forget to change `input_path` for `train_buildings.record`, `label_map_path`, and `input_path` for `test_buildings.record` too.
+- Go back to `ssd_inception_v2_coco.config` and change all the `PATH_TO_BE_CONFIGURED` to the your file directories, e.g. at `fine_tune_checkpoint: "PATH_TO_BE_CONFIGURED/model.ckpt"` you will need to change `PATH_TO_BE_CONFIGURED` to `ssd_inception_v2_coco_2017_11_17` in the configure file. Don't forget to change `input_path` for `train_buildings.record`, `label_map_path`, and `input_path` for `test_buildings.record` too.
 
 # Train the TensorFlow object detection model
 You are now ready to train the model, from the `models/research/object_detection` directory, run:
@@ -108,7 +108,7 @@ When model is successfully running you will see:
 We ran this model about **10,000 steps**, and it took **37 hours**, if you wanna run a faster model, we recommend to try out `ssd_mobilenet_v1_coco` in TensorFlow model zoo.
 
 # Create your object detection model to visualize
-After the 10,000 steps, you will ready to create your own building detection model, by simply running:
+After the 10,000 steps, you will ready to create your own building detection model, simply run:
 ```shell
 python3 export_inference_graph.py --input_type image_tensor \
               --pipeline_config_path training/ssd_inception_v2_coco.config \
@@ -124,7 +124,7 @@ go to your web browser and paste `http://127.0.0.1:6006/`, you will see.
 ![screenshot 2018-01-24 14 42 00](https://user-images.githubusercontent.com/14057932/35353302-c6f555c6-0114-11e8-8c7c-1b5334e9c449.png)
 
 # Prediction
-We created another code for you to finally run and predict any image tile you have to do the building detection. We saved the test images in a folder called `test_images`. Now [go to our Label Maker repo, copy, paste and save the code as `tf_od_predict.py`](https://github.com/developmentseed/label-maker/blob/tf_object_detection/examples/utils/tf_od_predict.py), simply by running:
+We created another code for you to finally run and predict any image tile you have to do the building detection. We saved the test images in a folder called `test_images`. Now [go to our Label Maker repo, copy, paste and save the code as `tf_od_predict.py`](https://github.com/developmentseed/label-maker/blob/tf_object_detection/examples/utils/tf_od_predict.py), simply run:
 ```shell
 python3 tf_od_predict.py --model_name=building_od_ssd_inference_graph \
                                           --path_to_label=data/building_od.pbtxt \
