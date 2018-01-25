@@ -71,7 +71,7 @@ python3 tf_records_generation.py --label_input=labels.npz \
              --train_rd_path=data/train_buildings.record \
              --test_rd_path=data/test_buildings.record
 ```
-This code will create a `train_buildings.record` and `test_buildings.record` in a folder called `data` in directory `models/research/object_detection/`
+This code will create a `train_buildings.record` and `test_buildings.record` in a folder called `data` in directory `models/research/object_detection/`. It will aslo copy images in your `tiles` folder to `images` folder and split them up into two seperate folders of `train` and `test`.
 
 ### Object detection model setup
 - download a trained model from TensorFlow. Go to [TensorFlow model zoo](https://github.com/tensorflow/models/blob/master/research/object_detection/g3doc/detection_model_zoo.md) to pick up a trained model. We used [`ssd_inception_v2_coco`](http://download.tensorflow.org/models/object_detection/ssd_inception_v2_coco_2017_11_17.tar.gz).
