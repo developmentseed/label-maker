@@ -1,4 +1,4 @@
-# Example Use: A building object detection with Tensor Flow
+# Example Use: A building object detection with TensorFlow API
 
 You have to walk through all these steps to be able to train a TensorFlow Object Detection and have the following results:
 <p align="center">
