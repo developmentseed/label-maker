@@ -51,6 +51,14 @@ Before running any commands, it is necessary to create a `config.json` file to s
   - `"object-detection"`: An array of bounding boxes of the form `[xmin, ymin, width, height, class_index]`. In this case, the values are not latitude and longitude values but pixel values measured from the upper left-hand corner. Each feature is tested against each class so if a feature matches two or more classes, it will have the corresponding number of bounding boxes created.
   - `"segmentation"`: An array of shape `(256, 256)` with values matching the class_index label at that position. The classes are applied sequentially according to `config.json` so latter classes will be written over earlier class labels.
 
+  Using `ml_type == segmentation` as an example: you will have mask/label tiles from `label-maker labels`, and mask tile overlaid RGB tiles from `label-maker preview`, and RGB image tiles from `label-maker images`. We fetched the imagery from Mapbox, and it's zoom level 18 from Ho Chi Min city, Vietnam here.
+
+
+  |RGB Tiles | Label tiles | RGB overlaid Label |
+  | --- | --- |--- |
+  |![208677-123227-18](https://user-images.githubusercontent.com/14057932/35526531-b5fb8d46-04f5-11e8-800a-82a2f777b795.jpg)|![208677-123227-18](https://user-images.githubusercontent.com/14057932/35526544-c0b4ecd2-04f5-11e8-80ea-1615910bde88.png)|![208677-123227-18](https://user-images.githubusercontent.com/14057932/35526557-cf40bbb4-04f5-11e8-8150-ecabd78cdad6.jpg)|
+  | ![208683-123182-18](https://user-images.githubusercontent.com/14057932/35526941-23677bf0-04f7-11e8-94fc-8e73bb9c9ed9.jpg)|  ![208683-123182-18](https://user-images.githubusercontent.com/14057932/35526965-3614d900-04f7-11e8-9fc8-458889ac23e2.png)| ![208683-123182-18](https://user-images.githubusercontent.com/14057932/35526982-438739a2-04f7-11e8-9501-e99e79a09d71.jpg)|
+
 ## Command Line Use
 
 `label-maker` is most easily used as a command line tool. There are five commands documented below. All commands accept two flags:
