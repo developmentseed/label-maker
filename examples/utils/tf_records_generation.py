@@ -32,7 +32,7 @@ flags.DEFINE_string('test_rd_path', '', 'Path to output TFRecord')
 FLAGS = flags.FLAGS
 
 
-# TO-DO replace this with label map
+# replace this with label map
 def class_text_to_int(row_label):
     """read in label data"""
     if row_label == 'building':
