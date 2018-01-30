@@ -112,14 +112,7 @@ def main(_):
             for bbox in bboxes:
                 if bbox[4] == 1:
                     cl_str = "building"
-                    if bbox[0] < 0:
-                        bbox[0] = 0
-                    if bbox[1] < 0:
-                        bbox[1] = 0
-                    if  bbox[2] > 256:
-                        bbox[2] = 256
-                    if  bbox[3] > 256:
-                        bbox[3] = 256
+                    bbox = [max(0, min(255, x)) for x in bbox[0:4]]
                     y = ["{}.jpg".format(tile), width, height, cl_str, bbox[0], bbox[1], bbox[2], bbox[3]]
                     tf_tiles_info.append(y)
     #train_len = 0.8

@@ -1,5 +1,6 @@
 # Example Use: A building object detection with TensorFlow API
 
+ Google TensorFlow Object Detection API is an open source framework built on top of TensorFlow that makes it easy to construct, train, and deploy object detection models. In this example, we use it to detect buildings in Vietnam.
 You have to walk through all these steps to be able to train a TensorFlow Object Detection and have the following results:
 <p align="center">
 <img src="images/tf_od_result.jpg" width="1000" />
@@ -92,7 +93,7 @@ This code will create a `train_buildings.record` and `test_buildings.record` in 
 It's the second fastest model after `ssd_mobilenet_v1_coco`.
 run this command to unzip the downloaded model:
 ```shell
-tar -xzvf ssd_inception_v2_coco_2017_11_17.tar.gz  |  rm ssd_inception_v2_coco_2017_11_17.tar.gz
+tar -xzvf ssd_inception_v2_coco_2017_11_17.tar.gz  &&  rm ssd_inception_v2_coco_2017_11_17.tar.gz
 ```
 - [Go to our GitHub repository and create  a model configure file](https://github.com/developmentseed/label-maker/blob/tf_object_detection/examples/utils/ssd_inception_v2_coco.config) for `ssd_inception_v2_coco` as `ssd_inception_v2_coco.config`, create a folder, let's called it `training` and save this model configure in the folder.
 
