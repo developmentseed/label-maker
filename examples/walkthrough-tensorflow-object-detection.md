@@ -67,11 +67,9 @@ Now, you are ready to set up the TensorFlow Object Detection API.
 - To access the necessary utility scripts, you'll need to run all the following commands from the `models/research/object_detection` directory from the cloned repo. **From here on we will refer the TensorFlow Object Detection directory `models/research/object_detection/` as the TOD directory.**
 
 ### Create TFRecords for model training
-Tensorflow API supports a variety of file formats. The TFRecord file format is a simple record-oriented binary format that many TensorFlow applications use. We have a python code [in this repo](utils/tf_records_generation.py) which converts the `labels.npz` file to a TFRecords file.
+Tensorflow API supports a variety of file formats. The TFRecord file format is a simple record-oriented binary format that many TensorFlow applications use. We have example code in this repo which converts the `labels.npz` file to a TFRecords file:
 
-Follow these steps to create TFRecords.
-
-- Copy `tf_records_generation.py` from [this repo](utils/tf_records_generation.py) to the TOD directory, .
+- Copy [`tf_records_generation.py` from this repo](utils/tf_records_generation.py) to the TOD directory, .
 - Copy your `labels.npz` file and `tiles` folders from `data` to the TOD directory.
 - From the TOD directory run:
 
