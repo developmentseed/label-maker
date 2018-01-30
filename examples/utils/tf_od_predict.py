@@ -1,11 +1,11 @@
 """
-This is adepted from Tensorflow (https://github.com/tensorflow/models/tree/master/research/object_detection);
-Save this code under the diractory of `models/research/object_detection/`
+This is adapted from Tensorflow (https://github.com/tensorflow/models/tree/master/research/object_detection);
+Save this code under the directory `models/research/object_detection/`
 
 To use, run:
-python3 tf_od_predict.py --model_name=building_od_ssd_inference_graph \
-                                          --path_to_label=data/building_od.pbtxt \
-                                          --test_image_path=test_images
+python tf_od_predict.py --model_name=building_od_ssd \
+                         --path_to_label=data/building_od.pbtxt \
+                         --test_image_path=test_images
 """
 
 import os
@@ -27,8 +27,6 @@ sys.path.append("..")
 
 from utils import label_map_util
 from utils import visualization_utils as vis_util
-
-
 
 flags = tf.app.flags
 flags.DEFINE_string('model_name', '', 'Path to frozen detection graph')
@@ -95,7 +93,7 @@ if __name__ =='__main__':
     test_imgs = glob.glob(test_image_path + "/*.jpg")
 
     ############
-    #Load the frozen tensorflow model 
+    #Load the frozen tensorflow model
     #############
 
     detection_graph = tf.Graph()
