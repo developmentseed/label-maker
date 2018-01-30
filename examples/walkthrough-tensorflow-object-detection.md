@@ -6,7 +6,7 @@ Google TensorFlow Object Detection API is an open source framework built on top 
 <img src="images/tf_od_result.jpg" width="1000" />
 </p>
 
-First install Label Maker (`pip install label-maker`) and [tippecanoe](https://github.com/mapbox/tippecanoe)
+First install Label Maker (`pip install label-maker`),  [tippecanoe](https://github.com/mapbox/tippecanoe) and Pandas (`pip install pandas`).
 
 ## Create the training dataset
 
