@@ -74,7 +74,7 @@ Tensorflow API supports a variety of file formats. The TFRecord file format is a
 - From the TOD directory run:
 
 ```shell
-python3 tf_records_generation.py --label_input=labels.npz \
+python tf_records_generation.py --label_input=labels.npz \
              --train_rd_path=data/train_buildings.record \
              --test_rd_path=data/test_buildings.record
 ```
