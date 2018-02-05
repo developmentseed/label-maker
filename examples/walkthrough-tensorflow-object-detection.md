@@ -118,7 +118,7 @@ The model checkpoints and outputs for this task will save in the `training` fold
 <img src="images/tf_sc.jpg" width="500" />
 </p>
 
-We ran this model for about **10,000 steps**, and it took **37 hours** (local CPU). If you want to run a faster model, we recommend trying `ssd_mobilenet_v1_coco` in TensorFlow model zoo, training on a GPU, or using Google's [Cloud Machine Learning Engine](https://cloud.google.com/ml-engine/).
+We ran this model for about **20,000 steps**, and it took **50 hours** (local CPU). If you want to run a faster model, we recommend trying `ssd_mobilenet_v1_coco` in TensorFlow model zoo, training on a GPU, or using Google's [Cloud Machine Learning Engine](https://cloud.google.com/ml-engine/).
 
 ## Visualize the Model
 Create the building detection model inference graph with:
@@ -126,7 +126,7 @@ Create the building detection model inference graph with:
 ```shell
 python export_inference_graph.py --input_type image_tensor \
               --pipeline_config_path training/ssd_inception_v2_coco.config \
-              --trained_checkpoint_prefix training/model.ckpt-9575
+              --trained_checkpoint_prefix training/model.ckpt-18699 \
               --output_directory building_od_ssd
 ```
 We can visualize this graph using [`tensorboard`](https://github.com/tensorflow/tensorboard):
