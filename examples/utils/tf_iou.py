@@ -77,7 +77,7 @@ def pred_bbox():
         (boxes, scores, classes, num) = sess.run(
           [detection_boxes, detection_scores, detection_classes, num_detections],
           feed_dict={image_tensor: image_np_expanded})
-          ### 256 here is the image size from Label Maker, ajust it according to your input image size.
+          ### 256 here is the image size from Label Maker, adjust it according to your input image size.
         bboxe = (boxes*256).astype(np.int)
         bboxe = np.squeeze(bboxe)
         score = np.squeeze(((scores*100).transpose()).astype(np.int))
@@ -147,4 +147,10 @@ if __name__ =='__main__':
     category_index = label_map_util.create_category_index(categories)
     iou_out = get_iou()
     pred_bboxes = pred_bbox()
-    print("The IOU for your object detection is: {}".format(float(len(iou_out)/len(pred_bboxes))))
+    gr_bboxes = gr_bbox()
+
+    print('*'*40)
+    print("The precision score is: {}".format(float(len(iou_out)/len(pred_bboxes))))
+    
+    print("Precision is when the model predicts yes, how often is it correct.")
+    print('*'*40)
