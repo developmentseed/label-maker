@@ -10,7 +10,7 @@ https://www.tensorflow.org/versions/r0.12/api_docs/python/image/working_with_bou
 Usage:
            python tf_iou.py   --model_name=building_od_ssd  \
                                       --path_to_label=data/building_od.pbtxt\
-                                      --test_image_path=test_test
+                                      --test_image_path=images/test
 """
 
 import os
