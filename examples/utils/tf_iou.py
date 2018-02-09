@@ -98,7 +98,6 @@ def gr_bbox():
     gr_bboxes = list()
     for tile in tiles:
         bboxes = gr_data[tile].tolist()
-        bbox_info = list()
         if bboxes:
             for bbox in bboxes:
                 bbox = [max(0, min(255, x)) for x in bbox[:4]]
@@ -111,13 +110,14 @@ def get_iou():
     pred_bboxes = pred_bbox()
     gr_bboxes = gr_bbox()
     iou_out = list()
-    for pred_box in pred_bboxes:
-        for gr_box in gr_bboxes:
+    for gr_box in gr_bboxes:
+        for pred_box in pred_bboxes:
             try:
-                iou = bb_IOU(pred_box, gr_box)
+                iou = bb_IOU(gr_box, pred_box)
                 ### If iou is large than 0.5, we assume this prediction is acceptable.
                 if iou >=0.5:
                     iou_out.append(iou)
+                    break
             except:
                 pass
     return iou_out
@@ -146,11 +146,7 @@ if __name__ =='__main__':
     categories = label_map_util.convert_label_map_to_categories(label_map, max_num_classes=num_classes, use_display_name=True)
     category_index = label_map_util.create_category_index(categories)
     iou_out = get_iou()
-    pred_bboxes = pred_bbox()
-    gr_bboxes = gr_bbox()
 
     print('*'*40)
-    print("The precision score is: {}".format(float(len(iou_out)/len(pred_bboxes))))
-    
-    print("Precision is when the model predicts yes, how often is it correct.")
+    print("The number of labels that we have is correct {}".format(len(iou_out)))
     print('*'*40)
