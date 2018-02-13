@@ -1,25 +1,25 @@
 # Example Use: A building detector with TensorFlow API
 
-Google TensorFlow Object Detection API is an open source framework built on top of TensorFlow that makes it easy to construct, train, and deploy object detection models. In this example, we use it to detect buildings in Vietnam. If you follow these steps, you'll be able to train a TensorFlow Object Detection model with the following results:
+Google TensorFlow Object Detection API is an open source framework built on top of TensorFlow that makes it easy to construct, train, and deploy object detection models. In this example, we use it to detect buildings in Mexico City. If you follow these steps, you'll be able to train a TensorFlow Object Detection model with the following results:
 
 <p align="center">
-<img src="images/tf_od_result.jpg" width="1000" />
+<img src="images/ob_tf_result_fig1.jpg" width="1000" />
 </p>
 
 First install Label Maker (`pip install label-maker`),  [tippecanoe](https://github.com/mapbox/tippecanoe) and Pandas (`pip install pandas`).
 
 ## Create the training dataset
 
-Vietnam has good imagery via the Mapbox Satellite layer, so we are going to use the same configuration file we used for [another walkthrough](walkthrough-classification-mxnet-sagemaker.md), which we used to train a building classifier with MXNet and Amazon SageMaker.
+Mexico City  has good imagery via the Mapbox Satellite layer, so we are going to use the same configuration file we used for [another walkthrough](walkthrough-classification-mxnet-sagemaker.md), which we used to train a building classifier with MXNet and Amazon SageMaker.
 
 Create `config.json` as shown in following JSON file.
 ```json
 {
-  "country": "vietnam",
-  "bounding_box": [105.42,20.75,106.41,21.53],
-  "zoom": 15,
+  "country": "mexico",
+  "bounding_box": [-99.17,19.47,-99.12,19.52],
+  "zoom": 17,
   "classes": [
-    { "name": "Buildings", "filter": ["has", "building"] }
+    { "name": "Buildings", "filter": ["has", "building"] , "buffer":3}
   ],
   "imagery": "http://a.tiles.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}.jpg?access_token=ACCESS_TOKEN",
   "background_ratio": 1,
@@ -49,7 +49,7 @@ This will download ten images to the folder `data/examples/Buildings/`
 <img src="images/preview_tiles.jpg" width="1000" />
 </p>
 
-You can tell from the above image tiles that some buildings in Vietnam haven't been mapped yet which will impact our model prediction accuracy. If you’d like to help improve the labeling accuracy, [start mapping on OpenStreetMap](https://www.openstreetmap.org/#map=10/20.9755/105.4118).
+You can tell from the above image tiles that some buildings in Mexico City haven't been mapped yet which will impact our model prediction accuracy. If you’d like to help improve the labeling accuracy, [start mapping on OpenStreetMap](https://www.openstreetmap.org/#map=12/19.3815/-99.1653).
 
 To download all the image tiles that contain buildings:
 ```shell
@@ -150,8 +150,20 @@ python tf_od_predict.py --model_name=building_od_ssd \
                         --test_image_path=images/test
 ```
 
-This code will read through all your test images in `images/test` folder and output the final prediction into the same folder. You will see a final prediction like this:
+This code will read through all your test images in `images/test` folder and output the final prediction into the same folder. You will see a final prediction like this the first graph shows above.
+
+We also prepared a script to evaluate the model performance using intersection over union (IOU, also known [Jaccard index](https://en.wikipedia.org/wiki/Jaccard_index)).
 
 <p align="center">
-<img src="images/tf_od_result.jpg" width="1000" />
+<img src="images/Intersection_over_Union.png" width="1000" />
 </p>
+
+You will obtain a precision score for the model by running:
+
+```shell
+python tf_iou.py   --model_name=building_od_ssd \
+                              --path_to_label=data/building_od.pbtxt \
+                              --test_image_path=images/test
+```
+
+precision is when the model predicts yes, how often is it correct. When the IOU is higher than 0.5, we consider the model has predicted the buildings correctly.
