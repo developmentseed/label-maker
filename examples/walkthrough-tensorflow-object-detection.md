@@ -16,7 +16,7 @@ Create `config.json` as shown in following JSON file.
 ```json
 {
   "country": "mexico",
-  "bounding_box": [-99.17,19.47,-99.12,19.52],
+  "bounding_box": [-99.17667388916016,19.466430383606728,-99.11865234374999,19.51813278329343],
   "zoom": 17,
   "classes": [
     { "name": "Buildings", "filter": ["has", "building"] , "buffer":3}
@@ -55,7 +55,7 @@ To download all the image tiles that contain buildings:
 ```shell
 $ label-maker images
 ```
-You will have 385 image tiles in your folder `data/tiles`. You don't need to run `label-maker package` for the TensorFlow Object Detection task. We'll use some custom code (included) to write the images and labels to a different format.
+You will have 227 image tiles in your folder `data/tiles`. You don't need to run `label-maker package` for the TensorFlow Object Detection task. We'll use some custom code (included) to write the images and labels to a different format.
 
 Now, you are ready to set up the TensorFlow Object Detection API.
 
