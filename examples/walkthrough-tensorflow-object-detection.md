@@ -91,7 +91,7 @@ Now your current directory should be `models/research/object_detection/` and in 
 
 ```
 models/research/object_detection/
-├── ssd_inception_v2_coco/
+├── ssd_inception_v2_coco_2017_11_17/
 ├── training/
 │   └── ssd_inception_v2_coco.config
 ├── data/
