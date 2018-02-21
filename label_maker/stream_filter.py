@@ -5,7 +5,7 @@ from shapely.geometry import shape, box
 
 bbox = box(*json.loads(sys.argv[1]))
 
-for line in sys.stdin.readlines():
+for line in sys.stdin:
     geo = json.loads(line)
     geom = shape(geo['geometry'])
     geo.pop('tippecanoe')
