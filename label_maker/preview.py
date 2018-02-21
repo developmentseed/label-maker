@@ -9,7 +9,7 @@ import numpy as np
 import requests
 from PIL import Image, ImageDraw
 
-from label_maker.utils import url, class_match
+from label_maker.utils.cli_utils import url, class_match
 
 def preview(dest_folder, number, classes, imagery, ml_type, **kwargs):
     """Produce imagery examples for specified classes

@@ -8,7 +8,7 @@ from random import shuffle
 import numpy as np
 import requests
 
-from label_maker.utils import url
+from label_maker.utils.cli_utils import url
 
 def download_images(dest_folder, classes, imagery, ml_type, background_ratio, **kwargs):
     """Download satellite images specified by a URL and a label.npz file
