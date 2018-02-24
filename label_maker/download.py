@@ -29,4 +29,5 @@ def download_mbtiles(dest_folder, country, **kwargs):
     download(url=url, path=tmp_path)
     with gzip.open(tmp_path, 'rb') as r:
         with open(download_file, 'wb') as w:
-            w.write(r.read())
+            for line in r:
+                w.write(line)
