@@ -1,3 +1,11 @@
+0.2.1 (2018-02-24)
+------------------
+- Lower memory usage of stream_filter.py (#39)
+- Bug fix: print correct object detection labeling summary (#33)
+- Bug fix: uncompress mbtiles line by line to prevent memory usage issues
+  causing large files to fail on the 'download' subcommand (#35)
+
+
 0.2.0 (2018-01-19)
 ------------------
 - Add optional 'buffer' property to classes to create more accurate
