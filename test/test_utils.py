@@ -1,8 +1,10 @@
 """Tests for utils.py"""
+from os import path as op, makedirs
 import unittest
 import numpy as np
+from PIL import Image
 
-from label_maker.utils import url, class_match
+from label_maker.utils import url, class_match, get_tile_tif
 
 class TestUtils(unittest.TestCase):
     """Tests for utility functions"""
@@ -39,6 +41,21 @@ class TestUtils(unittest.TestCase):
         failing = np.ones((256, 256), dtype=np.int)
         self.assertTrue(class_match(ml_type, passing, class_index))
         self.assertFalse(class_match(ml_type, failing, class_index))
+
+    def test_get_tile_tif(self):
+        """Test reading of tile from geotiff"""
+        tile = '1087767-1046604-21'
+        # create tiles directory
+        dest_folder = 'test'
+        tiles_dir = op.join(dest_folder, 'tiles')
+        if not op.isdir(tiles_dir):
+            makedirs(tiles_dir)
+
+        get_tile_tif(tile, 'test/fixtures/drone.tif', dest_folder)
+        test_tile = Image.open('test/tiles/{}.jpg'.format(tile))
+        fixture_tile = Image.open('test/fixtures/{}.jpg'.format(tile))
+        self.assertTrue(test_tile, fixture_tile)
+
 
 if __name__ == '__main__':
     unittest.main()
