@@ -2,13 +2,11 @@
 """Generate an .npz file containing arrays for training machine learning algorithms"""
 
 from os import makedirs, path as op
-from urllib.parse import urlparse
 from random import shuffle
 
 import numpy as np
-import requests
 
-from label_maker.utils import url
+from label_maker.utils import download_tile_tms, download_tile_tif
 
 def download_images(dest_folder, classes, imagery, ml_type, background_ratio, **kwargs):
     """Download satellite images specified by a URL and a label.npz file
@@ -66,9 +64,11 @@ def download_images(dest_folder, classes, imagery, ml_type, background_ratio, **
     # download tiles
     tiles = class_tiles + background_tiles
     print('Downloading {} tiles to {}'.format(len(tiles), op.join(dest_folder, 'tiles')))
-    o = urlparse(imagery)
-    _, image_format = op.splitext(o.path)
+
+    # get downloading function based on imagery string
+    download_function = download_tile_tms
+    if imagery[-4:].lower() == '.tif':
+        download_function = download_tile_tif
+
     for tile in tiles:
-        r = requests.get(url(tile.split('-'), imagery))
-        tile_img = op.join(dest_folder, 'tiles', '{}{}'.format(tile, image_format))
-        open(tile_img, 'wb').write(r.content)
+        download_function(tile, imagery, dest_folder)
