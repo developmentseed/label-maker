@@ -31,7 +31,7 @@ def download_tile_tms(tile, imagery, dest_folder):
     tile_img = op.join(dest_folder, 'tiles', '{}{}'.format(tile, image_format))
     open(tile_img, 'wb').write(r.content)
 
-def download_tile_tif(tile, imagery, dest_folder):
+def get_tile_tif(tile, imagery, dest_folder):
     """Read a GeoTIFF with a window corresponding to a TMS tile"""
     bound = bounds(*[int(t) for t in tile.split('-')])
     with rasterio.open(imagery) as src:

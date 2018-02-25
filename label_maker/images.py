@@ -6,7 +6,7 @@ from random import shuffle
 
 import numpy as np
 
-from label_maker.utils import download_tile_tms, download_tile_tif
+from label_maker.utils import download_tile_tms, get_tile_tif
 
 def download_images(dest_folder, classes, imagery, ml_type, background_ratio, **kwargs):
     """Download satellite images specified by a URL and a label.npz file
@@ -65,10 +65,10 @@ def download_images(dest_folder, classes, imagery, ml_type, background_ratio, **
     tiles = class_tiles + background_tiles
     print('Downloading {} tiles to {}'.format(len(tiles), op.join(dest_folder, 'tiles')))
 
-    # get downloading function based on imagery string
-    download_function = download_tile_tms
+    # get image acquisition function based on imagery string
+    image_function = download_tile_tms
     if imagery[-4:].lower() == '.tif':
-        download_function = download_tile_tif
+        image_function = get_tile_tif
 
     for tile in tiles:
-        download_function(tile, imagery, dest_folder)
+        image_function(tile, imagery, dest_folder)
