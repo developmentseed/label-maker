@@ -46,7 +46,7 @@ Before running any commands, it is necessary to create a `config.json` file to s
   - `buffer`: The number of pixels to buffer the geometry by. This is an optional parameter to buffer the label for `object-detection` and `segmentation` tasks. Accepts any number (positive or negative). It uses [Shapely `object.buffer`](https://shapely.readthedocs.io/en/latest/manual.html#object.buffer) to calculate the final geometry. You can verify that your buffer options create the desired labels by inspecting the files created in `data/labels/` after running the `labels` command.
 - `imagery`: One of:
   - A template string for a tiled imagery service. Note that you will generally need an API key to obtain images and there may be associated costs. The above example requires a [Mapbox access token](https://www.mapbox.com/help/how-access-tokens-work/)
-  - A GeoTIFF file location. Works with both local and remote files.
+  - A GeoTIFF file location. Works with both local and remote files. Ex: `'http://oin-hotosm.s3.amazonaws.com/593ede5ee407d70011386139/0/3041615b-2bdb-40c5-b834-36f580baca29.tif'`
 - `background_ratio`: For single-class classification problems, we need to download images with no matching class. We will download `background_ratio` times the number of images matching the one class.
 - `ml_type`: One of `"classification"`, `"object-detection"`, or `"segmentation"`. For the final label numpy arrays (`y_train` and `y_test`), we will produce a different label depending upon the `type`.
   - `"classification"`: An array of the same length as `classes`. Each array value will be either `1` or `0` based on whether it matches the class at the same index

@@ -32,7 +32,15 @@ def download_tile_tms(tile, imagery, dest_folder):
     open(tile_img, 'wb').write(r.content)
 
 def get_tile_tif(tile, imagery, dest_folder):
-    """Read a GeoTIFF with a window corresponding to a TMS tile"""
+    """
+    Read a GeoTIFF with a window corresponding to a TMS tile
+
+    The TMS tile bounds are converted to the GeoTIFF source CRS. That bounding
+    box is converted to a pixel window which is read from the GeoTIFF. For
+    remote files which are internally tiled, this will take advantage of HTTP
+    GET Range Requests to avoid downloading the entire file. See more info at:
+    http://www.cogeo.org/in-depth.html
+    """
     bound = bounds(*[int(t) for t in tile.split('-')])
     with rasterio.open(imagery) as src:
         x_res, y_res = src.transform[0], src.transform[4]
