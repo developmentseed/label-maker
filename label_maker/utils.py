@@ -46,11 +46,13 @@ def get_tile_tif(tile, imagery, dest_folder):
         x_res, y_res = src.transform[0], src.transform[4]
         proj_to = Proj(**src.crs)
 
+        # project tile boundaries from lat/lng to source CRS
         tile_ul_proj = proj_to(bound.west, bound.north)
         tile_lr_proj = proj_to(bound.east, bound.south)
+        # get origin point from the TIF
         tif_ul_proj = (src.bounds.left, src.bounds.top)
 
-        # y, x (rows, columns)
+        # use the above information to calculate the pixel indices of the window
         top = int((tile_ul_proj[1] - tif_ul_proj[1]) / y_res)
         left = int((tile_ul_proj[0] - tif_ul_proj[0]) / x_res)
         bottom = int((tile_lr_proj[1] - tif_ul_proj[1]) / y_res)
@@ -58,10 +60,12 @@ def get_tile_tif(tile, imagery, dest_folder):
 
         window = ((top, bottom), (left, right))
 
+        # read the first three bands (assumed RGB) of the TIF into an array
         data = np.empty(shape=(3, 256, 256)).astype(src.profile['dtype'])
         for k in (1, 2, 3):
             src.read(k, window=window, out=data[k - 1], boundless=True)
 
+        # save
         tile_img = op.join(dest_folder, 'tiles', '{}{}'.format(tile, '.jpg'))
         img = Image.fromarray(np.moveaxis(data, 0, -1), mode='RGB')
         img.save(tile_img)
