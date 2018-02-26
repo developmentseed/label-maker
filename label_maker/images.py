@@ -67,7 +67,7 @@ def download_images(dest_folder, classes, imagery, ml_type, background_ratio, **
 
     # get image acquisition function based on imagery string
     image_function = download_tile_tms
-    if imagery[-4:].lower() == '.tif':
+    if op.splitext(imagery)[1].lower() in ['.tif', '.tiff']:
         image_function = get_tile_tif
 
     for tile in tiles:
