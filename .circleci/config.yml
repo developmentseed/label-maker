@@ -47,8 +47,8 @@ jobs:
             cp -r test/fixtures/integration/tiles integration-sg/tiles
 
             # Test `label-maker labels --sparse`
-            label-maker labels --dest integration-sg --config test/fixtures/integration/config.integration.segmentation.json --sparse
-            python test/verify-labels-sg.py
+            label-maker labels --dest integration-sg --config test/fixtures/integration/config.integration.segmentation_sparse.json --sparse
+            python test/verify-labels-sg-sparse.py
             # Test `label-maker labels`
             label-maker labels --dest integration-sg --config test/fixtures/integration/config.integration.segmentation.json
             python test/verify-labels-sg.py
