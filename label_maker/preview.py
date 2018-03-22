@@ -53,10 +53,12 @@ def preview(dest_folder, number, classes, imagery, ml_type, **kwargs):
         if not op.isdir(class_dir):
             makedirs(class_dir)
 
-        class_tiles = [t for t in tiles.files if class_match(ml_type, tiles[t], i + 1)]
-        class_tiles = class_tiles[:number]
-        print('Downloading {} tiles for class {}'.format(len(class_tiles), cl.get('name')))
-        for tile in class_tiles:
+        class_tiles = (t for t in tiles.files
+                       if class_match(ml_type, tiles[t], i + 1))
+        print('Downloading at most {} tiles for class {}'.format(number, cl.get('name')))
+        for n, tile in enumerate(class_tiles):
+            if n > number:
+                break
             r = requests.get(url(tile.split('-'), imagery))
             tile_img = op.join(dest_folder, 'examples', cl.get('name'),
                                '{}{}'.format(tile, image_format))
