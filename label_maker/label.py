@@ -93,7 +93,8 @@ def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, spar
     if sparse:
         pos_examples, neg_examples = [], []
         for k in tile_results.keys():
-            if class_match(ml_type, tile_results[k], 0):
+            # if we don't match any class, this is a negative example
+            if not sum([class_match(ml_type, tile_results[k], i + 1) for i, c in enumerate(classes)]):
                 neg_examples.append(k)
             else:
                 pos_examples.append(k)
