@@ -20,7 +20,7 @@ jobs:
           command: pylint ~/label-maker/label_maker --rcfile=~/label-maker/.config/pylintrc
       - run:
           name: Unit Tests
-          command: python -m unittest -v
+          command:  python -m unittest discover -v -s test/unit
       - run:
           name: Integration Tests
           command: |
@@ -47,7 +47,7 @@ jobs:
             cp -r test/fixtures/integration/tiles integration-sg/tiles
             label-maker labels --dest integration-sg --config test/fixtures/integration/config.integration.segmentation.json
             python test/verify-labels-sg.py
-            
+
             # object detection integration tests
             mkdir integration-od
             cp -r test/fixtures/integration/tiles integration-od/tiles
@@ -56,7 +56,7 @@ jobs:
             python test/verify-labels-od.py
             label-maker package -d integration-od -c test/fixtures/integration/config.integration.object_detection.json
             python test/verify-package-od.py
-            
+
             # Retest that `label-maker labels` works, but from outside the module directory
             cd ~
             label-maker labels --dest label-maker/integration-cl --config label-maker/test/fixtures/integration/config.integration.json > stdout
