@@ -26,3 +26,4 @@ jobs:
           command: |
             sudo pip install .
             python -m unittest discover -v -s test/integration
+
