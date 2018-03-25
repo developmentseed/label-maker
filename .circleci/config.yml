@@ -22,24 +22,7 @@ jobs:
           name: Unit Tests
           command: python -m unittest discover -v -s test/unit
       - run:
-          name: Start moving integration
+          name: Integration Tests
           command: |
             sudo pip install .
             python -m unittest discover -v -s test/integration
-      - run:
-          name: Integration Tests
-          command: |
-            # object detection integration tests
-            mkdir integration-od
-            cp -r test/fixtures/integration/tiles integration-od/tiles
-            cp test/fixtures/integration/portugal-z17.mbtiles integration-od/
-            label-maker labels -d integration-od -c test/fixtures/integration/config.integration.object_detection.json
-            python test/verify-labels-od.py
-            label-maker package -d integration-od -c test/fixtures/integration/config.integration.object_detection.json
-            python test/verify-package-od.py
-
-            # Retest that `label-maker labels` works, but from outside the module directory
-            cd ~
-            label-maker labels --dest label-maker/integration-cl --config label-maker/test/fixtures/integration/config.integration.json > stdout
-            cd ~/label-maker
-            python test/verify-labels-cl.py
