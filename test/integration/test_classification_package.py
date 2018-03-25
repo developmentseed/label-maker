@@ -8,11 +8,11 @@ import subprocess
 import numpy as np
 
 class TestClassificationPackage(unittest.TestCase):
-    """Tests for package classification"""
+    """Tests for classification package creation"""
     @classmethod
     def setUpClass(cls):
         makedirs('integration-cl')
-        copyfile('test/fixtures/integration/labels.npz', 'integration-cl/labels.npz')
+        copyfile('test/fixtures/integration/labels-cl.npz', 'integration-cl/labels.npz')
         copytree('test/fixtures/integration/tiles', 'integration-cl/tiles')
 
     @classmethod
@@ -20,7 +20,7 @@ class TestClassificationPackage(unittest.TestCase):
         rmtree('integration-cl')
 
     def test_cli(self):
-        """Test package: Verify data.npz produced by CLI"""
+        """Verify data.npz produced by CLI"""
         cmd = 'label-maker package --dest integration-cl --config test/fixtures/integration/config.integration.json'
         cmd = cmd.split(' ')
         subprocess.run(cmd, universal_newlines=True)

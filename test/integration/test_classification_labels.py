@@ -3,13 +3,13 @@ label-maker labels --dest integration-cl --config test/fixtures/integration/conf
 import unittest
 import json
 from os import makedirs
-from shutil import copyfile, copytree, rmtree
+from shutil import copyfile, rmtree
 import subprocess
 
 import numpy as np
 
 class TestClassificationLabel(unittest.TestCase):
-    """Tests for label classification"""
+    """Tests for classification label creation"""
     @classmethod
     def setUpClass(cls):
         makedirs('integration-cl')
@@ -20,7 +20,7 @@ class TestClassificationLabel(unittest.TestCase):
         rmtree('integration-cl')
 
     def test_cli(self):
-        """Test labels: Verify stdout, geojson, and labels.npz produced by CLI"""
+        """Verify stdout, geojson, and labels.npz produced by CLI"""
         # our command line output should look like this
         expected_output = """Determining labels for each tile
 ---

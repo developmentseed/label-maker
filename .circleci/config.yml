@@ -29,13 +29,6 @@ jobs:
       - run:
           name: Integration Tests
           command: |
-            # segmentation integration tests
-            mkdir integration-sg
-            cp test/fixtures/integration/portugal-z17.mbtiles integration-sg/portugal-z17.mbtiles
-            cp -r test/fixtures/integration/tiles integration-sg/tiles
-            label-maker labels --dest integration-sg --config test/fixtures/integration/config.integration.segmentation.json
-            python test/verify-labels-sg.py
-
             # object detection integration tests
             mkdir integration-od
             cp -r test/fixtures/integration/tiles integration-od/tiles
