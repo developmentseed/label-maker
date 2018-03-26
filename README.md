@@ -76,7 +76,8 @@ Saving QA tiles to data/ghana.mbtiles
 
 ### Labels
 
-Retiles the OSM data to the desired zoom level, creates label data (`labels.npz`), calculates class statistics, creates visual label files (either GeoJSON or PNG files depending upon `ml_type`). Requires the OSM QA tiles from the previous step.
+Retiles the OSM data to the desired zoom level, creates label data (`labels.npz`), calculates class statistics, creates visual label files (either GeoJSON or PNG files depending upon `ml_type`). Requires the OSM QA tiles from the previous step. Accepts an additional flag:
+- `-s` or `--sparse`: _boolean_ if this flag is present, only save labels for up to `n` background tiles, where `n` is equal to `background_ratio` times the number of tiles with a class label.
 
 ```bash
 $ label-maker labels
