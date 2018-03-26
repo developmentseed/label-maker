@@ -25,9 +25,9 @@ class TestOutsideDirectory(unittest.TestCase):
 
         # first move outside the directory
         chdir('..')
-        dir = 'label-maker'
+        directory = 'label-maker'
 
-        cmd = 'label-maker labels --dest {}/integration-cl --config {}/test/fixtures/integration/config.integration.json'.format(dir, dir)
+        cmd = 'label-maker labels --dest {}/integration-cl --config {}/test/fixtures/integration/config.integration.json'.format(directory, directory)
         cmd = cmd.split(' ')
         subprocess.run(cmd, universal_newlines=True)
 
@@ -45,7 +45,7 @@ class TestOutsideDirectory(unittest.TestCase):
         }
 
         # move back into the directory
-        chdir(dir)
+        chdir(directory)
 
         labels = np.load('integration-cl/labels.npz')
         self.assertEqual(len(labels.files), len(expected_labels.keys()))  # First check number of tiles
