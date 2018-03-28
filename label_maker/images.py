@@ -8,7 +8,7 @@ import numpy as np
 
 from label_maker.utils import download_tile_tms, get_tile_tif
 
-def download_images(dest_folder, classes, imagery, ml_type, background_ratio, **kwargs):
+def download_images(dest_folder, classes, imagery, ml_type, background_ratio, imagery_offset=False, **kwargs):
     """Download satellite images specified by a URL and a label.npz file
     Parameters
     ------------
@@ -28,6 +28,9 @@ def download_images(dest_folder, classes, imagery, ml_type, background_ratio, **
     background_ratio: float
         Determines the number of background images to download in single class problems. Ex. A value
         of 1 will download an equal number of background images to class images.
+    imagery_offset: list
+        An optional list of integers representing the number of pixels to offset imagery. Ex. [15, -5] will
+        move the images 15 pixels right and 5 pixels up relative to the requested tile bounds
     **kwargs: dict
         Other properties from CLI config passed as keywords to other utility functions
     """
@@ -71,4 +74,4 @@ def download_images(dest_folder, classes, imagery, ml_type, background_ratio, **
         image_function = get_tile_tif
 
     for tile in tiles:
-        image_function(tile, imagery, dest_folder)
+        image_function(tile, imagery, dest_folder, imagery_offset)
