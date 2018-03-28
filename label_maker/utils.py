@@ -3,7 +3,7 @@ from os import path as op
 from urllib.parse import urlparse
 
 from mercantile import bounds
-from pyproj import Proj
+from pyproj import Proj, transform
 from PIL import Image
 import numpy as np
 import requests
@@ -23,7 +23,7 @@ def class_match(ml_type, label, i):
         return np.count_nonzero(label == i)
     return None
 
-def download_tile_tms(tile, imagery, dest_folder):
+def download_tile_tms(tile, imagery, dest_folder, *args):
     """Download a satellite image tile from a tms endpoint"""
     o = urlparse(imagery)
     _, image_format = op.splitext(o.path)
@@ -31,7 +31,7 @@ def download_tile_tms(tile, imagery, dest_folder):
     tile_img = op.join(dest_folder, 'tiles', '{}{}'.format(tile, image_format))
     open(tile_img, 'wb').write(r.content)
 
-def get_tile_tif(tile, imagery, dest_folder):
+def get_tile_tif(tile, imagery, dest_folder, imagery_offset):
     """
     Read a GeoTIFF with a window corresponding to a TMS tile
 
@@ -44,11 +44,12 @@ def get_tile_tif(tile, imagery, dest_folder):
     bound = bounds(*[int(t) for t in tile.split('-')])
     with rasterio.open(imagery) as src:
         x_res, y_res = src.transform[0], src.transform[4]
-        proj_to = Proj(**src.crs)
+        p1 = Proj({'init': 'epsg:4326'})
+        p2 = Proj(**src.crs)
 
         # project tile boundaries from lat/lng to source CRS
-        tile_ul_proj = proj_to(bound.west, bound.north)
-        tile_lr_proj = proj_to(bound.east, bound.south)
+        tile_ul_proj = transform(p1, p2, bound.west, bound.north)
+        tile_lr_proj = transform(p1, p2, bound.east, bound.south)
         # get origin point from the TIF
         tif_ul_proj = (src.bounds.left, src.bounds.top)
 
@@ -57,6 +58,12 @@ def get_tile_tif(tile, imagery, dest_folder):
         left = int((tile_ul_proj[0] - tif_ul_proj[0]) / x_res)
         bottom = int((tile_lr_proj[1] - tif_ul_proj[1]) / y_res)
         right = int((tile_lr_proj[0] - tif_ul_proj[0]) / x_res)
+
+        if imagery_offset:
+            left = left + imagery_offset[0]
+            right = right + imagery_offset[0]
+            top = top + imagery_offset[1]
+            bottom = bottom + imagery_offset[1]
 
         window = ((top, bottom), (left, right))
 
