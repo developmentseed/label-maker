@@ -51,7 +51,7 @@ class TestUtils(unittest.TestCase):
         if not op.isdir(tiles_dir):
             makedirs(tiles_dir)
 
-        get_tile_tif(tile, 'test/fixtures/drone.tif', dest_folder, False)
+        get_tile_tif(tile, 'test/fixtures/drone.tif', dest_folder, None)
         test_tile = Image.open('test/tiles/{}.jpg'.format(tile))
         fixture_tile = Image.open('test/fixtures/{}.jpg'.format(tile))
         self.assertTrue(test_tile, fixture_tile)
