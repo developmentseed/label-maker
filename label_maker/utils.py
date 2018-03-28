@@ -31,7 +31,7 @@ def download_tile_tms(tile, imagery, dest_folder, *args):
     tile_img = op.join(dest_folder, 'tiles', '{}{}'.format(tile, image_format))
     open(tile_img, 'wb').write(r.content)
 
-def get_tile_tif(tile, imagery, dest_folder, imagery_offset):
+def get_tile_tif(tile, imagery, dest_folder, imagery_offset=[0, 0]):
     """
     Read a GeoTIFF with a window corresponding to a TMS tile
 
@@ -47,9 +47,19 @@ def get_tile_tif(tile, imagery, dest_folder, imagery_offset):
         p1 = Proj({'init': 'epsg:4326'})
         p2 = Proj(**src.crs)
 
+        # offset our imagery in the "destination pixel" space
+        offset_bound = dict()
+        deg_per_pix_x = (bound.west - bound.east) / 256
+        deg_per_pix_y = (bound.north - bound.south) / 256
+
+        offset_bound['west'] = bound.west + imagery_offset[0] * deg_per_pix_x
+        offset_bound['east'] = bound.east + imagery_offset[0] * deg_per_pix_x
+        offset_bound['north'] = bound.north + imagery_offset[1] * deg_per_pix_y
+        offset_bound['south'] = bound.south + imagery_offset[1] * deg_per_pix_y
+
         # project tile boundaries from lat/lng to source CRS
-        tile_ul_proj = transform(p1, p2, bound.west, bound.north)
-        tile_lr_proj = transform(p1, p2, bound.east, bound.south)
+        tile_ul_proj = transform(p1, p2, offset_bound['west'], offset_bound['north'])
+        tile_lr_proj = transform(p1, p2, offset_bound['east'], offset_bound['south'])
         # get origin point from the TIF
         tif_ul_proj = (src.bounds.left, src.bounds.top)
 
