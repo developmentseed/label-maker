@@ -1,4 +1,4 @@
-# pylint: disable=unused-argument,dangerous-default-value
+# pylint: disable=unused-argument
 """Provide utility functions"""
 from os import path as op
 from urllib.parse import urlparse
@@ -32,7 +32,7 @@ def download_tile_tms(tile, imagery, dest_folder, *args):
     tile_img = op.join(dest_folder, 'tiles', '{}{}'.format(tile, image_format))
     open(tile_img, 'wb').write(r.content)
 
-def get_tile_tif(tile, imagery, dest_folder, imagery_offset=[0, 0]):
+def get_tile_tif(tile, imagery, dest_folder, imagery_offset):
     """
     Read a GeoTIFF with a window corresponding to a TMS tile
 
@@ -43,6 +43,7 @@ def get_tile_tif(tile, imagery, dest_folder, imagery_offset=[0, 0]):
     http://www.cogeo.org/in-depth.html
     """
     bound = bounds(*[int(t) for t in tile.split('-')])
+    imagery_offset = imagery_offset or [0, 0]
     with rasterio.open(imagery) as src:
         x_res, y_res = src.transform[0], src.transform[4]
         p1 = Proj({'init': 'epsg:4326'})
