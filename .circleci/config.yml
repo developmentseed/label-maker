@@ -20,53 +20,10 @@ jobs:
           command: pylint ~/label-maker/label_maker --rcfile=~/label-maker/.config/pylintrc
       - run:
           name: Unit Tests
-          command: python -m unittest -v
+          command: python -m unittest discover -v -s test/unit
       - run:
           name: Integration Tests
           command: |
             sudo pip install .
+            python -m unittest discover -v -s test/integration
 
-            ## Classification integration tests
-            mkdir integration-cl
-            cp test/fixtures/integration/portugal-z17.mbtiles integration-cl/portugal-z17.mbtiles
-            cp -r test/fixtures/integration/tiles integration-cl/tiles
-
-            # Test `label-maker labels --sparse`; must be run before `label-maker labels` so `verify-package.py` passes
-            label-maker labels --dest integration-cl --config test/fixtures/integration/config.integration_sparse.json --sparse > stdout_sparse
-            python test/verify-sparse-labels.py
-            # Test `label-maker labels`
-            label-maker labels --dest integration-cl --config test/fixtures/integration/config.integration.json > stdout
-            python test/verify-labels-cl.py
-            # Test `label-maker package`
-            label-maker package --dest integration-cl --config test/fixtures/integration/config.integration.json
-            python test/verify-package-cl.py
-
-            ## Segmentation integration tests
-            mkdir integration-sg
-            cp test/fixtures/integration/portugal-z17.mbtiles integration-sg/portugal-z17.mbtiles
-            cp -r test/fixtures/integration/tiles integration-sg/tiles
-
-            # Test `label-maker labels --sparse`
-            label-maker labels --dest integration-sg --config test/fixtures/integration/config.integration.segmentation_sparse.json --sparse
-            python test/verify-labels-sg-sparse.py
-            # Test `label-maker labels`
-            label-maker labels --dest integration-sg --config test/fixtures/integration/config.integration.segmentation.json
-            python test/verify-labels-sg.py
-
-            # object detection integration tests
-            mkdir integration-od
-            cp -r test/fixtures/integration/tiles integration-od/tiles
-            cp test/fixtures/integration/portugal-z17.mbtiles integration-od/
-            label-maker labels -d integration-od -c test/fixtures/integration/config.integration.object_detection.json
-            python test/verify-labels-od.py
-            label-maker package -d integration-od -c test/fixtures/integration/config.integration.object_detection.json
-            python test/verify-package-od.py
-
-            # Retest that `label-maker labels` works, but from outside the module directory
-            cd ~
-            label-maker labels --dest label-maker/integration-cl --config label-maker/test/fixtures/integration/config.integration.json > stdout
-            cd ~/label-maker
-            python test/verify-labels-cl.py
-
-      - store_artifacts:
-          path: ~/label-maker/integration-sg/labels/
