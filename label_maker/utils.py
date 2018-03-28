@@ -1,3 +1,4 @@
+# pylint: disable=unused-argument,dangerous-default-value
 """Provide utility functions"""
 from os import path as op
 from urllib.parse import urlparse
