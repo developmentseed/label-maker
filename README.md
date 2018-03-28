@@ -52,6 +52,7 @@ Before running any commands, it is necessary to create a `config.json` file to s
   - `"classification"`: An array of the same length as `classes`. Each array value will be either `1` or `0` based on whether it matches the class at the same index
   - `"object-detection"`: An array of bounding boxes of the form `[xmin, ymin, width, height, class_index]`. In this case, the values are not latitude and longitude values but pixel values measured from the upper left-hand corner. Each feature is tested against each class so if a feature matches two or more classes, it will have the corresponding number of bounding boxes created.
   - `"segmentation"`: An array of shape `(256, 256)` with values matching the class_index label at that position. The classes are applied sequentially according to `config.json` so latter classes will be written over earlier class labels.
+- `imagery_offset`: An optional list of integers representing the number of pixels to offset imagery. For example `[15, -5]` will move the images 15 pixels right and 5 pixels up relative to the requested tile bounds.
 
 ## Command Line Use
 
