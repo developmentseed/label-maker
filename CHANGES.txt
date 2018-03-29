@@ -1,3 +1,13 @@
+0.3.0 (2018-03-29)
+------------------
+- Add optional 'imagery_offset' property to align imagery with label data (#58)
+- Generate preview tiles faster (#30)
+- Add support for reading GeoTIFF as the imagery source (#13)
+- Refactor testing structure (#29)
+- Bug fix: fix logic for matching the correct tiles when creating segmentation
+  labels with the --sparse flag (#46)
+
+
 0.2.1 (2018-02-24)
 ------------------
 - Lower memory usage of stream_filter.py (#39)
