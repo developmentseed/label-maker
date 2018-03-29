@@ -71,12 +71,6 @@ def get_tile_tif(tile, imagery, dest_folder, imagery_offset):
         bottom = int((tile_lr_proj[1] - tif_ul_proj[1]) / y_res)
         right = int((tile_lr_proj[0] - tif_ul_proj[0]) / x_res)
 
-        if imagery_offset:
-            left = left + imagery_offset[0]
-            right = right + imagery_offset[0]
-            top = top + imagery_offset[1]
-            bottom = bottom + imagery_offset[1]
-
         window = ((top, bottom), (left, right))
 
         # read the first three bands (assumed RGB) of the TIF into an array
