@@ -1,4 +1,5 @@
 """Tests for utils.py"""
+import os
 from os import path as op, makedirs
 import unittest
 import numpy as np
@@ -51,11 +52,24 @@ class TestUtils(unittest.TestCase):
         if not op.isdir(tiles_dir):
             makedirs(tiles_dir)
 
-        get_tile_tif(tile, 'test/fixtures/drone.tif', dest_folder)
+        get_tile_tif(tile, 'test/fixtures/drone.tif', dest_folder, None)
         test_tile = Image.open('test/tiles/{}.jpg'.format(tile))
         fixture_tile = Image.open('test/fixtures/{}.jpg'.format(tile))
-        self.assertTrue(test_tile, fixture_tile)
+        self.assertEqual(test_tile, fixture_tile)
 
+    def test_get_tile_tif_offset(self):
+        """Test reading of tile from geotiff with imagery_offset, test fixture"""
+        tile = '1087767-1046604-21'
+        # create tiles directory
+        dest_folder = 'test'
+        tiles_dir = op.join(dest_folder, 'tiles')
+        if not op.isdir(tiles_dir):
+            makedirs(tiles_dir)
+
+        get_tile_tif(tile, 'test/fixtures/drone.tif', dest_folder, [128, 64])
+        test_tile = Image.open('test/tiles/{}.jpg'.format(tile))
+        fixture_tile = Image.open('test/fixtures/{}_offset.jpg'.format(tile))
+        self.assertEqual(test_tile, fixture_tile)
 
 if __name__ == '__main__':
     unittest.main()
