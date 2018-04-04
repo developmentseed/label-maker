@@ -38,20 +38,22 @@ def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, spar
         Folder to save labels and example tiles into
     zoom: int
         The zoom level to create tiles at
+    country: str
+        The OSM QA Tile extract to download. The value should be a country string matching a value found in
+        `label_maker/countries.txt`
     classes: list
         A list of classes for machine learning training. Each class is defined as a dict
         with two required properties:
           - name: class name
           - filter: A Mapbox GL Filter.
         See the README for more details
-    imagery: str
-        Imagery template to download satellite images from.
-        Ex: http://a.tiles.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}.jpg?access_token=ACCESS_TOKEN
     ml_type: str
         Defines the type of machine learning. One of "classification", "object-detection", or "segmentation"
     bounding_box: list
         The bounding box to create images from. This should be given in the form: `[xmin, ymin, xmax, ymax]`
         as longitude and latitude values between `[-180, 180]` and `[-90, 90]` respectively
+    sparse: boolean
+        Limit the total background tiles to write based on `background_ratio` kwarg.
     **kwargs: dict
         Other properties from CLI config passed as keywords to other utility functions
     """
