@@ -87,4 +87,5 @@ def get_tile_tif(tile, imagery, dest_folder, imagery_offset):
     return tile_img
 
 def is_tif(imagery):
+    """Determine if an imagery path has a valid tif extension"""
     return op.splitext(imagery)[1].lower() in ['.tif', '.tiff', '.vrt']
