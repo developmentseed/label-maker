@@ -9,7 +9,7 @@ import numpy as np
 import requests
 from PIL import Image, ImageDraw
 
-from label_maker.utils import url, class_match
+from label_maker.utils import url, class_match, download_tile_tms, get_tile_tif, is_tif
 
 def preview(dest_folder, number, classes, imagery, ml_type, **kwargs):
     """Produce imagery examples for specified classes
@@ -47,6 +47,12 @@ def preview(dest_folder, number, classes, imagery, ml_type, **kwargs):
     print('Writing example images to {}'.format(examples_dir))
     o = urlparse(imagery)
     _, image_format = op.splitext(o.path)
+
+    # get image acquisition function based on imagery string
+    image_function = download_tile_tms
+    if is_tif(imagery):
+        image_function = get_tile_tif
+
     for i, cl in enumerate(classes):
         # create class directory
         class_dir = op.join(dest_folder, 'examples', cl.get('name'))
@@ -59,10 +65,9 @@ def preview(dest_folder, number, classes, imagery, ml_type, **kwargs):
         for n, tile in enumerate(class_tiles):
             if n > number:
                 break
-            r = requests.get(url(tile.split('-'), imagery))
-            tile_img = op.join(dest_folder, 'examples', cl.get('name'),
-                               '{}{}'.format(tile, image_format))
-            open(tile_img, 'wb').write(r.content)
+
+            tile_img = image_function(tile, imagery, class_dir, imagery_offset)
+
             if ml_type == 'object-detection':
                 img = Image.open(tile_img)
                 draw = ImageDraw.Draw(img)
