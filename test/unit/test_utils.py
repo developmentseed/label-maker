@@ -71,5 +71,19 @@ class TestUtils(unittest.TestCase):
         fixture_tile = Image.open('test/fixtures/{}_offset.jpg'.format(tile))
         self.assertEqual(test_tile, fixture_tile)
 
+    def test_get_tile_vrt(self):
+        """Test reading of tile from a virtual raster"""
+        tile = '1087767-1046604-21'
+        # create tiles directory
+        dest_folder = 'test'
+        tiles_dir = op.join(dest_folder, 'tiles')
+        if not op.isdir(tiles_dir):
+            makedirs(tiles_dir)
+
+        get_tile_tif(tile, 'test/fixtures/drone.vrt', dest_folder, None)
+        test_tile = Image.open('test/tiles/{}.jpg'.format(tile))
+        fixture_tile = Image.open('test/fixtures/{}.jpg'.format(tile))
+        self.assertEqual(test_tile, fixture_tile)
+
 if __name__ == '__main__':
     unittest.main()
