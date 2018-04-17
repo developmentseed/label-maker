@@ -6,6 +6,8 @@ from urllib.parse import urlparse
 import numpy as np
 from PIL import Image
 
+from label_maker.utils import is_tif
+
 
 def package_directory(dest_folder, classes, imagery, ml_type, seed=False, train_size=0.8, **kwargs):
     """Generate an .npz file containing arrays for training machine learning algorithms
