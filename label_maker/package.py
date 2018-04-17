@@ -25,7 +25,9 @@ def package_directory(dest_folder, classes, imagery, ml_type, seed=False, train_
         Ex: http://a.tiles.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}.jpg?access_token=ACCESS_TOKEN
     ml_type: str
         Defines the type of machine learning. One of "classification", "object-detection", or "segmentation"
-    train_percent: float
+    seed: int
+        Random generator seed. Optional, use to make results reproducable.
+    train_size: float
         Portion of the data to use in training, the remainder is used as test data (default 0.8)
     **kwargs: dict
         Other properties from CLI config passed as keywords to other utility functions
@@ -56,6 +58,8 @@ def package_directory(dest_folder, classes, imagery, ml_type, seed=False, train_
     # open the images and load those plus the labels into the final arrays
     o = urlparse(imagery)
     _, image_format = op.splitext(o.path)
+    if image_format == '.tif': # if a local GeoTIFF or a remote Cloud Optimized GeoTIFF is provided, use jpg as tile format
+        image_format = '.jpg'
     for tile in tiles:
         image_file = op.join(dest_folder, 'tiles', '{}{}'.format(tile, image_format))
         try:

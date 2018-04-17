@@ -1,0 +1,12 @@
+{
+  "country": "sao_tome_and_principe",
+  "bounding_box": [6.72746119738703,0.3382909054246151,6.72776258384623,0.33878086940393715],
+  "zoom": 20,
+  "classes": [
+        { "name": "Roads", "filter": ["has", "highway"] },
+    { "name": "Buildings", "filter": ["has", "building"] }
+  ],
+  "imagery": "integration-tif/drone.tif",
+  "background_ratio": 1,
+  "ml_type": "classification"
+}

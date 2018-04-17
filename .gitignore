@@ -12,3 +12,4 @@ data
 config.json
 stdout*
 /integration*
+.idea/
