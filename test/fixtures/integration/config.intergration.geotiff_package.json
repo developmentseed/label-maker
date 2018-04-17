@@ -6,7 +6,7 @@
         { "name": "Roads", "filter": ["has", "highway"] },
     { "name": "Buildings", "filter": ["has", "building"] }
   ],
-  "imagery": "../drone.tif",
+  "imagery": "integration-tif/drone.tif",
   "background_ratio": 1,
   "ml_type": "classification"
 }
