@@ -131,7 +131,7 @@ def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, spar
                 img = Image.new('RGB', (256, 256))
                 draw = ImageDraw.Draw(img)
                 for box in label:
-                    draw.rectangle(((box[0], box[1]), (box[2], box[3])), outline='red')
+                    draw.rectangle(((box[0], box[1]), (box[2], box[3])), outline=class_color(box[4]))
                 print('Writing {}'.format(label_file))
                 img.save(op.join(label_folder, label_file))
     elif ml_type == 'segmentation':
