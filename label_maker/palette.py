@@ -4,7 +4,7 @@ from PIL import ImageColor
 colors = ["#DDCC77", "#CC6677", "#117733", "#332288", "#AA4499", "#88CCEE"]
 
 def class_color(c):
-    """Return 3-element list containing rgb values for a given class"""
+    """Return 3-element tuple containing rgb values for a given class"""
     if c == 0:
         return (0, 0, 0) # background class
     return ImageColor.getrgb(colors[c % len(colors)])
