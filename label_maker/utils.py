@@ -82,3 +82,6 @@ def get_tile_tif(tile, imagery, dest_folder, imagery_offset):
         tile_img = op.join(dest_folder, 'tiles', '{}{}'.format(tile, '.jpg'))
         img = Image.fromarray(np.moveaxis(data, 0, -1), mode='RGB')
         img.save(tile_img)
+
+def is_tif(imagery):
+    return op.splitext(imagery)[1].lower() in ['.tif', '.tiff', '.vrt']
