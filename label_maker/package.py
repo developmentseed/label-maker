@@ -65,6 +65,9 @@ def package_directory(dest_folder, classes, imagery, ml_type, seed=False, train_
         try:
             img = Image.open(image_file)
         except FileNotFoundError:
+            # we often don't download images for each label (e.g. background tiles)
+            continue
+        except OSError:
             print('Couldn\'t open {}, skipping'.format(image_file))
             continue
 
