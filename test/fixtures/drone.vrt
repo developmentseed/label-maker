@@ -1,0 +1,40 @@
+<VRTDataset rasterXSize="576" rasterYSize="923">
+  <SRS>PROJCS["WGS 84 / UTM zone 32N",GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433],AUTHORITY["EPSG","4326"]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",9],PARAMETER["scale_factor",0.9996],PARAMETER["false_easting",500000],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AUTHORITY["EPSG","32632"]]</SRS>
+  <GeoTransform>  2.4706054023498323e+05,  5.9170000000000000e-02,  0.0000000000000000e+00,  3.7475319649383746e+04,  0.0000000000000000e+00, -5.9170000000000000e-02</GeoTransform>
+  <VRTRasterBand dataType="Byte" band="1">
+    <NoDataValue>-10000</NoDataValue>
+    <ColorInterp>Red</ColorInterp>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="1">drone.tif</SourceFilename>
+      <SourceBand>1</SourceBand>
+      <SourceProperties RasterXSize="576" RasterYSize="923" DataType="Byte" BlockXSize="576" BlockYSize="4" />
+      <SrcRect xOff="0" yOff="0" xSize="576" ySize="923" />
+      <DstRect xOff="0" yOff="0" xSize="576" ySize="923" />
+      <NODATA>-10000</NODATA>
+    </ComplexSource>
+  </VRTRasterBand>
+  <VRTRasterBand dataType="Byte" band="2">
+    <NoDataValue>-10000</NoDataValue>
+    <ColorInterp>Green</ColorInterp>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="1">drone.tif</SourceFilename>
+      <SourceBand>2</SourceBand>
+      <SourceProperties RasterXSize="576" RasterYSize="923" DataType="Byte" BlockXSize="576" BlockYSize="4" />
+      <SrcRect xOff="0" yOff="0" xSize="576" ySize="923" />
+      <DstRect xOff="0" yOff="0" xSize="576" ySize="923" />
+      <NODATA>-10000</NODATA>
+    </ComplexSource>
+  </VRTRasterBand>
+  <VRTRasterBand dataType="Byte" band="3">
+    <NoDataValue>-10000</NoDataValue>
+    <ColorInterp>Blue</ColorInterp>
+    <ComplexSource>
+      <SourceFilename relativeToVRT="1">drone.tif</SourceFilename>
+      <SourceBand>3</SourceBand>
+      <SourceProperties RasterXSize="576" RasterYSize="923" DataType="Byte" BlockXSize="576" BlockYSize="4" />
+      <SrcRect xOff="0" yOff="0" xSize="576" ySize="923" />
+      <DstRect xOff="0" yOff="0" xSize="576" ySize="923" />
+      <NODATA>-10000</NODATA>
+    </ComplexSource>
+  </VRTRasterBand>
+</VRTDataset>
