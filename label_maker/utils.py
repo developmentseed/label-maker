@@ -31,6 +31,7 @@ def download_tile_tms(tile, imagery, dest_folder, *args):
     r = requests.get(url(tile.split('-'), imagery))
     tile_img = op.join(dest_folder, 'tiles', '{}{}'.format(tile, image_format))
     open(tile_img, 'wb').write(r.content)
+    return tile_img
 
 def get_tile_tif(tile, imagery, dest_folder, imagery_offset):
     """
@@ -82,3 +83,9 @@ def get_tile_tif(tile, imagery, dest_folder, imagery_offset):
         tile_img = op.join(dest_folder, 'tiles', '{}{}'.format(tile, '.jpg'))
         img = Image.fromarray(np.moveaxis(data, 0, -1), mode='RGB')
         img.save(tile_img)
+
+    return tile_img
+
+def is_tif(imagery):
+    """Determine if an imagery path has a valid tif extension"""
+    return op.splitext(imagery)[1].lower() in ['.tif', '.tiff', '.vrt']
