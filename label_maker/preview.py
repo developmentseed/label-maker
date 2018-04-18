@@ -57,7 +57,7 @@ def preview(dest_folder, number, classes, imagery, ml_type, **kwargs):
                        if class_match(ml_type, tiles[t], i + 1))
         print('Downloading at most {} tiles for class {}'.format(number, cl.get('name')))
         for n, tile in enumerate(class_tiles):
-            if n > number:
+            if n >= number:
                 break
             r = requests.get(url(tile.split('-'), imagery))
             tile_img = op.join(dest_folder, 'examples', cl.get('name'),
