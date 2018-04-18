@@ -142,6 +142,31 @@ model.evaluate(x_test, y_test, batch_size=16)
 
 For more detailed walkthroughs, check out the [examples page](examples)
 
+## Contributing
+
+### Installation
+
+Install in development mode using
+```
+pip install -e .
+```
+
+### Testing
+
+Tests are run using `unittest`. Unit tests are at `tests/unit` and
+integration tests are at `tests/integration`.
+
+You can test a single file like:
+```
+python -m unittest test/unit/test_validate.py
+```
+or a folder with
+```
+python -m unittest discover -v -s test/unit
+```
+Full options [here](https://docs.python.org/3/library/unittest.html)
+
+
 ## Acknowledgements
 
 This library builds on the concepts of [skynet-data](https://github.com/developmentseed/skynet-data). It wouldn't be possible without the excellent data from OpenStreetMap and Mapbox under the following licenses:
