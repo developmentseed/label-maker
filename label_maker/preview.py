@@ -62,7 +62,7 @@ def preview(dest_folder, number, classes, imagery, ml_type, imagery_offset, **kw
                        if class_match(ml_type, tiles[t], i + 1))
         print('Downloading at most {} tiles for class {}'.format(number, cl.get('name')))
         for n, tile in enumerate(class_tiles):
-            if n > number:
+            if n >= number:
                 break
 
             tile_img = image_function(tile, imagery, class_dir, imagery_offset)
