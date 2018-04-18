@@ -6,6 +6,8 @@ from urllib.parse import urlparse
 import numpy as np
 from PIL import Image
 
+from label_maker.utils import is_tif
+
 
 def package_directory(dest_folder, classes, imagery, ml_type, seed=False, train_size=0.8, **kwargs):
     """Generate an .npz file containing arrays for training machine learning algorithms
@@ -58,7 +60,7 @@ def package_directory(dest_folder, classes, imagery, ml_type, seed=False, train_
     # open the images and load those plus the labels into the final arrays
     o = urlparse(imagery)
     _, image_format = op.splitext(o.path)
-    if image_format == '.tif': # if a local GeoTIFF or a remote Cloud Optimized GeoTIFF is provided, use jpg as tile format
+    if is_tif(imagery): # if a TIF is provided, use jpg as tile format
         image_format = '.jpg'
     for tile in tiles:
         image_file = op.join(dest_folder, 'tiles', '{}{}'.format(tile, image_format))
