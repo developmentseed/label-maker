@@ -1,3 +1,14 @@
+0.3.1 (2018-04-19)
+------------------
+- Add colors for object detection and segmentation labels (#64)
+- Add support for 'vrt' reads (#71)
+- Add documentation for local testing (#75)
+- Fix 'preview' downloading one too many tiles (#63)
+- Fix warnings on intentionally missing tiles (#68)
+- Fix image and tile format inconsistency when packaging GeoTIFF (#66)
+- Fix function docstrings (#61)
+
+
 0.3.0 (2018-03-29)
 ------------------
 - Add optional 'imagery_offset' property to align imagery with label data (#58)
