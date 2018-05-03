@@ -9,7 +9,7 @@ from PIL import Image, ImageDraw
 
 from label_maker.utils import class_match, download_tile_tms, get_tile_tif, is_tif
 
-def preview(dest_folder, number, classes, imagery, ml_type, imagery_offset, **kwargs):
+def preview(dest_folder, number, classes, imagery, ml_type, imagery_offset=False, **kwargs):
     """Produce imagery examples for specified classes
 
     Parameters
@@ -55,8 +55,12 @@ def preview(dest_folder, number, classes, imagery, ml_type, imagery_offset, **kw
     for i, cl in enumerate(classes):
         # create class directory
         class_dir = op.join(dest_folder, 'examples', cl.get('name'))
-        if not op.isdir(class_dir):
-            makedirs(class_dir)
+
+        # the download process downloads into a tiles subdirectory so create that here
+        class_tile_dir = op.join(class_dir, 'tiles')
+
+        if not op.isdir(class_tile_dir):
+            makedirs(class_tile_dir)
 
         class_tiles = (t for t in tiles.files
                        if class_match(ml_type, tiles[t], i + 1))
