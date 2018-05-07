@@ -66,7 +66,7 @@ def download_images(dest_folder, classes, imagery, ml_type, background_ratio, im
 
     # download tiles
     tiles = class_tiles + background_tiles
-    print('Downloading {} tiles to {}'.format(len(tiles), op.join(dest_folder, 'tiles')))
+    print('Downloading {} tiles to {}'.format(len(tiles), tiles_dir))
 
     # get image acquisition function based on imagery string
     image_function = download_tile_tms
@@ -74,4 +74,4 @@ def download_images(dest_folder, classes, imagery, ml_type, background_ratio, im
         image_function = get_tile_tif
 
     for tile in tiles:
-        image_function(tile, imagery, dest_folder, imagery_offset)
+        image_function(tile, imagery, tiles_dir, imagery_offset)

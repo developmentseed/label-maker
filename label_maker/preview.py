@@ -56,11 +56,8 @@ def preview(dest_folder, number, classes, imagery, ml_type, imagery_offset=False
         # create class directory
         class_dir = op.join(dest_folder, 'examples', cl.get('name'))
 
-        # the download process downloads into a tiles subdirectory so create that here
-        class_tile_dir = op.join(class_dir, 'tiles')
-
-        if not op.isdir(class_tile_dir):
-            makedirs(class_tile_dir)
+        if not op.isdir(class_dir):
+            makedirs(class_dir)
 
         class_tiles = (t for t in tiles.files
                        if class_match(ml_type, tiles[t], i + 1))
