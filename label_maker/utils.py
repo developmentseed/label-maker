@@ -95,7 +95,7 @@ def is_tif(imagery):
                 valid_tif = False
             else:
                 valid_tif = True
-    except:
+    except rasterio._err.CPLE_HttpResponseError: #pylint: disable=protected-access
         # rasterio cannot open the path. this is the case for a
         # tile service
         valid_tif = False
