@@ -87,5 +87,17 @@ def get_tile_tif(tile, imagery, dest_folder, imagery_offset):
     return tile_img
 
 def is_tif(imagery):
-    """Determine if an imagery path has a valid tif extension"""
-    return op.splitext(imagery)[1].lower() in ['.tif', '.tiff', '.vrt']
+    """Determine if an imagery path leads to a valid tif"""
+    try:
+        with rasterio.open(imagery) as test_ds:
+            if test_ds.meta['driver'] != 'GTiff':
+                # rasterio can open path, but it is not a tif
+                is_tif = False
+            else:
+                is_tif = True
+    except rasterio._err.CPLE_HttpResponseError:
+        # rasterio cannot opent path. this is the case for a
+        # tile service
+        is_tif = False
+
+    return is_tif
