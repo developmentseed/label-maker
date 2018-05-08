@@ -92,12 +92,12 @@ def is_tif(imagery):
         with rasterio.open(imagery) as test_ds:
             if test_ds.meta['driver'] != 'GTiff':
                 # rasterio can open path, but it is not a tif
-                is_tif = False
+                valid_tif = False
             else:
-                is_tif = True
-    except rasterio._err.CPLE_HttpResponseError:
-        # rasterio cannot opent path. this is the case for a
+                valid_tif = True
+    except:
+        # rasterio cannot open the path. this is the case for a
         # tile service
-        is_tif = False
+        valid_tif = False
 
-    return is_tif
+    return valid_tif
