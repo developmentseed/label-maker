@@ -112,53 +112,53 @@ def main(_):
                     y = ["{}.jpg".format(tile), width, height, cl_str, bbox[0], bbox[1], bbox[2], bbox[3]]
                     tf_tiles_info.append(y)
 
-  split_index= int(len(tiles) * 0.8)
+    split_index= int(len(tiles) * 0.8)
 
-tiles_train=tiles[:split_index]
-tiles_validation=tiles[split_index:]
+    tiles_train=tiles[:split_index]
+    tiles_validation=tiles[split_index:]
 
-tf_tiles_info_train = []
-tf_tiles_info_validation = []
+    tf_tiles_info_train = []
+    tf_tiles_info_validation = []
 
-for tile_train in tiles_train:
-    bboxes = labels[tile_train].tolist()
-    width = 256
-    height = 256
-    if bboxes:
-        for bbox in bboxes:
-            if bbox[4] == 1:
-                cl_str = "building"
-                bbox = [max(0, min(255, x)) for x in bbox[0:4]]
-                y = ["{}.jpg".format(tile_train), width, height, cl_str, bbox[0], bbox[1], bbox[2], bbox[3]]
-                tf_tiles_info_train.append(y)
+    for tile_train in tiles_train:
+        bboxes = labels[tile_train].tolist()
+        width = 256
+        height = 256
+        if bboxes:
+            for bbox in bboxes:
+                if bbox[4] == 1:
+                    cl_str = "building"
+                    bbox = [max(0, min(255, x)) for x in bbox[0:4]]
+                    y = ["{}.jpg".format(tile_train), width, height, cl_str, bbox[0], bbox[1], bbox[2], bbox[3]]
+                    tf_tiles_info_train.append(y)
 
-for tile_validation in tiles_validation:
-    bboxes = labels[tile_validation].tolist()
-    width = 256
-    height = 256
-    if bboxes:
-        for bbox in bboxes:
-            if bbox[4] == 1:
-                cl_str = "building"
-                bbox = [max(0, min(255, x)) for x in bbox[0:4]]
-                z = ["{}.jpg".format(tile_validation), width, height, cl_str, bbox[0], bbox[1], bbox[2], bbox[3]]
-                tf_tiles_info_validation.append(z)
+    for tile_validation in tiles_validation:
+        bboxes = labels[tile_validation].tolist()
+        width = 256
+        height = 256
+        if bboxes:
+            for bbox in bboxes:
+                if bbox[4] == 1:
+                    cl_str = "building"
+                    bbox = [max(0, min(255, x)) for x in bbox[0:4]]
+                    z = ["{}.jpg".format(tile_validation), width, height, cl_str, bbox[0], bbox[1], bbox[2], bbox[3]]
+                    tf_tiles_info_validation.append(z)
 
 
-column_name = ['filename', 'width', 'height', 'class', 'xmin', 'ymin', 'xmax', 'ymax']
-df_train = pd.DataFrame(tf_tiles_info_train, columns=column_name)
-df_validation = pd.DataFrame(tf_tiles_info_validation, columns=column_name)
-# shuffle the dataframe
-df_train = df_train.sample(frac=1)
-df_validation = df_validation.sample(frac=1)
-train_df = df_train
-test_df = df_validation
-print("You have {} training tiles and {} test tiles ready".format(
-    len(set(train_df['filename'])), len(set(test_df['filename']))))
+    column_name = ['filename', 'width', 'height', 'class', 'xmin', 'ymin', 'xmax', 'ymax']
+    df_train = pd.DataFrame(tf_tiles_info_train, columns=column_name)
+    df_validation = pd.DataFrame(tf_tiles_info_validation, columns=column_name)
+    # shuffle the dataframe
+    df_train = df_train.sample(frac=1)
+    df_validation = df_validation.sample(frac=1)
+    train_df = df_train
+    test_df = df_validation
+    print("You have {} training tiles and {} test tiles ready".format(
+        len(set(train_df['filename'])), len(set(test_df['filename']))))
 
-tiles_dir = op.join(os.getcwd(), 'tiles')
-train_dir = op.join(os.getcwd(), 'images', 'train')
-test_dir = op.join(os.getcwd(), 'images', 'test')
+    tiles_dir = op.join(os.getcwd(), 'tiles')
+    train_dir = op.join(os.getcwd(), 'images', 'train')
+    test_dir = op.join(os.getcwd(), 'images', 'test')
 
     if not op.isdir(train_dir):
         makedirs(train_dir)
