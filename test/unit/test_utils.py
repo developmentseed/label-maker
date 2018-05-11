@@ -52,7 +52,7 @@ class TestUtils(unittest.TestCase):
         if not op.isdir(tiles_dir):
             makedirs(tiles_dir)
 
-        get_tile_tif(tile, 'test/fixtures/drone.tif', dest_folder, None)
+        get_tile_tif(tile, 'test/fixtures/drone.tif', tiles_dir, None)
         test_tile = Image.open('test/tiles/{}.jpg'.format(tile))
         fixture_tile = Image.open('test/fixtures/{}.jpg'.format(tile))
         self.assertEqual(test_tile, fixture_tile)
@@ -66,7 +66,7 @@ class TestUtils(unittest.TestCase):
         if not op.isdir(tiles_dir):
             makedirs(tiles_dir)
 
-        get_tile_tif(tile, 'test/fixtures/drone.tif', dest_folder, [128, 64])
+        get_tile_tif(tile, 'test/fixtures/drone.tif', tiles_dir, [128, 64])
         test_tile = Image.open('test/tiles/{}.jpg'.format(tile))
         fixture_tile = Image.open('test/fixtures/{}_offset.jpg'.format(tile))
         self.assertEqual(test_tile, fixture_tile)
@@ -80,7 +80,7 @@ class TestUtils(unittest.TestCase):
         if not op.isdir(tiles_dir):
             makedirs(tiles_dir)
 
-        get_tile_tif(tile, 'test/fixtures/drone.vrt', dest_folder, None)
+        get_tile_tif(tile, 'test/fixtures/drone.vrt', tiles_dir, None)
         test_tile = Image.open('test/tiles/{}.jpg'.format(tile))
         fixture_tile = Image.open('test/fixtures/{}.jpg'.format(tile))
         self.assertEqual(test_tile, fixture_tile)
