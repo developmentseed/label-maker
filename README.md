@@ -54,6 +54,14 @@ Before running any commands, it is necessary to create a `config.json` file to s
   - `"segmentation"`: An array of shape `(256, 256)` with values matching the class_index label at that position. The classes are applied sequentially according to `config.json` so latter classes will be written over earlier class labels.
 - `imagery_offset`: An optional list of integers representing the number of pixels to offset imagery. For example `[15, -5]` will move the images 15 pixels right and 5 pixels up relative to the requested tile bounds.
 
+  Using `ml_type == segmentation` as an example: you will have mask/label tiles from `label-maker labels`, and mask tile overlaid RGB tiles from `label-maker preview`, and RGB image tiles from `label-maker images`. We fetched the imagery from Mapbox, and it's zoom level 18 from Ho Chi Min city, Vietnam here.
+
+
+  |RGB Tiles | Label tiles | RGB overlaid Label |
+  | --- | --- |--- |
+  |![208677-123227-18](https://user-images.githubusercontent.com/14057932/35526531-b5fb8d46-04f5-11e8-800a-82a2f777b795.jpg)|![208677-123227-18](https://user-images.githubusercontent.com/14057932/35526544-c0b4ecd2-04f5-11e8-80ea-1615910bde88.png)|![208677-123227-18](https://user-images.githubusercontent.com/14057932/35526557-cf40bbb4-04f5-11e8-8150-ecabd78cdad6.jpg)|
+  | ![208683-123182-18](https://user-images.githubusercontent.com/14057932/35526941-23677bf0-04f7-11e8-94fc-8e73bb9c9ed9.jpg)|  ![208683-123182-18](https://user-images.githubusercontent.com/14057932/35526965-3614d900-04f7-11e8-9fc8-458889ac23e2.png)| ![208683-123182-18](https://user-images.githubusercontent.com/14057932/35526982-438739a2-04f7-11e8-9501-e99e79a09d71.jpg)|
+
 ## Command Line Use
 
 `label-maker` is most easily used as a command line tool. There are five commands documented below. All commands accept two flags:
