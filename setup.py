@@ -15,6 +15,10 @@ with io.open(op.join(here, 'requirements.txt'), encoding='utf-8') as f:
 install_requires = [x.strip() for x in all_reqs if 'git+' not in x]
 dependency_links = [x.strip().replace('git+', '') for x in all_reqs if 'git+' not in x]
 
+# readme
+with open('README.md') as f:
+    readme = f.read()
+
 setup(
     name='label-maker',
     author='Drew Bollinger',
@@ -36,4 +40,6 @@ setup(
     include_package_data=True,
     install_requires=install_requires,
     dependency_links=dependency_links,
+    long_description=readme,
+    long_description_content_type="text/markdown"
 )
