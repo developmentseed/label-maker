@@ -50,31 +50,31 @@ def tf_od_pred():
             detection_scores = detection_graph.get_tensor_by_name('detection_scores:0')
             detection_classes = detection_graph.get_tensor_by_name('detection_classes:0')
             num_detections = detection_graph.get_tensor_by_name('num_detections:0')
-    for image_path in test_imgs:
-        image = Image.open(image_path)
-        image_np = load_image_into_numpy_array(image)
-        # the array based representation of the image will be used later in order to prepare the
-        # result image with boxes and labels on it.
-        # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
-        image_np_expanded = np.expand_dims(image_np, axis=0)
-        # Actual detection.
-        (boxes, scores, classes, num) = sess.run(
-          [detection_boxes, detection_scores, detection_classes, num_detections],
-          feed_dict={image_tensor: image_np_expanded})
-         # draw_bounding_box_on_image(image, boxes, )
-         # Visualization of the results of a detection.
-        vis_image = vis_util.visualize_boxes_and_labels_on_image_array(
-                 image_np,
-                 np.squeeze(boxes),
-                 np.squeeze(classes).astype(np.int32),
-                 np.squeeze(scores),
-                 category_index,
-                 use_normalized_coordinates=True,
-                 line_thickness=1)
-        print("{} boxes in {} image tile!".format(len(boxes), image_path))
-        image_pil = Image.fromarray(np.uint8(vis_image)).convert('RGB')
-        with tf.gfile.Open(image_path, 'w') as fid:
-             image_pil.save(fid, 'PNG')
+            for image_path in test_imgs:
+                image = Image.open(image_path)
+                image_np = load_image_into_numpy_array(image)
+                # the array based representation of the image will be used later in order to prepare the
+                # result image with boxes and labels on it.
+                # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
+                image_np_expanded = np.expand_dims(image_np, axis=0)
+                # Actual detection.
+                (boxes, scores, classes, num) = sess.run(
+                  [detection_boxes, detection_scores, detection_classes, num_detections],
+                  feed_dict={image_tensor: image_np_expanded})
+                 # draw_bounding_box_on_image(image, boxes, )
+                 # Visualization of the results of a detection.
+                vis_image = vis_util.visualize_boxes_and_labels_on_image_array(
+                         image_np,
+                         np.squeeze(boxes),
+                         np.squeeze(classes).astype(np.int32),
+                         np.squeeze(scores),
+                         category_index,
+                         use_normalized_coordinates=True,
+                         line_thickness=1)
+                print("{} boxes in {} image tile!".format(len(boxes), image_path))
+                image_pil = Image.fromarray(np.uint8(vis_image)).convert('RGB')
+                with tf.gfile.Open(image_path, 'w') as fid:
+                     image_pil.save(fid, 'PNG')
 
 
 
