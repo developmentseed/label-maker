@@ -66,28 +66,28 @@ def pred_bbox():
             detection_scores = detection_graph.get_tensor_by_name('detection_scores:0')
             detection_classes = detection_graph.get_tensor_by_name('detection_classes:0')
             num_detections = detection_graph.get_tensor_by_name('num_detections:0')
-    for image_path in test_imgs:
-        image = Image.open(image_path)
-        image_np = load_image_into_numpy_array(image)
-        # the array based representation of the image will be used later in order to prepare the
-        # result image with boxes and labels on it.
-        # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
-        image_np_expanded = np.expand_dims(image_np, axis=0)
-        # Actual detection.
-        (boxes, scores, classes, num) = sess.run(
-          [detection_boxes, detection_scores, detection_classes, num_detections],
-          feed_dict={image_tensor: image_np_expanded})
-          ### 256 here is the image size from Label Maker, adjust it according to your input image size.
-        bboxe = (boxes*256).astype(np.int)
-        bboxe = np.squeeze(bboxe)
-        score = np.squeeze(((scores*100).transpose()).astype(np.int))
-        ### only keep the bbox that prediction score is higher than 50.
-        bboxes = bboxe[score > 50]
-        if bboxes.any():
-            bboxes_ls = bboxes.tolist()
-            for bbox in bboxes_ls:
-                # pred_bboxes.append([image_path[-18:],bbox])
-                pred_bboxes.append(bbox)
+            for image_path in test_imgs:
+                image = Image.open(image_path)
+                image_np = load_image_into_numpy_array(image)
+                # the array based representation of the image will be used later in order to prepare the
+                # result image with boxes and labels on it.
+                # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
+                image_np_expanded = np.expand_dims(image_np, axis=0)
+                # Actual detection.
+                (boxes, scores, classes, num) = sess.run(
+                  [detection_boxes, detection_scores, detection_classes, num_detections],
+                  feed_dict={image_tensor: image_np_expanded})
+                  ### 256 here is the image size from Label Maker, adjust it according to your input image size.
+                bboxe = (boxes*256).astype(np.int)
+                bboxe = np.squeeze(bboxe)
+                score = np.squeeze(((scores*100).transpose()).astype(np.int))
+                ### only keep the bbox that prediction score is higher than 50.
+                bboxes = bboxe[score > 50]
+                if bboxes.any():
+                    bboxes_ls = bboxes.tolist()
+                    for bbox in bboxes_ls:
+                        # pred_bboxes.append([image_path[-18:],bbox])
+                        pred_bboxes.append(bbox)
     return pred_bboxes
 
 def gr_bbox():
