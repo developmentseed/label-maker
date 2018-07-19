@@ -1,7 +1,7 @@
 # pylint: disable=unused-argument
 """Provide utility functions"""
 from os import path as op
-from urllib.parse import urlparse
+from urllib.parse import urlparse, parse_qs
 
 from mercantile import bounds
 from pyproj import Proj, transform
@@ -86,6 +86,35 @@ def get_tile_tif(tile, imagery, folder, imagery_offset):
 
     return tile_img
 
+def get_tile_wms(tile, imagery, folder, imagery_offset):
+    """
+    Read a WMS endpoint corresponding to a TMS tile
+    """
+    query_dict = parse_qs(imagery)
+    image_format = query_dict['format'][0].split('/')[1]
+    wms_srs = query_dict['srs'][0]
+
+    bound = bounds(*[int(t) for t in tile.split('-')])
+    p1 = Proj({'init': 'epsg:4326'})
+    p2 = Proj({'init': wms_srs})
+
+    # project tile boundaries from lat/lng to WMS SRS
+    tile_ul_proj = transform(p1, p2, bound.west, bound.north)
+    tile_lr_proj = transform(p1, p2, bound.east, bound.south)
+    bbox = tile_lr_proj + tile_ul_proj
+
+    wms_url = imagery.replace('{bbox}', ','.join([str(b) for b in bbox]))
+    print(wms_url)
+    r = requests.get(wms_url)
+    tile_img = op.join(folder, '{}.{}'.format(tile, image_format))
+    open(tile_img, 'wb').write(r.content)
+    return tile_img
+
+
 def is_tif(imagery):
     """Determine if an imagery path has a valid tif extension"""
     return op.splitext(imagery)[1].lower() in ['.tif', '.tiff', '.vrt']
+
+def is_wms(imagery):
+    """Determine if an imagery path is a WMS endpoint"""
+    return '{bbox}' in imagery
