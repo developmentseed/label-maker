@@ -197,7 +197,7 @@ south_georgia_and_south_sandwich_islands
 south_korea_korea
 south_sudan
 spain
-sri_lanka_lanka
+sri_lanka
 sudan
 suriname
 swaziland
