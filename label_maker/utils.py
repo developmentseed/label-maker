@@ -30,7 +30,8 @@ def download_tile_tms(tile, imagery, folder, *args):
     _, image_format = op.splitext(o.path)
     r = requests.get(url(tile.split('-'), imagery))
     tile_img = op.join(folder, '{}{}'.format(tile, image_format))
-    open(tile_img, 'wb').write(r.content)
+    with open(tile_img, 'wb')as w:
+        w.write(r.content)
     return tile_img
 
 def get_tile_tif(tile, imagery, folder, imagery_offset):
@@ -109,7 +110,8 @@ def get_tile_wms(tile, imagery, folder, imagery_offset):
     wms_url = imagery.replace('{bbox}', ','.join([str(b) for b in bbox]))
     r = requests.get(wms_url)
     tile_img = op.join(folder, '{}.{}'.format(tile, image_format))
-    open(tile_img, 'wb').write(r.content)
+    with open(tile_img, 'wb') as w:
+        w.write(r.content)
     return tile_img
 
 
