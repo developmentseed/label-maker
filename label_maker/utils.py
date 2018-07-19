@@ -104,7 +104,6 @@ def get_tile_wms(tile, imagery, folder, imagery_offset):
     bbox = tile_lr_proj + tile_ul_proj
 
     wms_url = imagery.replace('{bbox}', ','.join([str(b) for b in bbox]))
-    print(wms_url)
     r = requests.get(wms_url)
     tile_img = op.join(folder, '{}.{}'.format(tile, image_format))
     open(tile_img, 'wb').write(r.content)
