@@ -122,3 +122,11 @@ def is_tif(imagery):
 def is_wms(imagery):
     """Determine if an imagery path is a WMS endpoint"""
     return '{bbox}' in imagery
+
+def get_image_function(imagery):
+    """Return the correct image downloading function based on the imagery string"""
+    if is_tif(imagery):
+        return get_tile_tif
+    if is_wms(imagery):
+        return get_tile_wms
+    return download_tile_tms
