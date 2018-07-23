@@ -89,7 +89,7 @@ def get_tile_tif(tile, imagery, folder, imagery_offset):
 
 def get_tile_wms(tile, imagery, folder, imagery_offset):
     """
-    Read a WMS endpoint corresponding to a TMS tile
+    Read a WMS endpoint with query parameters corresponding to a TMS tile
 
     Converts the tile boundaries to the spatial reference system (SRS) specified
     by the WMS query parameter.
