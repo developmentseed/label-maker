@@ -94,19 +94,22 @@ def get_tile_wms(tile, imagery, folder, imagery_offset):
     Converts the tile boundaries to the spatial reference system (SRS) specified
     by the WMS query parameter.
     """
+    # retrieve the necessary parameters from the query string
     query_dict = parse_qs(imagery.lower())
     image_format = query_dict['format'][0].split('/')[1]
     wms_srs = query_dict['srs'][0]
 
+    # find our tile bounding box
     bound = bounds(*[int(t) for t in tile.split('-')])
     p1 = Proj({'init': 'epsg:4326'})
     p2 = Proj({'init': wms_srs})
 
-    # project tile boundaries from lat/lng to WMS SRS
+    # project the tile bounding box from lat/lng to WMS SRS
     tile_ll_proj = transform(p1, p2, bound.west, bound.south)
     tile_ur_proj = transform(p1, p2, bound.east, bound.north)
     bbox = tile_ll_proj + tile_ur_proj
 
+    # request the image with the transformed bounding box and save
     wms_url = imagery.replace('{bbox}', ','.join([str(b) for b in bbox]))
     r = requests.get(wms_url)
     tile_img = op.join(folder, '{}.{}'.format(tile, image_format))
