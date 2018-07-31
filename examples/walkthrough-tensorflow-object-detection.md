@@ -8,6 +8,8 @@ Google TensorFlow Object Detection API is an open source framework built on top 
 
 First install Label Maker (`pip install label-maker`),  [tippecanoe](https://github.com/mapbox/tippecanoe) and Pandas (`pip install pandas`).
 
+**Note:** *If you want to learn how TensorFlow object detection works and how to setup the workflow, you should follow these instructions step by step. If you want to skip the steps and automate the workflow, you can use our docker image and [follow these instructions](https://github.com/Rub21/tensorflow-building-detection) instead.*
+
 ## Create the training dataset
 
 Mexico City  has good imagery via the Mapbox Satellite layer, so we are going to use the same configuration file we used for [another walkthrough](walkthrough-classification-mxnet-sagemaker.md), which we used to train a building classifier with MXNet and Amazon SageMaker.
