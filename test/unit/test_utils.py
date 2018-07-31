@@ -5,7 +5,7 @@ import unittest
 import numpy as np
 from PIL import Image
 
-from label_maker.utils import url, class_match, get_tile_tif
+from label_maker.utils import url, class_match, get_tile_tif, get_tile_wms
 
 class TestUtils(unittest.TestCase):
     """Tests for utility functions"""
@@ -83,6 +83,22 @@ class TestUtils(unittest.TestCase):
         get_tile_tif(tile, 'test/fixtures/drone.vrt', tiles_dir, None)
         test_tile = Image.open('test/tiles/{}.jpg'.format(tile))
         fixture_tile = Image.open('test/fixtures/{}.jpg'.format(tile))
+        self.assertEqual(test_tile, fixture_tile)
+
+    def test_get_tile_wms(self):
+        """Test reading of tile from a WMS endpoint"""
+        tile = '4686-6267-14'
+        # create tiles directory
+        dest_folder = 'test'
+        tiles_dir = op.join(dest_folder, 'tiles')
+        if not op.isdir(tiles_dir):
+            makedirs(tiles_dir)
+
+        usgs_url = 'https://basemap.nationalmap.gov/arcgis/services/USGSImageryOnly/MapServer/WMSServer?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&LAYERS=0&STYLES=&FORMAT=image%2Fjpeg&TRANSPARENT=false&HEIGHT=256&WIDTH=256&SRS=EPSG%3A3857&BBOX={bbox}'
+
+        get_tile_wms(tile, usgs_url, tiles_dir, None)
+        test_tile = Image.open('test/tiles/{}.jpeg'.format(tile))
+        fixture_tile = Image.open('test/fixtures/{}.jpeg'.format(tile))
         self.assertEqual(test_tile, fixture_tile)
 
 if __name__ == '__main__':
