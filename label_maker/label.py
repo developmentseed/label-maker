@@ -9,7 +9,7 @@ from functools import partial
 import numpy as np
 import mapbox_vector_tile
 import pyproj
-from shapely.geometry import shape, mapping
+from shapely.geometry import shape, mapping, Polygon
 from rasterio.features import rasterize
 from geojson import Feature, FeatureCollection as fc
 from mercantile import tiles, feature, Tile
@@ -23,6 +23,9 @@ from label_maker.palette import class_color
 
 # declare a global accumulator so the workers will have access
 tile_results = dict()
+
+# clip all geometries to a tile
+clip_mask = Polygon(((0, 0), (0, 255), (255, 255), (255, 0), (0, 0)))
 
 def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, sparse, **kwargs):
     """Create label data from OSM QA tiles for specified classes
@@ -215,6 +218,7 @@ def _mapper(x, y, z, data, args):
                     if ff(feat):
                         feat['geometry']['coordinates'] = _convert_coordinates(feat['geometry']['coordinates'])
                         geo = shape(feat['geometry'])
+                        geo = geo.intersection(clip_mask)
                         if cl.get('buffer'):
                             geo = geo.buffer(cl.get('buffer'), 4)
                         geos.append((mapping(geo), i + 1))
@@ -238,12 +242,19 @@ def _pixel_bbox(bb):
 
 def _buffer_bbox(bb, buffer=4):
     """Buffer a bounding box in pixel coordinates"""
-    return [
-        bb[0] - buffer,
-        bb[1] - buffer,
-        bb[2] + buffer,
-        bb[3] + buffer
-    ]
+    return list(map(
+        _clamp,
+        [
+            bb[0] - buffer,
+            bb[1] - buffer,
+            bb[2] + buffer,
+            bb[3] + buffer
+        ]
+    ))
+
+def _clamp(coordinate):
+    """restrict a single coordinate to 0-255"""
+    return max(0, min(255, coordinate))
 
 def _pixel_bounds_convert(x):
     """Convert a single 0-4096 coordinate to a pixel coordinate"""
@@ -251,8 +262,7 @@ def _pixel_bounds_convert(x):
     # input bounds are in the range 0-4096 by default: https://github.com/tilezen/mapbox-vector-tile
     # we want them to match our fixed imagery size of 256
     pixel = round(b * 255. / 4096) # convert to tile pixels
-    flipped = pixel if (i % 2 == 0) else 255 - pixel # flip the y axis
-    return max(0, min(255, flipped)) # clamp to the correct range
+    return pixel if (i % 2 == 0) else 255 - pixel # flip the y axis
 
 def _callback(tile_label):
     """Attach tile labels to a global tile_results dict"""
