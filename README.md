@@ -44,7 +44,7 @@ Before running any commands, it is necessary to create a `config.json` file to s
   - `name`: The class name
   - `filter`: A [Mapbox GL Filter](https://www.mapbox.com/mapbox-gl-js/style-spec#other-filter) to define any vector features matching this class. Filters are applied with the standalone [featureFilter](https://github.com/mapbox/mapbox-gl-js/tree/master/src/style-spec/feature_filter) from Mapbox GL JS.
   - `buffer`: The number of pixels to buffer the geometry by. This is an optional parameter to buffer the label for `object-detection` and `segmentation` tasks. Accepts any number (positive or negative). It uses [Shapely `object.buffer`](https://shapely.readthedocs.io/en/latest/manual.html#object.buffer) to calculate the final geometry. You can verify that your buffer options create the desired labels by inspecting the files created in `data/labels/` after running the `labels` command.
-- `imagery`: One of:
+- `imagery`: Label Maker expects to receive imagery tiles that are 256 x 256 pixels. You can specific the source of the imagery with one of:
   - A template string for a tiled imagery service. Note that you will generally need an API key to obtain images and there may be associated costs. The above example requires a [Mapbox access token](https://www.mapbox.com/help/how-access-tokens-work/)
   - A GeoTIFF file location. Works with both local and remote files. Ex: `'http://oin-hotosm.s3.amazonaws.com/593ede5ee407d70011386139/0/3041615b-2bdb-40c5-b834-36f580baca29.tif'`
   - A [WMS endpoint](http://www.opengeospatial.org/standards/wms) `GetMap` request. Fill out all necessary parameters except `bbox` which should be set as `{bbox}`. Ex:
