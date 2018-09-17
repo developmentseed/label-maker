@@ -1,5 +1,6 @@
-########
 Examples
 ########
 
-Move examples from `here <https://github.com/developmentseed/label-maker/tree/master/examples>`_
+Examples live `here <https://github.com/developmentseed/label-maker/tree/master/examples>`_
+
+ToDo: move these to their own page within this docs website.
