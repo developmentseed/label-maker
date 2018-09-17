@@ -50,8 +50,10 @@ Command line interface (CLI)
 
 Label Maker is most easily used as a command line tool. There are five commands documented below. You should run them in order as each operation builds on the previous one and commands accept two flags:
 
-1. ``-d`` or ``--dest``: string specifying directory for storing output files. Default: ``'./data'``
-2. ``-c`` or ``--config``: string specifying location of ``config.json`` file. Default: ``'./config.json'``
+	``-d`` or ``--dest``: string
+		Directory for storing output files. Defaults to ``'./data'``
+	``-c`` or ``--config``: string
+		Location of ``config.json`` file. Defaults to ``'./config.json'``
 
 CLI Step 1: download
 ^^^^^^^^^^^^^^^^^^^^
@@ -65,11 +67,12 @@ Download and unzip OSM QA tiles containing feature information.
 
 CLI Step 2: labels
 ^^^^^^^^^^^^^^^^^^
-Retiles the OSM data to the desired zoom level, creates label data (``labels.npz``), calculates class statistics, creates visual label files (either GeoJSON or PNG files depending upon ``ml_type``). Requires the mbtiles file from the `label-maker download` step.
+Retiles the OSM data to the desired zoom level, creates label data (``labels.npz``), calculates class statistics, creates visual label files (either GeoJSON or PNG files depending upon ``ml_type``). Requires the mbtiles file from the ``label-maker download`` step.
 
 Accepts one additional flag:
 
-- ``-s`` or ``--sparse``: *boolean* specifying if class of interest are sparse. If ``True``, only save labels for up to ``n`` background tiles, where ``n`` is equal to ``background_ratio`` times the number of tiles with a class label. Defaults to ``False``.
+	``-s`` or ``--sparse``: boolean 
+		Specifies if features in the class of interest are sparse. If ``True``, only save labels for up to ``n`` background tiles, where ``n`` is equal to ``background_ratio`` times the number of tiles with a class label. Defaults to ``False``.
 
 .. code-block:: bash
 
@@ -83,11 +86,12 @@ Accepts one additional flag:
 CLI Step 3: preview (optional)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Downloads example overhead images for each class. Requires the ``labels.npz`` file from the previous step.
+Downloads example overhead images for each class. Requires the ``labels.npz`` file from the ``label-maker labels`` step.
 
 Accepts one additional flag:
 
-- ``-n`` or ``--number``: *integer* specifying number of examples images to create per class. Defaults to ``5``.
+	``-n`` or ``--number``: int
+		Specifies the number of examples images to create per class. Defaults to ``5``.
 
 .. code-block:: bash
 
@@ -98,7 +102,7 @@ Accepts one additional flag:
 CLI Step 4: images
 ^^^^^^^^^^^^^^^^^^
 
-Downloads all imagery tiles needed to create the training data. Requires the ``labels.npz`` file from the ``labels`` step.
+Downloads all imagery tiles needed to create the training data. Requires the ``labels.npz`` file from the ``label-maker labels`` step.
 
 .. code-block:: bash
 
@@ -136,7 +140,7 @@ Once you have a create ``data.npz`` file using the above commands, you can use `
 	model.fit(x_train, y_train, batch_size=16, epochs=50)
 	model.evaluate(x_test, y_test, batch_size=16)
 
-For more detailed walkthroughs, see the `examples page <https://github.com/developmentseed/label-maker/blob/master/examples>`_.
+For more detailed walkthroughs, see the `examples page <examples.html>`_.
 
 Acknowledgements
 ================
@@ -146,18 +150,11 @@ This library builds on the concepts of `skynet-data <https://github.com/developm
 * OSM QA tile data `copyright OpenStreetMap contributors <http://www.openstreetmap.org/copyright>`_ and licensed under `ODbL <http://opendatacommons.org/licenses/odbl/>`_.
 * Mapbox Satellite data can be `traced for noncommercial purposes <https://www.mapbox.com/tos/#%5BYmtMIywt%5D>`_.
 
-Table of Contents
-=================
+
 .. toctree::
+   :hidden:
    :maxdepth: 2
 
    parameters
    examples
    contributing
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
