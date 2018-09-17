@@ -26,26 +26,24 @@ Standard pip install
 
 Configuration
 =============
-Before you can use Label Maker, you must specify inputs to the data-creation process within ``config.json`` file. Below is a simple example. To see the complete list of parameters and options for imagery access, check out the XXX page.
+Before you can use Label Maker, you must specify inputs to the data-creation process within ``config.json`` file. Below is a simple example. To see the complete list of parameters and options for imagery access, check out the `parameters page <parameters.html>`_.
 
 .. code-block:: json
-	
+
 	{
 	  "country": "togo",
 	  "bounding_box": [1.09725, 6.05520, 1.34582, 6.30915],
 	  "zoom": 12,
 	  "classes": [
-	  { "name": "Roads", "filter": ["has", "highway"] },
-	  { "name": "Buildings", "filter": ["has", "building"] }
+	    { "name": "Roads", "filter": ["has", "highway"] },
+	    { "name": "Buildings", "filter": ["has", "building"] }
 	  ],
 	  "imagery": "http://a.tiles.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}.jpg?access_token=ACCESS_TOKEN",
 	  "background_ratio": 1,
 	  "ml_type": "classification"
 	}
-	
 
-TODO: Okay to separate config options like this? See Sphinx's RST list options as there are some recommendations
-TODO: Add page with full parameter list
+Before using this configuration, make sure to replace ``ACCESS_TOKEN`` with your `Mapbox Access Token <https://www.mapbox.com/help/how-access-tokens-work/>`_
 
 Command line interface (CLI)
 ============================
@@ -70,7 +68,8 @@ CLI Step 2: labels
 Retiles the OSM data to the desired zoom level, creates label data (``labels.npz``), calculates class statistics, creates visual label files (either GeoJSON or PNG files depending upon ``ml_type``). Requires the mbtiles file from the `label-maker download` step.
 
 Accepts one additional flag:
-1. ``-s`` or ``--sparse``: *boolean* specifying if class of interest are sparse. If ``True``, only save labels for up to ``n`` background tiles, where ``n`` is equal to ``background_ratio`` times the number of tiles with a class label. Defaults to ``False``.
+
+- ``-s`` or ``--sparse``: *boolean* specifying if class of interest are sparse. If ``True``, only save labels for up to ``n`` background tiles, where ``n`` is equal to ``background_ratio`` times the number of tiles with a class label. Defaults to ``False``.
 
 .. code-block:: bash
 
@@ -81,24 +80,20 @@ Accepts one additional flag:
 	Total tiles: 1189
 	Write out labels to data/labels.npz
 
-TODO: Is bool 0/1 or True/False? Or does it matter?
-TODO: Is requirement correct? Should we just move these requirements to "Note" boxes?
+CLI Step 3: preview (optional)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-CLI Step 3: preview
-^^^^^^^^^^^^^^^^^^^
-
-Downloads example overhead images for each class. Requires the labels.npz file from the previous step. Accepts an additional flag:
+Downloads example overhead images for each class. Requires the ``labels.npz`` file from the previous step.
 
 Accepts one additional flag:
-1. ``-n`` or ``--number``: *integer* specifying number of examples images to create per class. Defaults to ``5``.
+
+- ``-n`` or ``--number``: *integer* specifying number of examples images to create per class. Defaults to ``5``.
 
 .. code-block:: bash
 
 	$ label-maker preview -n 10
 	Writing example images to data/examples
 	Downloading 10 tiles for class Residential
-
-TODO: Requirements?
 
 CLI Step 4: images
 ^^^^^^^^^^^^^^^^^^
@@ -110,11 +105,9 @@ Downloads all imagery tiles needed to create the training data. Requires the ``l
 	$ label-maker images
 	Downloading 1189 tiles to data/tiles
 
-TODO: Requirements?
-
 CLI Step 5: package
 ^^^^^^^^^^^^^^^^^^^
-Bundles the images and OSM labels to create a final ``data.npz`` file. Requires the ``labels.npz`` file from the ``label-maker labels`` step and downloaded image tiles from the ``label-maker  images`` step.
+Bundles the images and OSM labels to create a final ``data.npz`` file. Requires the ``labels.npz`` file from the ``label-maker labels`` step and downloaded image tiles from the ``label-maker images`` step.
 
 .. code-block:: bash
 
@@ -123,7 +116,7 @@ Bundles the images and OSM labels to create a final ``data.npz`` file. Requires 
 
 Using the packaged data
 =======================
-Once you have a create ``data.npz`` file using the above commands, you can use ```numpy.load`` <https://docs.scipy.org/doc/numpy/reference/generated/numpy.load.html>`_ to load it. For example, you can supply the created data to a `Keras <https://keras.io/>`_ ``Model`` as follows:
+Once you have a create ``data.npz`` file using the above commands, you can use `numpy.load <https://docs.scipy.org/doc/numpy/reference/generated/numpy.load.html>`_ to load it. For example, you can supply the created data to a `Keras <https://keras.io/>`_ ``Model`` as follows:
 
 .. code-block:: bash
 
@@ -144,8 +137,6 @@ Once you have a create ``data.npz`` file using the above commands, you can use `
 	model.evaluate(x_test, y_test, batch_size=16)
 
 For more detailed walkthroughs, see the `examples page <https://github.com/developmentseed/label-maker/blob/master/examples>`_.
-
-TODO: move/add examples? PyTorch load example?
 
 Acknowledgements
 ================
