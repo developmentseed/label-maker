@@ -149,6 +149,7 @@ This library builds on the concepts of `skynet-data <https://github.com/developm
 
 * OSM QA tile data `copyright OpenStreetMap contributors <http://www.openstreetmap.org/copyright>`_ and licensed under `ODbL <http://opendatacommons.org/licenses/odbl/>`_.
 * Mapbox Satellite data can be `traced for noncommercial purposes <https://www.mapbox.com/tos/#%5BYmtMIywt%5D>`_.
+* Marc Farra's `tilepie <https://github.com/kamicut/tilepie>`_ to asynchronously process vector tiles.
 
 
 .. toctree::
