@@ -31,3 +31,4 @@ This library builds on the concepts of [skynet-data](https://github.com/developm
   [ODbL](http://opendatacommons.org/licenses/odbl/)
 - Mapbox Satellite data can be
   [traced for noncommercial purposes](https://www.mapbox.com/tos/#[YmtMIywt]).
+- Marc Farra's [tilepie](https://github.com/kamicut/tilepie) to asynchronously process vector tiles 
