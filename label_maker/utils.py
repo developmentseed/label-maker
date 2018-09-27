@@ -120,10 +120,12 @@ def get_tile_wms(tile, imagery, folder, imagery_offset):
 
 def is_tif(imagery):
     """Determine if an imagery path leads to a valid tif"""
+    valid_drivers = ['GTiff', 'VRT']
     try:
         with rasterio.open(imagery) as test_ds:
-            if test_ds.meta['driver'] != 'GTiff':
+            if test_ds.meta['driver'] not in valid_drivers:
                 # rasterio can open path, but it is not a tif
+                raise Exception(test_ds.meta['driver'])
                 valid_tif = False
             else:
                 valid_tif = True
