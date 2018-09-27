@@ -125,7 +125,6 @@ def is_tif(imagery):
         with rasterio.open(imagery) as test_ds:
             if test_ds.meta['driver'] not in valid_drivers:
                 # rasterio can open path, but it is not a tif
-                raise Exception(test_ds.meta['driver'])
                 valid_tif = False
             else:
                 valid_tif = True
