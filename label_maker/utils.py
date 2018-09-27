@@ -1,7 +1,7 @@
 # pylint: disable=unused-argument
 """Provide utility functions"""
 from os import path as op
-from urllib.parse import urlparse
+from urllib.parse import urlparse, parse_qs
 
 from mercantile import bounds
 from pyproj import Proj, transform
@@ -24,16 +24,17 @@ def class_match(ml_type, label, i):
         return np.count_nonzero(label == i)
     return None
 
-def download_tile_tms(tile, imagery, dest_folder, *args):
+def download_tile_tms(tile, imagery, folder, *args):
     """Download a satellite image tile from a tms endpoint"""
     o = urlparse(imagery)
     _, image_format = op.splitext(o.path)
     r = requests.get(url(tile.split('-'), imagery))
-    tile_img = op.join(dest_folder, 'tiles', '{}{}'.format(tile, image_format))
-    open(tile_img, 'wb').write(r.content)
+    tile_img = op.join(folder, '{}{}'.format(tile, image_format))
+    with open(tile_img, 'wb')as w:
+        w.write(r.content)
     return tile_img
 
-def get_tile_tif(tile, imagery, dest_folder, imagery_offset):
+def get_tile_tif(tile, imagery, folder, imagery_offset):
     """
     Read a GeoTIFF with a window corresponding to a TMS tile
 
@@ -80,11 +81,42 @@ def get_tile_tif(tile, imagery, dest_folder, imagery_offset):
             src.read(k, window=window, out=data[k - 1], boundless=True)
 
         # save
-        tile_img = op.join(dest_folder, 'tiles', '{}{}'.format(tile, '.jpg'))
+        tile_img = op.join(folder, '{}{}'.format(tile, '.jpg'))
         img = Image.fromarray(np.moveaxis(data, 0, -1), mode='RGB')
         img.save(tile_img)
 
     return tile_img
+
+def get_tile_wms(tile, imagery, folder, imagery_offset):
+    """
+    Read a WMS endpoint with query parameters corresponding to a TMS tile
+
+    Converts the tile boundaries to the spatial reference system (SRS) specified
+    by the WMS query parameter.
+    """
+    # retrieve the necessary parameters from the query string
+    query_dict = parse_qs(imagery.lower())
+    image_format = query_dict['format'][0].split('/')[1]
+    wms_srs = query_dict['srs'][0]
+
+    # find our tile bounding box
+    bound = bounds(*[int(t) for t in tile.split('-')])
+    p1 = Proj({'init': 'epsg:4326'})
+    p2 = Proj({'init': wms_srs})
+
+    # project the tile bounding box from lat/lng to WMS SRS
+    tile_ll_proj = transform(p1, p2, bound.west, bound.south)
+    tile_ur_proj = transform(p1, p2, bound.east, bound.north)
+    bbox = tile_ll_proj + tile_ur_proj
+
+    # request the image with the transformed bounding box and save
+    wms_url = imagery.replace('{bbox}', ','.join([str(b) for b in bbox]))
+    r = requests.get(wms_url)
+    tile_img = op.join(folder, '{}.{}'.format(tile, image_format))
+    with open(tile_img, 'wb') as w:
+        w.write(r.content)
+    return tile_img
+
 
 def is_tif(imagery):
     """Determine if an imagery path leads to a valid tif"""
@@ -101,3 +133,15 @@ def is_tif(imagery):
         valid_tif = False
 
     return valid_tif
+
+def is_wms(imagery):
+    """Determine if an imagery path is a WMS endpoint"""
+    return '{bbox}' in imagery
+
+def get_image_function(imagery):
+    """Return the correct image downloading function based on the imagery string"""
+    if is_tif(imagery):
+        return get_tile_tif
+    if is_wms(imagery):
+        return get_tile_wms
+    return download_tile_tms

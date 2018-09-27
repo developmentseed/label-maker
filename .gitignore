@@ -13,3 +13,4 @@ config.json
 stdout*
 /integration*
 .idea/
+docs/_build/

@@ -7,9 +7,9 @@ from os import makedirs
 import numpy as np
 from PIL import Image, ImageDraw
 
-from label_maker.utils import class_match, download_tile_tms, get_tile_tif, is_tif
+from label_maker.utils import class_match, get_image_function
 
-def preview(dest_folder, number, classes, imagery, ml_type, imagery_offset, **kwargs):
+def preview(dest_folder, number, classes, imagery, ml_type, imagery_offset=False, **kwargs):
     """Produce imagery examples for specified classes
 
     Parameters
@@ -48,13 +48,12 @@ def preview(dest_folder, number, classes, imagery, ml_type, imagery_offset, **kw
     print('Writing example images to {}'.format(examples_dir))
 
     # get image acquisition function based on imagery string
-    image_function = download_tile_tms
-    if is_tif(imagery):
-        image_function = get_tile_tif
+    image_function = get_image_function(imagery)
 
     for i, cl in enumerate(classes):
         # create class directory
         class_dir = op.join(dest_folder, 'examples', cl.get('name'))
+
         if not op.isdir(class_dir):
             makedirs(class_dir)
 
