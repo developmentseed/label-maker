@@ -1,3 +1,11 @@
+0.4.0 (2018-10-04)
+------------------
+- Read file drivers to determine file type rather than relying on extension (#80)
+- Add support for WMS endpoints as an imagery source (#93)
+- Add documentation site (#108)
+- Fix rendering errors at tile boundaries (#78)
+- New examples and updates to example code (#89, #91, #105, #107)
+
 0.3.2 (2018-05-14)
 ------------------
 - Provide a default value of False for imagery_offset to preview function (#79)
