@@ -66,15 +66,18 @@ def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, spar
     mbtiles_file_zoomed = op.join(dest_folder, '{}-z{!s}.mbtiles'.format(country, zoom))
 
     if not op.exists(mbtiles_file_zoomed):
-        print('Retiling QA Tiles to zoom level {} (takes a bit)'.format(zoom))
         filtered_geo = op.join(dest_folder, '{}.geojson'.format(country))
-        ps = Popen(['tippecanoe-decode', '-c', '-f', mbtiles_file], stdout=PIPE)
-        stream_filter_fpath = op.join(op.dirname(label_maker.__file__), 'stream_filter.py')
-        run(['python', stream_filter_fpath, json.dumps(bounding_box)],
-            stdin=ps.stdout, stdout=open(filtered_geo, 'w'))
-        ps.wait()
-        run(['tippecanoe', '--no-feature-limit', '--no-tile-size-limit', '-P',
-             '-l', 'osm', '-f', '-z', str(zoom), '-Z', str(zoom), '-o',
+        fast_parse = []
+        if not op.exists(filtered_geo):
+            fast_parse = ['-P']
+            print('Retiling QA Tiles to zoom level {} (takes a bit)'.format(zoom))
+            ps = Popen(['tippecanoe-decode', '-c', '-f', mbtiles_file], stdout=PIPE)
+            stream_filter_fpath = op.join(op.dirname(label_maker.__file__), 'stream_filter.py')
+            run(['python', stream_filter_fpath, json.dumps(bounding_box)],
+                stdin=ps.stdout, stdout=open(filtered_geo, 'w'))
+            ps.wait()
+        run(['tippecanoe', '--no-feature-limit', '--no-tile-size-limit'] + fast_parse +
+            ['-l', 'osm', '-f', '-z', str(zoom), '-Z', str(zoom), '-o',
              mbtiles_file_zoomed, filtered_geo])
 
     # Call tilereduce
