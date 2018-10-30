@@ -38,7 +38,7 @@ Here is the full list of configuration parameters you can specify in a ``config.
 	One of ``'classification'``, ``'object-detection'``, or ``'segmentation'``. This defines the output format for the final label numpy arrays (``y_train`` and ``y_test``).
 
  	``'classification'``
- 		Output is an array of ``length of classes`` + 1. Each array value will be either `1` or `0` based on whether it matches the class at the same index. The additional array element belongs to the background class, which will always be the first element. 
+ 		Output is an array of ``len(classes) + 1``. Each array value will be either `1` or `0` based on whether it matches the class at the same index. The additional array element belongs to the background class, which will always be the first element. 
 
  	``'object-detection'``
  		Output is an array of bounding boxes of the form ``[xmin, ymin, width, height, class_index]``. In this case, the values are pixel values measured from the upper left-hand corner (not latitude and longitude values). Each feature is tested against each class, so if a feature matches two or more classes, it will have the corresponding number of bounding boxes created.
