@@ -16,7 +16,7 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('.'))
 sys.path.insert(0, os.path.abspath('../label_maker'))
-
+from label_maker.version import __version__
 
 # -- Project information -----------------------------------------------------
 
@@ -25,9 +25,9 @@ copyright = '2018, Development Seed'
 author = 'Development Seed'
 
 # The short X.Y version
-version = '0.3.2'
+version = __version__
 # The full version, including alpha/beta/rc tags
-release = '0.3.2'
+release = __version__
 
 
 # -- General configuration ---------------------------------------------------
