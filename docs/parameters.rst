@@ -8,6 +8,9 @@ Here is the full list of configuration parameters you can specify in a ``config.
 **bounding_box**: list of floats
 	The bounding box to create images from. This should be given in the form: ``[xmin, ymin, xmax, ymax]`` as longitude and latitude values between ``[-180, 180]`` and ``[-90, 90]``, respectively. Values should use the WGS84 datum, with longitude and latitude units in decimal degrees.
 
+**geojson**: string
+	An input ``GeoJSON`` file containing labels. Adding this parameter will override the values in the ``country`` and ``bounding_box`` parameters. The ``GeoJSON`` should only contain polygons.
+
 **zoom**: int
 	The `zoom level <http://wiki.openstreetmap.org/wiki/Zoom_levels>`_ used to create images. This functions as a rough proxy for resolution. Value should be given as an int on the interval [0, 19].
 
@@ -26,9 +29,9 @@ Here is the full list of configuration parameters you can specify in a ``config.
 	Label Maker expects to receive imagery tiles that are 256 x 256 pixels. You can specific the source of the imagery with one of:
 
  		A template string for a tiled imagery service. Note that you will generally need an API key to obtain images and there may be associated costs. The above example requires a `Mapbox access token <https://www.mapbox.com/help/how-access-tokens-work/>`_. Also see `OpenAerialMap <https://openaerialmap.org/>`_ for open imagery.
- 	
+
  		A GeoTIFF file location. Works with local files: ``'http://oin-hotosm.s3.amazonaws.com/593ede5ee407d70011386139/0/3041615b-2bdb-40c5-b834-36f580baca29.tif'``
- 	
+
  		Remote files like a `WMS endpoint <http://www.opengeospatial.org/standards/wms>`_ ``GetMap`` request. Fill out all necessary parameters except ``bbox`` which should be set as ``{bbox}``. Ex: ``'https://basemap.nationalmap.gov/arcgis/services/USGSImageryOnly/MapServer/WMSServer?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&LAYERS=0&STYLES=&FORMAT=image%2Fjpeg&TRANSPARENT=false&HEIGHT=256&WIDTH=256&SRS=EPSG%3A3857&BBOX={bbox}'``
 
 **background_ratio**: float
@@ -36,13 +39,13 @@ Here is the full list of configuration parameters you can specify in a ``config.
 
 **ml_type**: string
 	One of ``'classification'``, ``'object-detection'``, or ``'segmentation'``. This defines the output format for the final label numpy arrays (``y_train`` and ``y_test``).
- 	
+
  	``'classification'``
  		Output is an array of the same length as `classes`. Each array value will be either `1` or `0` based on whether it matches the class at the same index.
- 
+
  	``'object-detection'``
  		Output is an array of bounding boxes of the form ``[xmin, ymin, width, height, class_index]``. In this case, the values are pixel values measured from the upper left-hand corner (not latitude and longitude values). Each feature is tested against each class, so if a feature matches two or more classes, it will have the corresponding number of bounding boxes created.
- 
+
  	``'segmentation'``
  		Output is an array of shape ``(256, 256)`` with values matching the class index label at that position. The classes are applied sequentially according to ``config.json`` so latter classes will be written over earlier class labels if there is overlap.
 
