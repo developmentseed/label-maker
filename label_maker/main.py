@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 def get_bounds(feature_collection):
     """Get a bounding box for a FeatureCollection of Polygon Features"""
-    features = [f for f in feature_collection['features'] if f['geometry']['type'] in ['Polygon', 'MultiPolygon']]
+    features = [f for f in feature_collection['features'] if f['geometry']['type'] in ['Polygon']]
     return MultiPolygon(list(map(lambda x: Polygon(x['geometry']['coordinates'][0]), features))).bounds
 
 
@@ -90,9 +90,8 @@ def cli():
 
     # for geojson, overwrite other config keys to correct labeling
     if 'geojson' in config.keys():
-        config['country'] = op.splitext(config.get('geojson'))[0]
+        config['country'] = op.splitext(op.basename(config.get('geojson')))[0]
         config['bounding_box'] = get_bounds(json.load(open(config.get('geojson'), 'r')))
-    print(config['bounding_box'])
 
     if cmd == 'download':
         download_mbtiles(dest_folder=dest_folder, **config)

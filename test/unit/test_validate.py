@@ -21,11 +21,18 @@ class TestValidate(unittest.TestCase):
         """Test for all required keys"""
         with open('test/fixtures/validation/passing.json') as config_file:
             config = json.load(config_file)
-            for key in ['country', 'bounding_box', 'zoom', 'classes', 'imagery', 'ml_type']:
+            for key in ['zoom', 'classes', 'imagery', 'ml_type']:
                 bad_config = copy.deepcopy(config)
                 bad_config.pop(key)
                 valid = v.validate(bad_config)
                 self.assertFalse(valid)
+
+    def test_geojson(self):
+        """Test an alternate configuration with geojson input"""
+        with open('test/fixtures/validation/geojson.json') as config_file:
+            config = json.load(config_file)
+            valid = v.validate(config)
+            self.assertTrue(valid)
 
     def test_country(self):
         """Test country not in list fails"""
