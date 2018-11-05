@@ -1,3 +1,9 @@
+0.5.0 (2018-11-05)
+------------------
+- Accept GeoJSON input labels (#32)
+- Correct documentation regarding class labels (#113)
+- Small miscellaneous fixes
+
 0.4.0 (2018-10-04)
 ------------------
 - Read file drivers to determine file type rather than relying on extension (#80)
