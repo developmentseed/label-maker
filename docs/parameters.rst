@@ -9,7 +9,7 @@ Here is the full list of configuration parameters you can specify in a ``config.
 	The bounding box to create images from. This should be given in the form: ``[xmin, ymin, xmax, ymax]`` as longitude and latitude values between ``[-180, 180]`` and ``[-90, 90]``, respectively. Values should use the WGS84 datum, with longitude and latitude units in decimal degrees.
 
 **geojson**: string
-	An input ``GeoJSON`` file containing labels. Adding this parameter will override the values in the ``country`` and ``bounding_box`` parameters. The ``GeoJSON`` should only contain polygons.
+	An input ``GeoJSON`` file containing labels. Adding this parameter will override the values in the ``country`` and ``bounding_box`` parameters. The ``GeoJSON`` should only contain `Polygon` and not `Multipolygon` or a `GeometryCollection`.
 
 **zoom**: int
 	The `zoom level <http://wiki.openstreetmap.org/wiki/Zoom_levels>`_ used to create images. This functions as a rough proxy for resolution. Value should be given as an int on the interval [0, 19].
