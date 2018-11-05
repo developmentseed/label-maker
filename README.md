@@ -27,4 +27,5 @@ Full documentation is available here: http://devseed.com/label-maker/
 This library builds on the concepts of [skynet-data](https://github.com/developmentseed/skynet-data). It wouldn't be possible without the excellent data from OpenStreetMap and Mapbox under the following licenses:
 - OSM QA tile data [copyright OpenStreetMap contributors](http://www.openstreetmap.org/copyright) and licensed under [ODbL](http://opendatacommons.org/licenses/odbl/)
 - Mapbox Satellite data can be [traced for noncommercial purposes](https://www.mapbox.com/tos/#[YmtMIywt]).
-- Marc Farra's [tilepie](https://github.com/kamicut/tilepie) to asynchronously process vector tiles
+
+It also relies heavily on Marc Farra's [tilepie](https://github.com/kamicut/tilepie) to asynchronously process vector tiles
