@@ -9,7 +9,7 @@ Here is the full list of configuration parameters you can specify in a ``config.
 	The bounding box to create images from. This should be given in the form: ``[xmin, ymin, xmax, ymax]`` as longitude and latitude values between ``[-180, 180]`` and ``[-90, 90]``, respectively. Values should use the WGS84 datum, with longitude and latitude units in decimal degrees.
 
 **geojson**: string
-	An input ``GeoJSON`` file containing labels. Adding this parameter will override the values in the ``country`` and ``bounding_box`` parameters. The ``GeoJSON`` should only contain polygons.
+	An input ``GeoJSON`` file containing labels. Adding this parameter will override the values in the ``country`` and ``bounding_box`` parameters. The ``GeoJSON`` should only contain `Polygon` and not `Multipolygon` or a `GeometryCollection`.
 
 **zoom**: int
 	The `zoom level <http://wiki.openstreetmap.org/wiki/Zoom_levels>`_ used to create images. This functions as a rough proxy for resolution. Value should be given as an int on the interval [0, 19].
@@ -41,7 +41,7 @@ Here is the full list of configuration parameters you can specify in a ``config.
 	One of ``'classification'``, ``'object-detection'``, or ``'segmentation'``. This defines the output format for the final label numpy arrays (``y_train`` and ``y_test``).
 
  	``'classification'``
- 		Output is an array of the same length as `classes`. Each array value will be either `1` or `0` based on whether it matches the class at the same index.
+ 		Output is an array of ``len(classes) + 1``. Each array value will be either `1` or `0` based on whether it matches the class at the same index. The additional array element belongs to the background class, which will always be the first element. 
 
  	``'object-detection'``
  		Output is an array of bounding boxes of the form ``[xmin, ymin, width, height, class_index]``. In this case, the values are pixel values measured from the upper left-hand corner (not latitude and longitude values). Each feature is tested against each class, so if a feature matches two or more classes, it will have the corresponding number of bounding boxes created.

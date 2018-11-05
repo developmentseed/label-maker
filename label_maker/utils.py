@@ -119,8 +119,21 @@ def get_tile_wms(tile, imagery, folder, imagery_offset):
 
 
 def is_tif(imagery):
-    """Determine if an imagery path has a valid tif extension"""
-    return op.splitext(imagery)[1].lower() in ['.tif', '.tiff', '.vrt']
+    """Determine if an imagery path leads to a valid tif"""
+    valid_drivers = ['GTiff', 'VRT']
+    try:
+        with rasterio.open(imagery) as test_ds:
+            if test_ds.meta['driver'] not in valid_drivers:
+                # rasterio can open path, but it is not a tif
+                valid_tif = False
+            else:
+                valid_tif = True
+    except rasterio._err.CPLE_HttpResponseError: #pylint: disable=protected-access
+        # rasterio cannot open the path. this is the case for a
+        # tile service
+        valid_tif = False
+
+    return valid_tif
 
 def is_wms(imagery):
     """Determine if an imagery path is a WMS endpoint"""

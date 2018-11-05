@@ -59,7 +59,7 @@ def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, spar
     sparse: boolean
         Limit the total background tiles to write based on `background_ratio` kwarg.
     geojson: str
-        File name for optional geojson label input
+        Filepath to optional geojson label input
     **kwargs: dict
         Other properties from CLI config passed as keywords to other utility functions
     """

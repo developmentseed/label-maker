@@ -1,11 +1,13 @@
 """Tests for utils.py"""
 import os
 from os import path as op, makedirs
+import shutil
+import tempfile
 import unittest
 import numpy as np
 from PIL import Image
 
-from label_maker.utils import url, class_match, get_tile_tif, get_tile_wms
+from label_maker.utils import url, class_match, get_tile_tif, get_tile_wms, is_tif
 
 class TestUtils(unittest.TestCase):
     """Tests for utility functions"""
@@ -42,6 +44,33 @@ class TestUtils(unittest.TestCase):
         failing = np.ones((256, 256), dtype=np.int)
         self.assertTrue(class_match(ml_type, passing, class_index))
         self.assertFalse(class_match(ml_type, failing, class_index))
+
+    def test_is_tif(self):
+        """Test identifying tif or vrt files as tif"""
+        img_dir = op.join('test', 'fixtures')
+
+        # tif with .tif extension identified as tif
+        test_tif = op.join(img_dir, 'drone.tif')
+        self.assertTrue(is_tif(test_tif))
+
+        # vrt with .vrt extension identified as tif
+        test_vrt = op.join(img_dir, 'drone.vrt')
+        self.assertTrue(is_tif(test_vrt))
+
+
+        # tif with no extension identified as tif
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            test_tif_no_ext = op.join(tmpdirname, 'drone')
+            shutil.copy(test_tif, test_tif_no_ext)
+            self.assertTrue(is_tif(test_tif_no_ext))
+
+        # vrt with no extension identified as tif
+        with tempfile.TemporaryDirectory() as tmpdirname:
+            test_vrt_no_ext = op.join(tmpdirname, 'drone')
+            shutil.copy(test_vrt, test_vrt_no_ext)
+            self.assertTrue(is_tif(test_vrt_no_ext))
+
+
 
     def test_get_tile_tif(self):
         """Test reading of tile from geotiff"""
