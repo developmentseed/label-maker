@@ -1,5 +1,5 @@
 """Test that the following CLI command returns the expected outputs
-label-maker labels --dest integration-cl --config test/fixtures/integration/config.integration_sparse.json --sparse"""
+label-maker labels --dest integration-cl --config test/fixtures/integration/config.geojson.json"""
 import unittest
 import json
 from os import makedirs
@@ -8,12 +8,12 @@ import subprocess
 
 import numpy as np
 
-class TestClassificationLabelSparse(unittest.TestCase):
-    """Tests for classification label creation (sparse)"""
+class TestClassificationLabelGeoJSON(unittest.TestCase):
+    """Tests for classification label creation"""
     @classmethod
     def setUpClass(cls):
         makedirs('integration-cl')
-        copyfile('test/fixtures/integration/portugal-z17.mbtiles', 'integration-cl/portugal-z17.mbtiles')
+        copyfile('test/fixtures/integration/labels.geojson', 'integration-cl/labels.geojson')
 
     @classmethod
     def tearDownClass(cls):
@@ -31,17 +31,17 @@ Ruins: 1 tiles
 Parking: 1 tiles
 Roads: 8 tiles
 Total tiles: 9
-Using sparse mode; subselected 0 background tiles
 Writing out labels to integration-cl/labels.npz
 """
 
-        cmd = 'label-maker labels --dest integration-cl --config test/fixtures/integration/config.integration_sparse.json --sparse'
+        cmd = 'label-maker labels --dest integration-cl --config test/fixtures/integration/config.geojson.json'
         cmd = cmd.split(' ')
         with subprocess.Popen(cmd, universal_newlines=True, stdout=subprocess.PIPE) as p:
             self.assertEqual(expected_output, p.stdout.read())
 
         # our labels should look like this
         expected_labels = {
+            '62092-50162-17': np.array([1, 0, 0, 0, 0, 0, 0]),
             '62092-50163-17': np.array([0, 0, 0, 0, 0, 0, 1]),
             '62092-50164-17': np.array([0, 0, 0, 0, 0, 0, 1]),
             '62093-50162-17': np.array([0, 0, 0, 0, 0, 0, 1]),

@@ -58,6 +58,8 @@ def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, spar
         as longitude and latitude values between `[-180, 180]` and `[-90, 90]` respectively
     sparse: boolean
         Limit the total background tiles to write based on `background_ratio` kwarg.
+    geojson: str
+        Filepath to optional geojson label input
     **kwargs: dict
         Other properties from CLI config passed as keywords to other utility functions
     """
@@ -66,15 +68,18 @@ def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, spar
     mbtiles_file_zoomed = op.join(dest_folder, '{}-z{!s}.mbtiles'.format(country, zoom))
 
     if not op.exists(mbtiles_file_zoomed):
-        print('Retiling QA Tiles to zoom level {} (takes a bit)'.format(zoom))
-        filtered_geo = op.join(dest_folder, '{}.geojson'.format(country))
-        ps = Popen(['tippecanoe-decode', '-c', '-f', mbtiles_file], stdout=PIPE)
-        stream_filter_fpath = op.join(op.dirname(label_maker.__file__), 'stream_filter.py')
-        run(['python', stream_filter_fpath, json.dumps(bounding_box)],
-            stdin=ps.stdout, stdout=open(filtered_geo, 'w'))
-        ps.wait()
-        run(['tippecanoe', '--no-feature-limit', '--no-tile-size-limit', '-P',
-             '-l', 'osm', '-f', '-z', str(zoom), '-Z', str(zoom), '-o',
+        filtered_geo = kwargs.get('geojson') or op.join(dest_folder, '{}.geojson'.format(country))
+        fast_parse = []
+        if not op.exists(filtered_geo):
+            fast_parse = ['-P']
+            print('Retiling QA Tiles to zoom level {} (takes a bit)'.format(zoom))
+            ps = Popen(['tippecanoe-decode', '-c', '-f', mbtiles_file], stdout=PIPE)
+            stream_filter_fpath = op.join(op.dirname(label_maker.__file__), 'stream_filter.py')
+            run(['python', stream_filter_fpath, json.dumps(bounding_box)],
+                stdin=ps.stdout, stdout=open(filtered_geo, 'w'))
+            ps.wait()
+        run(['tippecanoe', '--no-feature-limit', '--no-tile-size-limit'] + fast_parse +
+            ['-l', 'osm', '-f', '-z', str(zoom), '-Z', str(zoom), '-o',
              mbtiles_file_zoomed, filtered_geo])
 
     # Call tilereduce
