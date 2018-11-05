@@ -63,5 +63,4 @@ Writing out labels to integration-cl/labels.npz
                 expected_geojson = json.load(fixture)
                 geojson = json.load(geojson_file)
 
-                for feature in geojson['features']:
-                    self.assertTrue(feature in expected_geojson['features'])
+                self.assertCountEqual(expected_geojson, geojson)

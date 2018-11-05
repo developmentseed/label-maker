@@ -58,5 +58,4 @@ class TestOutsideDirectory(unittest.TestCase):
                 expected_geojson = json.load(fixture)
                 geojson = json.load(geojson_file)
 
-                for feature in geojson['features']:
-                    self.assertTrue(feature in expected_geojson['features'])
+                self.assertCountEqual(expected_geojson, geojson)
