@@ -7,6 +7,7 @@ import json
 from os import makedirs, path as op
 
 from cerberus import Validator
+from shapely.geometry import MultiPolygon, Polygon
 
 from label_maker.version import __version__
 from label_maker.download import download_mbtiles
@@ -17,6 +18,11 @@ from label_maker.package import package_directory
 from label_maker.validate import schema
 
 logger = logging.getLogger(__name__)
+
+def get_bounds(feature_collection):
+    """Get a bounding box for a FeatureCollection of Polygon Features"""
+    features = [f for f in feature_collection['features'] if f['geometry']['type'] in ['Polygon']]
+    return MultiPolygon(list(map(lambda x: Polygon(x['geometry']['coordinates'][0]), features))).bounds
 
 
 def parse_args(args):
@@ -76,6 +82,16 @@ def cli():
     valid = v.validate(config)
     if not valid:
         raise Exception(v.errors)
+
+    # custom validation for top level keys
+    # require either: country & bounding_box or geojson
+    if 'geojson' not in config.keys() and not ('country' in config.keys() and 'bounding_box' in config.keys()):
+        raise Exception('either "geojson" or "country" and "bounding_box" must be present in the configuration JSON')
+
+    # for geojson, overwrite other config keys to correct labeling
+    if 'geojson' in config.keys():
+        config['country'] = op.splitext(op.basename(config.get('geojson')))[0]
+        config['bounding_box'] = get_bounds(json.load(open(config.get('geojson'), 'r')))
 
     if cmd == 'download':
         download_mbtiles(dest_folder=dest_folder, **config)

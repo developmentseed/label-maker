@@ -15,6 +15,11 @@ jobs:
             sudo pip install numpy==1.13.3
             sudo pip install -r requirements.txt
             sudo pip install -r requirements-dev.txt
+            git clone git@github.com:mapbox/tippecanoe.git
+            cd tippecanoe
+            sudo make -j
+            sudo make install
+
       - run:
           name: Pylint
           command: pylint ~/label-maker/label_maker --rcfile=~/label-maker/.config/pylintrc

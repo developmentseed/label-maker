@@ -1,0 +1,10 @@
+{
+  "geojson": "test.geojson",
+  "zoom": 16,
+  "classes": [
+    { "name": "Substation", "filter": ["==", "power", "substation"] }
+  ],
+  "imagery": "http://a.tiles.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}.jpg",
+  "background_ratio": 1,
+  "ml_type": "classification"
+}
