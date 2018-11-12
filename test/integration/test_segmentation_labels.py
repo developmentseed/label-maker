@@ -27,7 +27,7 @@ class TestSegmentationLabel(unittest.TestCase):
         # our labels should look like this
         expected_sums = {
             '62092-50162-17': 0,
-            '62092-50163-17': 0,
+            '62092-50163-17': 2526,
             '62092-50164-17': 13500,
             '62093-50162-17': 36822,
             '62093-50164-17': 2400,
