@@ -1,3 +1,8 @@
+0.5.1 (2018-11-12)
+------------------
+- Skip invalid or empty geometries which prevented segmentation rendering (#118)
+- Add binder example (#119)
+
 0.5.0 (2018-11-05)
 ------------------
 - Accept GeoJSON input labels (#32)
