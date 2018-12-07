@@ -1,6 +1,7 @@
 # pylint: disable=unused-argument,too-many-nested-blocks
 """Create label data from OSM QA tiles for specified classes"""
 
+import sys
 from os import makedirs, path as op
 from subprocess import run, Popen, PIPE
 import json
@@ -76,7 +77,7 @@ def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, spar
             print('Retiling QA Tiles to zoom level {} (takes a bit)'.format(zoom))
             ps = Popen(['tippecanoe-decode', '-c', '-f', mbtiles_file], stdout=PIPE)
             stream_filter_fpath = op.join(op.dirname(label_maker.__file__), 'stream_filter.py')
-            run(['python', stream_filter_fpath, json.dumps(bounding_box)],
+            run([sys.executable, stream_filter_fpath, json.dumps(bounding_box)],
                 stdin=ps.stdout, stdout=open(filtered_geo, 'w'))
             ps.wait()
         run(['tippecanoe', '--no-feature-limit', '--no-tile-size-limit'] + fast_parse +
