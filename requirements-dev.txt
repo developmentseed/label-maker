@@ -1,6 +1,5 @@
-astroid>=1.6.0
 isort>=4.2.15
-pylint==1.8.1
+pylint==1.9.1
 Sphinx==1.8.0
 sphinx-autobuild==0.7.1
 sphinxcontrib-fulltoc==1.2.0
