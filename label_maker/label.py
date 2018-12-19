@@ -129,8 +129,10 @@ def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, spar
         features = []
         for tile, label in tile_results.items():
             feat = feature(Tile(*[int(t) for t in tile.split('-')]))
+            label_count = np.count_nonzero(label) if np.sum(label) else 0
             features.append(Feature(geometry=feat['geometry'],
-                                    properties=dict(label=label.tolist())))
+                                    properties=dict(label=label.tolist(),
+                                                   label_count=label_count.tolist())))
         json.dump(fc(features), open(op.join(dest_folder, 'classification.geojson'), 'w'))
     elif ml_type == 'object-detection':
         label_folder = op.join(dest_folder, 'labels')
