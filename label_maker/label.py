@@ -1,7 +1,6 @@
 # pylint: disable=unused-argument,too-many-nested-blocks
 """Create label data from OSM QA tiles for specified classes"""
 
-import sys
 from os import makedirs, path as op
 from subprocess import run, Popen, PIPE
 import json
@@ -77,7 +76,7 @@ def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, spar
             print('Retiling QA Tiles to zoom level {} (takes a bit)'.format(zoom))
             ps = Popen(['tippecanoe-decode', '-c', '-f', mbtiles_file], stdout=PIPE)
             stream_filter_fpath = op.join(op.dirname(label_maker.__file__), 'stream_filter.py')
-            run([sys.executable, stream_filter_fpath, json.dumps(bounding_box)],
+            run(['python', stream_filter_fpath, json.dumps(bounding_box)],
                 stdin=ps.stdout, stdout=open(filtered_geo, 'w'))
             ps.wait()
         run(['tippecanoe', '--no-feature-limit', '--no-tile-size-limit'] + fast_parse +
@@ -128,11 +127,14 @@ def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, spar
     if ml_type == 'classification':
         features = []
         for tile, label in tile_results.items():
+            label_bool = [int(bool(l)) for l in label]
+            # if there are no classes, activate the background
+            if all(v == 0 for v in label_bool):
+                label_bool[0] = 1
             feat = feature(Tile(*[int(t) for t in tile.split('-')]))
-            label_count = np.count_nonzero(label) if np.sum(label) else 0
             features.append(Feature(geometry=feat['geometry'],
-                                    properties=dict(label=label.tolist(),
-                                                   label_count=label_count.tolist())))
+                                    properties=dict(label=label_bool,
+                                                    label_area=label.tolist())))
         json.dump(fc(features), open(op.join(dest_folder, 'classification.geojson'), 'w'))
     elif ml_type == 'object-detection':
         label_folder = op.join(dest_folder, 'labels')
@@ -160,7 +162,7 @@ def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, spar
                 img = Image.fromarray(visible_label.astype(np.uint8))
                 print('Writing {}'.format(label_file))
                 img.save(op.join(label_folder, label_file))
-
+        json.dump(fc(features), open(op.join(dest_folder, 'segmentation.geojson'), 'w'))
 
 def _mapper(x, y, z, data, args):
     """Iterate over OSM QA Tiles and return a label for each tile
@@ -199,14 +201,15 @@ def _mapper(x, y, z, data, args):
 
     if tile['osm']['features']:
         if ml_type == 'classification':
-            class_counts = np.zeros(len(classes) + 1, dtype=np.int)
-            for i, cl in enumerate(classes):
-                ff = create_filter(cl.get('filter'))
-                class_counts[i + 1] = int(bool([f for f in tile['osm']['features'] if ff(f)]))
-            # if there are no classes, activate the background
-            if np.sum(class_counts) == 0:
-                class_counts[0] = 1
-            return ('{!s}-{!s}-{!s}'.format(x, y, z), class_counts)
+            class_areas = np.zeros(len(classes) + 1)
+            for feat in tile['osm']['features']:
+                for i, cl in enumerate(classes):
+                    ff = create_filter(cl.get('filter'))
+                    if ff(feat):
+                        feat['geometry']['coordinates'] = _convert_coordinates(feat['geometry']['coordinates'])
+                        geo = shape(feat['geometry'])
+                        class_areas[i + 1] = geo.area
+            return ('{!s}-{!s}-{!s}'.format(x, y, z), class_areas)
         elif ml_type == 'object-detection':
             bboxes = _create_empty_label(ml_type, classes)
             for feat in tile['osm']['features']:
@@ -307,7 +310,7 @@ def _tile_results_summary(ml_type, classes):
             cl_tiles = len([l for l in labels if len(list(filter(_bbox_class(i + 1), l)))]) # pylint: disable=cell-var-from-loop
             print('{}: {} features in {} tiles'.format(cl.get('name'), cl_features, cl_tiles))
     elif ml_type == 'classification':
-        class_tile_counts = list(np.sum(labels, axis=0))
+        class_tile_counts = list(np.count_nonzero(labels, axis=0))
         for i, cl in enumerate(classes):
             print('{}: {} tiles'.format(cl.get('name'), int(class_tile_counts[i + 1])))
     elif ml_type == 'segmentation':
@@ -320,7 +323,6 @@ def _tile_results_summary(ml_type, classes):
 def _create_empty_label(ml_type, classes):
     if ml_type == 'classification':
         label = np.zeros(len(classes) + 1, dtype=np.int)
-        label[0] = 1
         return label
     elif ml_type == 'object-detection':
         return np.empty((0, 5), dtype=np.int)
