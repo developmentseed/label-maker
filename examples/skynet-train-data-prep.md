@@ -9,7 +9,7 @@
 `skynet-train` requires a few separate files specific to [`caffe`](https://github.com/BVLC/caffe). To create these files, we've created a [utility script](utils/skynet.py) to help connect `label-maker` with [`skynet-train`](https://github.com/developmentseed/skynet-train/). First, prepare segmentation labels and images with `label-maker` by running `download`, `labels`, and `images` from the command line, following instructions from the [other examples](README.md) or the [README](../README.md). Then, in your data folder (the script uses relative paths), run:
 
 ```bash
-python utils/segnet.py
+python utils/skynet.py
 ```
 
 This should create the files (`train.txt`, `val.txt`, and `label-stats.csv`) which are needed for running `skynet-train`
