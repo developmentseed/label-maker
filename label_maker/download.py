@@ -16,18 +16,20 @@ def download_mbtiles(dest_folder, country, **kwargs):
     ------------
     dest_folder: str
         Folder to save download into
-    country: str
-        Country for which to download the OSM QA tiles
+    countries: str
+        Countries for which to download the OSM QA tiles
     **kwargs: dict
         Other properties from CLI config passed as keywords to other utility functions
     """
-    download_file = path.join(dest_folder, '{}.mbtiles'.format(country))
-    print('Saving QA tiles to {}'.format(download_file))
-    url = 'https://s3.amazonaws.com/mapbox/osm-qa-tiles-production/latest.country/{}.mbtiles.gz'.format(country)
-    gz = tempfile.TemporaryDirectory()
-    tmp_path = path.join(gz.name, '{}.mbtiles.gz'.format(country))
-    download(url=url, path=tmp_path)
-    with gzip.open(tmp_path, 'rb') as r:
-        with open(download_file, 'wb') as w:
-            for line in r:
-                w.write(line)
+    countries = list(country)
+    for country in countries:
+        download_file = path.join(dest_folder, '{}.mbtiles'.format(country))
+        print('Saving QA tiles to {}'.format(download_file))
+        url = 'https://s3.amazonaws.com/mapbox/osm-qa-tiles-production/latest.country/{}.mbtiles.gz'.format(country)
+        gz = tempfile.TemporaryDirectory()
+        tmp_path = path.join(gz.name, '{}.mbtiles.gz'.format(country))
+        download(url=url, path=tmp_path)
+        with gzip.open(tmp_path, 'rb') as r:
+            with open(download_file, 'wb') as w:
+                for line in r:
+                    w.write(line)
