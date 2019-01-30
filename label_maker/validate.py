@@ -21,8 +21,9 @@ lat_schema = {'type': 'float', 'min': -90, 'max': 90}
 lon_schema = {'type': 'float', 'min': -180, 'max': 180}
 
 schema = {
+    'aoi_name': {'type':'string'},
     'geojson': {'type': 'string'},
-    'country': {'type': 'string', 'allowed': countries},
+    'country': {'type': 'list', 'allowed': countries},
     'bounding_box': {'type': 'list', 'items': [lon_schema, lat_schema, lon_schema, lat_schema]},
     'zoom': {'type': 'integer', 'required': True},
     'classes': {'type': 'list', 'schema': class_schema, 'required': True},
