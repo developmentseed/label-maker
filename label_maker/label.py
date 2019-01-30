@@ -163,13 +163,16 @@ def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, spar
                                                     label=label_bool,
                                                     label_area=label.tolist())))
 
-        json.dump(fc(features), open(op.join(dest_folder, f'classification_{f}.geojson'), 'w'))
+        json.dump(fc(features), open(op.join(dest_folder, f'classification_{f}_{zoom}.geojson'), 'w'))
         print("Injecting morton tile grid geojson into postgres DB...")
         cursor.execute("CREATE SCHEMA IF NOT EXISTS {0};".format(project_name))
-        p1 = subprocess.Popen('ogr2ogr -f PostgreSQL PG:"host=pg2dcm.maps-visualization-prod.amiefarm.com dbname=postgres user=dba_admin password=vis_admin" {0} -nln morton_tile_grid -lco SCHEMA={1}'.format(op.join(dest_folder, f'classification_{f}.geojson'),project_name),shell=True)
+        p1 = subprocess.Popen('ogr2ogr -f PostgreSQL PG:"host=pg2dcm.maps-visualization-prod.amiefarm.com \
+                              dbname=postgres user=dba_admin password=vis_admin" {0} -nln morton_tile_grid \
+                              -lco SCHEMA={1}'.format(op.join(dest_folder, f'classification_{f}_{zoom}.geojson'),project_name),
+                              shell=True)
         p1.wait()
         cursor.execute("""SET SEARCH_PATH TO {0},public;
-                       ALTER TABLE morton_tile_grid RENAME COLUMN wkb_geometry TO geom;""".format(project_name))
+                       ALTER TABLE morton_tile_grid_{1} RENAME COLUMN wkb_geometry TO geom;""".format(project_name,zoom))
         print("Injection DONE!")
     elif ml_type == 'object-detection':
         label_folder = op.join(dest_folder, 'labels')
