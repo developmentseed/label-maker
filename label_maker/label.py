@@ -167,8 +167,8 @@ def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, spar
         print("Injecting morton tile grid geojson into postgres DB...")
         cursor.execute("CREATE SCHEMA IF NOT EXISTS {0};".format(project_name))
         p1 = subprocess.Popen('ogr2ogr -f PostgreSQL PG:"host=pg2dcm.maps-visualization-prod.amiefarm.com \
-                              dbname=postgres user=dba_admin password=vis_admin" {0} -nln morton_tile_grid \
-                              -lco SCHEMA={1}'.format(op.join(dest_folder, f'classification_{f}_{zoom}.geojson'),project_name),
+                              dbname=postgres user=dba_admin password=vis_admin" {0} -nln morton_tile_grid_{2} \
+                              -lco SCHEMA={1}'.format(op.join(dest_folder, f'classification_{f}_{zoom}.geojson'),project_name,zoom),
                               shell=True)
         p1.wait()
         cursor.execute("""SET SEARCH_PATH TO {0},public;
