@@ -6,6 +6,8 @@ from os import makedirs, path as op
 from subprocess import run, Popen, PIPE
 import json
 from functools import partial
+import datetime
+import subprocess
 
 import numpy as np
 import mapbox_vector_tile
@@ -22,6 +24,29 @@ import label_maker
 from label_maker.utils import class_match
 from label_maker.filter import create_filter
 from label_maker.palette import class_color
+import psycopg2 as ps
+import time
+
+# Database credentials
+database = 'postgres'
+user = 'dba_admin'
+host = 'pg2dcm.maps-visualization-prod.amiefarm.com'
+password = 'vis_admin'
+
+try:
+    # Connect to Database.
+    conn = ps.connect("dbname = %s user = %s host = %s password = %s" % (database, user, host, password))
+    cursor = conn.cursor()
+    conn.rollback()
+    conn.autocommit = True
+except (Exception, ps.Error) as error:
+    print("Error", error)
+
+with open('config.json') as json_data_file:
+    data = json.load(json_data_file)
+    f=data['aoi_name']
+    #time_now = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    project_name = f'capturing_plan_{f}'
 
 # declare a global accumulator so the workers will have access
 tile_results = dict()
@@ -66,11 +91,11 @@ def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, spar
         Other properties from CLI config passed as keywords to other utility functions
     """
 
-    mbtiles_file = op.join(dest_folder, '{}.mbtiles'.format(country))
-    mbtiles_file_zoomed = op.join(dest_folder, '{}-z{!s}.mbtiles'.format(country, zoom))
+    mbtiles_file = op.join(dest_folder, '{}.mbtiles'.format(country[0]))
+    mbtiles_file_zoomed = op.join(dest_folder, '{}-z{!s}.mbtiles'.format(country[0], zoom))
 
     if not op.exists(mbtiles_file_zoomed):
-        filtered_geo = kwargs.get('geojson') or op.join(dest_folder, '{}.geojson'.format(country))
+        filtered_geo = kwargs.get('geojson') or op.join(dest_folder, '{}.geojson'.format(country[0]))
         fast_parse = []
         if not op.exists(filtered_geo):
             fast_parse = ['-P']
@@ -128,10 +153,24 @@ def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, spar
     if ml_type == 'classification':
         features = []
         for tile, label in tile_results.items():
+            label_bool = [int(bool(l)) for l in label]
+            # if there are no classes, activate the background
+            if all(v == 0 for v in label_bool):
+                label_bool[0] = 1
             feat = feature(Tile(*[int(t) for t in tile.split('-')]))
             features.append(Feature(geometry=feat['geometry'],
-                                    properties=dict(label=label.tolist())))
-        json.dump(fc(features), open(op.join(dest_folder, 'classification.geojson'), 'w'))
+                                    properties=dict(feat_id=str(tile),
+                                                    label=label_bool,
+                                                    label_area=label.tolist())))
+
+        json.dump(fc(features), open(op.join(dest_folder, f'classification_{f}.geojson'), 'w'))
+        print("Injecting morton tile grid geojson into postgres DB...")
+        cursor.execute("CREATE SCHEMA IF NOT EXISTS {0};".format(project_name))
+        p1 = subprocess.Popen('ogr2ogr -f PostgreSQL PG:"host=pg2dcm.maps-visualization-prod.amiefarm.com dbname=postgres user=dba_admin password=vis_admin" {0} -nln morton_tile_grid -lco SCHEMA={1}'.format(op.join(dest_folder, "classification.geojson"),project_name),shell=True)
+        p1.wait()
+        cursor.execute("""SET SEARCH_PATH TO {0},public;
+                       ALTER TABLE morton_tile_grid RENAME COLUMN wkb_geometry TO geom;""".format(project_name))
+        print("Injection DONE!")
     elif ml_type == 'object-detection':
         label_folder = op.join(dest_folder, 'labels')
         if not op.isdir(label_folder):
@@ -158,7 +197,6 @@ def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, spar
                 img = Image.fromarray(visible_label.astype(np.uint8))
                 print('Writing {}'.format(label_file))
                 img.save(op.join(label_folder, label_file))
-
 
 def _mapper(x, y, z, data, args):
     """Iterate over OSM QA Tiles and return a label for each tile
@@ -197,14 +235,15 @@ def _mapper(x, y, z, data, args):
 
     if tile['osm']['features']:
         if ml_type == 'classification':
-            class_counts = np.zeros(len(classes) + 1, dtype=np.int)
-            for i, cl in enumerate(classes):
-                ff = create_filter(cl.get('filter'))
-                class_counts[i + 1] = int(bool([f for f in tile['osm']['features'] if ff(f)]))
-            # if there are no classes, activate the background
-            if np.sum(class_counts) == 0:
-                class_counts[0] = 1
-            return ('{!s}-{!s}-{!s}'.format(x, y, z), class_counts)
+            class_areas = np.zeros(len(classes) + 1)
+            for feat in tile['osm']['features']:
+                for i, cl in enumerate(classes):
+                    ff = create_filter(cl.get('filter'))
+                    if ff(feat):
+                        feat['geometry']['coordinates'] = _convert_coordinates(feat['geometry']['coordinates'])
+                        geo = shape(feat['geometry'])
+                        class_areas[i + 1] = geo.area
+            return ('{!s}-{!s}-{!s}'.format(x, y, z), class_areas)
         elif ml_type == 'object-detection':
             bboxes = _create_empty_label(ml_type, classes)
             for feat in tile['osm']['features']:
@@ -305,7 +344,7 @@ def _tile_results_summary(ml_type, classes):
             cl_tiles = len([l for l in labels if len(list(filter(_bbox_class(i + 1), l)))]) # pylint: disable=cell-var-from-loop
             print('{}: {} features in {} tiles'.format(cl.get('name'), cl_features, cl_tiles))
     elif ml_type == 'classification':
-        class_tile_counts = list(np.sum(labels, axis=0))
+        class_tile_counts = list(np.count_nonzero(labels, axis=0))
         for i, cl in enumerate(classes):
             print('{}: {} tiles'.format(cl.get('name'), int(class_tile_counts[i + 1])))
     elif ml_type == 'segmentation':
@@ -318,7 +357,6 @@ def _tile_results_summary(ml_type, classes):
 def _create_empty_label(ml_type, classes):
     if ml_type == 'classification':
         label = np.zeros(len(classes) + 1, dtype=np.int)
-        label[0] = 1
         return label
     elif ml_type == 'object-detection':
         return np.empty((0, 5), dtype=np.int)
@@ -331,3 +369,4 @@ project = partial(
     pyproj.transform,
     pyproj.Proj(init='epsg:3857'),
     pyproj.Proj(init='epsg:4326'))
+
