@@ -161,7 +161,7 @@ def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, spar
             features.append(Feature(geometry=feat['geometry'],
                                     properties=dict(feat_id=str(tile),
                                                     label=label_bool,
-                                                    label_area=label.tolist())))
+                                                    label_area=(label*10).tolist())))
 
         json.dump(fc(features), open(op.join(dest_folder, f'classification_{f}_{zoom}.geojson'), 'w'))
         print("Injecting morton tile grid geojson into postgres DB...")
