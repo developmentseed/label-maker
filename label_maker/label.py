@@ -27,12 +27,6 @@ from label_maker.palette import class_color
 import psycopg2 as ps
 import time
 
-# Database credentials
-database = 'postgres'
-user = 'dba_admin'
-host = 'pg2dcm.maps-visualization-prod.amiefarm.com'
-password = 'vis_admin'
-
 try:
     # Connect to Database.
     conn = ps.connect("dbname = %s user = %s host = %s password = %s" % (database, user, host, password))
@@ -51,7 +45,7 @@ tile_results = dict()
 # clip all geometries to a tile
 clip_mask = Polygon(((0, 0), (0, 255), (255, 255), (255, 0), (0, 0)))
 
-def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, sparse, **kwargs):
+def make_labels(dest_folder, zoom, country, classes, ml_type, format, bounding_box, sparse, **kwargs):
     """Create label data from OSM QA tiles for specified classes
 
     Perform the following operations:
@@ -114,7 +108,7 @@ def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, spar
                _mapper, _callback, _done)
 
     # Add empty labels to any tiles which didn't have data
-    empty_label = _create_empty_label(ml_type, classes)
+    empty_label = _create_empty_label(ml_type, classes, format)
     for tile in tiles(*bounding_box, [zoom]):
         index = '-'.join([str(i) for i in tile])
         global tile_results
@@ -175,17 +169,27 @@ def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, spar
                 print('Writing {}'.format(label_file))
                 img.save(op.join(label_folder, label_file))
     elif ml_type == 'segmentation':
+        features = []
         label_folder = op.join(dest_folder, 'labels')
         if not op.isdir(label_folder):
             makedirs(label_folder)
-        for tile, label in tile_results.items():
-            # if we have any class pixels
-            if np.sum(label):
-                label_file = '{}.png'.format(tile)
-                visible_label = np.array([class_color(l) for l in np.nditer(label)]).reshape(256, 256, 3)
-                img = Image.fromarray(visible_label.astype(np.uint8))
-                print('Writing {}'.format(label_file))
-                img.save(op.join(label_folder, label_file))
+        if format == 'vector':
+            for tile, label in tile_results.items():
+                # if we have any class pixels
+                if label[1] != 0:
+                    features.append(Feature(geometry=label[0]['geometry'],
+                                    properties=dict(feat_id=str(tile),
+                                                    label=label[1])))
+            json.dump(fc(features), open(op.join(dest_folder, f'segmentation_{zoom}.geojson'), 'w'))
+        else:
+            for tile, label in tile_results.items():
+                # if we have any class pixels
+                if np.sum(label):
+                    label_file = '{}.png'.format(tile)
+                    visible_label = np.array([class_color(l) for l in np.nditer(label)]).reshape(256, 256, 3)
+                    img = Image.fromarray(visible_label.astype(np.uint8))
+                    print('Writing {}'.format(label_file))
+                    img.save(op.join(label_folder, label_file))
 
 def _mapper(x, y, z, data, args):
     """Iterate over OSM QA Tiles and return a label for each tile
@@ -215,9 +219,10 @@ def _mapper(x, y, z, data, args):
     """
     ml_type = args.get('ml_type')
     classes = args.get('classes')
+    format = args.get('format')
 
     if data is None:
-        return ('{!s}-{!s}-{!s}'.format(x, y, z), _create_empty_label(ml_type, classes))
+        return ('{!s}-{!s}-{!s}'.format(x, y, z), _create_empty_label(ml_type, classes, format))
 
     tile = mapbox_vector_tile.decode(data)
     # for each class, determine if any features in the tile match
@@ -234,7 +239,7 @@ def _mapper(x, y, z, data, args):
                         class_areas[i + 1] = geo.area
             return ('{!s}-{!s}-{!s}'.format(x, y, z), class_areas)
         elif ml_type == 'object-detection':
-            bboxes = _create_empty_label(ml_type, classes)
+            bboxes = _create_empty_label(ml_type, classes, format)
             for feat in tile['osm']['features']:
                 for i, cl in enumerate(classes):
                     ff = create_filter(cl.get('filter'))
@@ -262,7 +267,10 @@ def _mapper(x, y, z, data, args):
                             geo = geo.buffer(cl.get('buffer'), 4)
                         if not geo.is_empty:
                             geos.append((mapping(geo), i + 1))
-            result = rasterize(geos, out_shape=(256, 256))
+            if format == 'vector':
+                result = geos
+            else:
+                result = rasterize(geos, out_shape=(256, 256))
             return ('{!s}-{!s}-{!s}'.format(x, y, z), result)
     return ('{!s}-{!s}-{!s}'.format(x, y, z), np.array())
 
@@ -343,14 +351,16 @@ def _tile_results_summary(ml_type, classes):
 
     print('Total tiles: {}'.format(len(all_tiles)))
 
-def _create_empty_label(ml_type, classes):
+def _create_empty_label(ml_type, classes, format):
     if ml_type == 'classification':
-        label = np.zeros(len(classes) + 1, dtype=np.int)
-        return label
+        return np.zeros(len(classes) + 1, dtype=np.int)
     elif ml_type == 'object-detection':
         return np.empty((0, 5), dtype=np.int)
     elif ml_type == 'segmentation':
-        return np.zeros((256, 256), dtype=np.int)
+        if format == 'vector':
+            return (mapping(Polygon()), 0)
+        else:
+            return np.zeros((256, 256), dtype=np.int)
     return None
 
 # Use with 'transform' to project to EPSG:4326
