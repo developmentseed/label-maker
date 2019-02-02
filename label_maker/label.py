@@ -44,9 +44,6 @@ except (Exception, ps.Error) as error:
 
 with open('config.json') as json_data_file:
     data = json.load(json_data_file)
-    f=data['aoi_name']
-    #time_now = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    project_name = f'capturing_plan_{f}'
 
 # declare a global accumulator so the workers will have access
 tile_results = dict()
@@ -161,19 +158,8 @@ def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, spar
             features.append(Feature(geometry=feat['geometry'],
                                     properties=dict(feat_id=str(tile),
                                                     label=label_bool,
-                                                    label_area=(label*10).tolist())))
-
-        json.dump(fc(features), open(op.join(dest_folder, f'classification_{f}_{zoom}.geojson'), 'w'))
-        print("Injecting morton tile grid geojson into postgres DB...")
-        cursor.execute("CREATE SCHEMA IF NOT EXISTS {0};".format(project_name))
-        p1 = subprocess.Popen('ogr2ogr -f PostgreSQL PG:"host=pg2dcm.maps-visualization-prod.amiefarm.com \
-                              dbname=postgres user=dba_admin password=vis_admin" {0} -nln morton_tile_grid_{2} \
-                              -lco SCHEMA={1}'.format(op.join(dest_folder, f'classification_{f}_{zoom}.geojson'),project_name,zoom),
-                              shell=True)
-        p1.wait()
-        cursor.execute("""SET SEARCH_PATH TO {0},public;
-                       ALTER TABLE morton_tile_grid_{1} RENAME COLUMN wkb_geometry TO geom;""".format(project_name,zoom))
-        print("Injection DONE!")
+                                                    label_area=(label).tolist())))
+        json.dump(fc(features), open(op.join(dest_folder, f'classification_{zoom}.geojson'), 'w'))
     elif ml_type == 'object-detection':
         label_folder = op.join(dest_folder, 'labels')
         if not op.isdir(label_folder):
