@@ -12,10 +12,12 @@ import subprocess
 import numpy as np
 import mapbox_vector_tile
 import pyproj
+import pandas as pd
 from shapely.geometry import shape, mapping, Polygon
 from shapely.errors import TopologicalError
 from rasterio.features import rasterize
 from geojson import Feature, FeatureCollection as fc
+from pandas.io.json import json_normalize
 from mercantile import tiles, feature, Tile
 from PIL import Image, ImageDraw
 from tilepie import tilereduce
@@ -27,15 +29,6 @@ from label_maker.palette import class_color
 import psycopg2 as ps
 import time
 
-try:
-    # Connect to Database.
-    conn = ps.connect("dbname = %s user = %s host = %s password = %s" % (database, user, host, password))
-    cursor = conn.cursor()
-    conn.rollback()
-    conn.autocommit = True
-except (Exception, ps.Error) as error:
-    print("Error", error)
-
 with open('config.json') as json_data_file:
     data = json.load(json_data_file)
 
@@ -45,7 +38,7 @@ tile_results = dict()
 # clip all geometries to a tile
 clip_mask = Polygon(((0, 0), (0, 255), (255, 255), (255, 0), (0, 0)))
 
-def make_labels(dest_folder, zoom, country, classes, ml_type, format, bounding_box, sparse, **kwargs):
+def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, sparse, **kwargs):
     """Create label data from OSM QA tiles for specified classes
 
     Perform the following operations:
@@ -82,114 +75,124 @@ def make_labels(dest_folder, zoom, country, classes, ml_type, format, bounding_b
         Other properties from CLI config passed as keywords to other utility functions
     """
 
-    mbtiles_file = op.join(dest_folder, '{}.mbtiles'.format(country[0]))
-    mbtiles_file_zoomed = op.join(dest_folder, '{}-z{!s}.mbtiles'.format(country[0], zoom))
+    for ctr in country:
+        mbtiles_file = op.join(dest_folder, '{}.mbtiles'.format(ctr))
+        mbtiles_file_zoomed = op.join(dest_folder, '{}-z{!s}.mbtiles'.format(ctr, zoom))
 
-    if not op.exists(mbtiles_file_zoomed):
-        filtered_geo = kwargs.get('geojson') or op.join(dest_folder, '{}.geojson'.format(country[0]))
-        fast_parse = []
-        if not op.exists(filtered_geo):
-            fast_parse = ['-P']
-            print('Retiling QA Tiles to zoom level {} (takes a bit)'.format(zoom))
-            ps = Popen(['tippecanoe-decode', '-c', '-f', mbtiles_file], stdout=PIPE)
-            stream_filter_fpath = op.join(op.dirname(label_maker.__file__), 'stream_filter.py')
-            run([sys.executable, stream_filter_fpath, json.dumps(bounding_box)],
-                stdin=ps.stdout, stdout=open(filtered_geo, 'w'))
-            ps.wait()
-        run(['tippecanoe', '--no-feature-limit', '--no-tile-size-limit'] + fast_parse +
-            ['-l', 'osm', '-f', '-z', str(zoom), '-Z', str(zoom), '-o',
-             mbtiles_file_zoomed, filtered_geo])
+        if not op.exists(mbtiles_file_zoomed):
+            filtered_geo = op.join(dest_folder, '{}.geojson'.format(ctr))
+            fast_parse = []
+            if not op.exists(filtered_geo):
+                fast_parse = ['-P']
+                print('Retiling QA Tiles to zoom level {} (takes a bit)'.format(zoom))
+                ps = Popen(['tippecanoe-decode', '-c', '-f', mbtiles_file], stdout=PIPE)
+                stream_filter_fpath = op.join(op.dirname(label_maker.__file__), 'stream_filter.py')
+                run([sys.executable, stream_filter_fpath, json.dumps(bounding_box)],
+                    stdin=ps.stdout, stdout=open(filtered_geo, 'w'))
+                ps.wait()
+            run(['tippecanoe', '--no-feature-limit', '--no-tile-size-limit'] + fast_parse +
+                ['-l', 'osm', '-f', '-z', str(zoom), '-Z', str(zoom), '-o',
+                 mbtiles_file_zoomed, filtered_geo])
 
-    # Call tilereduce
-    print('Determining labels for each tile')
-    mbtiles_to_reduce = mbtiles_file_zoomed
-    tilereduce(dict(zoom=zoom, source=mbtiles_to_reduce, bbox=bounding_box,
-                    args=dict(ml_type=ml_type, classes=classes)),
-               _mapper, _callback, _done)
+        # Call tilereduce
+        print('Determining labels for each tile')
+        mbtiles_to_reduce = mbtiles_file_zoomed
+        tilereduce(dict(zoom=zoom, source=mbtiles_to_reduce, bbox=bounding_box,
+                        args=dict(ml_type=ml_type, classes=classes)),
+                   _mapper, _callback, _done)
 
-    # Add empty labels to any tiles which didn't have data
-    empty_label = _create_empty_label(ml_type, classes, format)
-    for tile in tiles(*bounding_box, [zoom]):
-        index = '-'.join([str(i) for i in tile])
-        global tile_results
-        if tile_results.get(index) is None:
-            tile_results[index] = empty_label
+        # Add empty labels to any tiles which didn't have data
+        empty_label = _create_empty_label(ml_type, classes, format)
+        for tile in tiles(*bounding_box, [zoom]):
+            index = '-'.join([str(i) for i in tile])
+            global tile_results
+            if tile_results.get(index) is None:
+                tile_results[index] = empty_label
 
-    # Print a summary of the labels
-    _tile_results_summary(ml_type, classes)
+        # Print a summary of the labels
+        _tile_results_summary(ml_type, classes)
 
-    # If the --sparse flag is provided, limit the total background tiles to write
-    if sparse:
-        pos_examples, neg_examples = [], []
-        for k in tile_results.keys():
-            # if we don't match any class, this is a negative example
-            if not sum([class_match(ml_type, tile_results[k], i + 1) for i, c in enumerate(classes)]):
-                neg_examples.append(k)
-            else:
-                pos_examples.append(k)
+        # If the --sparse flag is provided, limit the total background tiles to write
+        if sparse:
+            pos_examples, neg_examples = [], []
+            for k in tile_results.keys():
+                # if we don't match any class, this is a negative example
+                if not sum([class_match(ml_type, tile_results[k], i + 1) for i, c in enumerate(classes)]):
+                    neg_examples.append(k)
+                else:
+                    pos_examples.append(k)
 
-        # Choose random subset of negative examples
-        n_neg_ex = int(kwargs['background_ratio'] * len(pos_examples))
-        neg_examples = np.random.choice(neg_examples, n_neg_ex, replace=False).tolist()
+            # Choose random subset of negative examples
+            n_neg_ex = int(kwargs['background_ratio'] * len(pos_examples))
+            neg_examples = np.random.choice(neg_examples, n_neg_ex, replace=False).tolist()
 
-        tile_results = {k: tile_results.get(k) for k in pos_examples + neg_examples}
-        print('Using sparse mode; subselected {} background tiles'.format(n_neg_ex))
+            tile_results = {k: tile_results.get(k) for k in pos_examples + neg_examples}
+            print('Using sparse mode; subselected {} background tiles'.format(n_neg_ex))
 
-    # write out labels as numpy arrays
-    labels_file = op.join(dest_folder, 'labels.npz')
-    print('Writing out labels to {}'.format(labels_file))
-    np.savez(labels_file, **tile_results)
+        # write out labels as numpy arrays
+        # labels_file = op.join(dest_folder, 'labels.npz')
+        # print('Writing out labels to {}'.format(labels_file))
+        #np.savez(labels_file, **tile_results)
 
-    # write out labels as GeoJSON or PNG
-    if ml_type == 'classification':
-        features = []
-        for tile, label in tile_results.items():
-            label_bool = [int(bool(l)) for l in label]
-            # if there are no classes, activate the background
-            if all(v == 0 for v in label_bool):
-                label_bool[0] = 1
-            feat = feature(Tile(*[int(t) for t in tile.split('-')]))
-            features.append(Feature(geometry=feat['geometry'],
-                                    properties=dict(feat_id=str(tile),
-                                                    label=label_bool,
-                                                    label_area=(label).tolist())))
-        json.dump(fc(features), open(op.join(dest_folder, f'classification_{zoom}.geojson'), 'w'))
-    elif ml_type == 'object-detection':
-        label_folder = op.join(dest_folder, 'labels')
-        if not op.isdir(label_folder):
-            makedirs(label_folder)
-        for tile, label in tile_results.items():
-            # if we have at least one bounding box label
-            if bool(label.shape[0]):
-                label_file = '{}.png'.format(tile)
-                img = Image.new('RGB', (256, 256))
-                draw = ImageDraw.Draw(img)
-                for box in label:
-                    draw.rectangle(((box[0], box[1]), (box[2], box[3])), outline=class_color(box[4]))
-                print('Writing {}'.format(label_file))
-                img.save(op.join(label_folder, label_file))
-    elif ml_type == 'segmentation':
-        features = []
-        label_folder = op.join(dest_folder, 'labels')
-        if not op.isdir(label_folder):
-            makedirs(label_folder)
-        if format == 'vector':
+        # write out labels as GeoJSON or PNG
+        if ml_type == 'classification':
+            features = []
+            label_area = []
+            label_bool = []
+            i = 0
             for tile, label in tile_results.items():
-                # if we have any class pixels
-                if label[1] != 0:
-                    features.append(Feature(geometry=label[0]['geometry'],
-                                    properties=dict(feat_id=str(tile),
-                                                    label=label[1])))
-            json.dump(fc(features), open(op.join(dest_folder, f'segmentation_{zoom}.geojson'), 'w'))
-        else:
+                label_bool.append([int(bool(l)) for l in label])
+                label_area.append([float(l) for l in label])
+                if 'label_bool2' in locals() and 'label_area2' in locals():
+                    label_bool[i] = [int(bool(label_bool[i] + label_bool2[i])) for label_bool[i], label_bool2[i] in zip(label_bool[i], label_bool2[i])]
+                    label_area[i] = [label_area[i] + label_area2[i] for label_area[i], label_area2[i] in zip(label_area[i], label_area2[i])]
+                # if there are no classes, activate the background
+                if ctr == country[-1]:
+                    if all(v == 0 for v in label_bool[i]):
+                        label_bool[i][0] = 1
+                    feat = feature(Tile(*[int(t) for t in tile.split('-')]))
+                    features.append(Feature(geometry=feat['geometry'],
+                                            properties=dict(feat_id=str(tile),
+                                                            label=label_bool[i],
+                                                            label_area=label_area[i])))
+                i += 1
+            label_bool2 = label_bool
+            label_area2 = label_area
+            if ctr == country[-1]:
+                json.dump(fc(features), open(op.join(dest_folder, f'classification_{zoom}.geojson'), 'w'))
+        elif ml_type == 'object-detection':
+            label_folder = op.join(dest_folder, 'labels')
+            if not op.isdir(label_folder):
+                makedirs(label_folder)
             for tile, label in tile_results.items():
-                # if we have any class pixels
-                if np.sum(label):
+                # if we have at least one bounding box label
+                if bool(label.shape[0]):
                     label_file = '{}.png'.format(tile)
-                    visible_label = np.array([class_color(l) for l in np.nditer(label)]).reshape(256, 256, 3)
-                    img = Image.fromarray(visible_label.astype(np.uint8))
+                    img = Image.new('RGB', (256, 256))
+                    draw = ImageDraw.Draw(img)
+                    for box in label:
+                        draw.rectangle(((box[0], box[1]), (box[2], box[3])), outline=class_color(box[4]))
                     print('Writing {}'.format(label_file))
-                    img.save(op.join(label_folder, label_file))
+                    if op.isfile(op.join(label_folder, label_file)):
+                        img.paste(op.join(label_folder, label_file))
+                    else:
+                        img.save(op.join(label_folder, label_file))
+        elif ml_type == 'segmentation':
+            features = []
+            label_folder = op.join(dest_folder, 'labels')
+            if not op.isdir(label_folder):
+                makedirs(label_folder)
+                for tile, label in tile_results.items():
+                    # if we have any class pixels
+                    if np.sum(label):
+                        label_file = '{}.png'.format(tile)
+                        visible_label = np.array([class_color(l) for l in np.nditer(label)]).reshape(256, 256, 3)
+                        img = Image.fromarray(visible_label.astype(np.uint8))
+                        print('Writing {}'.format(label_file))
+                        if op.isfile(op.join(label_folder, label_file)):
+                            img.paste(op.join(label_folder, label_file))
+                        else:
+                            img.save(op.join(label_folder, label_file))
 
 def _mapper(x, y, z, data, args):
     """Iterate over OSM QA Tiles and return a label for each tile
@@ -267,10 +270,7 @@ def _mapper(x, y, z, data, args):
                             geo = geo.buffer(cl.get('buffer'), 4)
                         if not geo.is_empty:
                             geos.append((mapping(geo), i + 1))
-            if format == 'vector':
-                result = geos
-            else:
-                result = rasterize(geos, out_shape=(256, 256))
+            result = rasterize(geos, out_shape=(256, 256))
             return ('{!s}-{!s}-{!s}'.format(x, y, z), result)
     return ('{!s}-{!s}-{!s}'.format(x, y, z), np.array())
 
@@ -357,10 +357,7 @@ def _create_empty_label(ml_type, classes, format):
     elif ml_type == 'object-detection':
         return np.empty((0, 5), dtype=np.int)
     elif ml_type == 'segmentation':
-        if format == 'vector':
-            return (mapping(Polygon()), 0)
-        else:
-            return np.zeros((256, 256), dtype=np.int)
+        return np.zeros((256, 256), dtype=np.int)
     return None
 
 # Use with 'transform' to project to EPSG:4326
@@ -368,4 +365,3 @@ project = partial(
     pyproj.transform,
     pyproj.Proj(init='epsg:3857'),
     pyproj.Proj(init='epsg:4326'))
-

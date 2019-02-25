@@ -21,13 +21,12 @@ def download_mbtiles(dest_folder, country, **kwargs):
     **kwargs: dict
         Other properties from CLI config passed as keywords to other utility functions
     """
-    countries = list(country)
-    for country in countries:
-        download_file = path.join(dest_folder, '{}.mbtiles'.format(country))
+    for ctr in country:
+        download_file = path.join(dest_folder, '{}.mbtiles'.format(ctr))
         print('Saving QA tiles to {}'.format(download_file))
-        url = 'https://s3.amazonaws.com/mapbox/osm-qa-tiles-production/latest.country/{}.mbtiles.gz'.format(country)
+        url = 'https://s3.amazonaws.com/mapbox/osm-qa-tiles-production/latest.country/{}.mbtiles.gz'.format(ctr)
         gz = tempfile.TemporaryDirectory()
-        tmp_path = path.join(gz.name, '{}.mbtiles.gz'.format(country))
+        tmp_path = path.join(gz.name, '{}.mbtiles.gz'.format(ctr))
         download(url=url, path=tmp_path)
         with gzip.open(tmp_path, 'rb') as r:
             with open(download_file, 'wb') as w:

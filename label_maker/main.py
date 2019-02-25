@@ -85,12 +85,11 @@ def cli():
 
     # custom validation for top level keys
     # require either: country & bounding_box or geojson
-    if 'geojson' not in config.keys() and not ('country' in config.keys() and 'bounding_box' in config.keys()):
-        raise Exception('either "geojson" or "country" and "bounding_box" must be present in the configuration JSON')
+    if not ('country' in config.keys() and 'geojson' in config.keys()) and not ('country' in config.keys() and 'bounding_box' in config.keys()):
+        raise Exception('either "country" and "geojson" or "country" and "bounding_box" must be present in the configuration JSON')
 
     # for geojson, overwrite other config keys to correct labeling
     if 'geojson' in config.keys():
-        config['country'] = op.splitext(op.basename(config.get('geojson')))[0]
         config['bounding_box'] = get_bounds(json.load(open(config.get('geojson'), 'r')))
 
     if cmd == 'download':
