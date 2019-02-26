@@ -29,9 +29,6 @@ from label_maker.palette import class_color
 import psycopg2 as ps
 import time
 
-with open('config.json') as json_data_file:
-    data = json.load(json_data_file)
-
 # declare a global accumulator so the workers will have access
 tile_results = dict()
 
