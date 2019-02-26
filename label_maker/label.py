@@ -127,9 +127,9 @@ def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, spar
             print('Using sparse mode; subselected {} background tiles'.format(n_neg_ex))
 
         # write out labels as numpy arrays
-        # labels_file = op.join(dest_folder, 'labels.npz')
+        labels_file = op.join(dest_folder, 'labels.npz')
         # print('Writing out labels to {}'.format(labels_file))
-        #np.savez(labels_file, **tile_results)
+        np.savez(labels_file, **tile_results)
 
         # write out labels as GeoJSON or PNG
         if ml_type == 'classification':
