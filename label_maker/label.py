@@ -99,7 +99,7 @@ def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, spar
                    _mapper, _callback, _done)
 
         # Add empty labels to any tiles which didn't have data
-        empty_label = _create_empty_label(ml_type, classes, format)
+        empty_label = _create_empty_label(ml_type, classes)
         for tile in tiles(*bounding_box, [zoom]):
             index = '-'.join([str(i) for i in tile])
             global tile_results
@@ -219,10 +219,9 @@ def _mapper(x, y, z, data, args):
     """
     ml_type = args.get('ml_type')
     classes = args.get('classes')
-    format = args.get('format')
 
     if data is None:
-        return ('{!s}-{!s}-{!s}'.format(x, y, z), _create_empty_label(ml_type, classes, format))
+        return ('{!s}-{!s}-{!s}'.format(x, y, z), _create_empty_label(ml_type, classes))
 
     tile = mapbox_vector_tile.decode(data)
     # for each class, determine if any features in the tile match
@@ -239,7 +238,7 @@ def _mapper(x, y, z, data, args):
                         class_areas[i + 1] = geo.area
             return ('{!s}-{!s}-{!s}'.format(x, y, z), class_areas)
         elif ml_type == 'object-detection':
-            bboxes = _create_empty_label(ml_type, classes, format)
+            bboxes = _create_empty_label(ml_type, classes)
             for feat in tile['osm']['features']:
                 for i, cl in enumerate(classes):
                     ff = create_filter(cl.get('filter'))
