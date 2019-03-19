@@ -16,7 +16,7 @@ def download_mbtiles(dest_folder, country, **kwargs):
     ------------
     dest_folder: str
         Folder to save download into
-    countries: str
+    country: list[str]
         Countries for which to download the OSM QA tiles
     **kwargs: dict
         Other properties from CLI config passed as keywords to other utility functions
