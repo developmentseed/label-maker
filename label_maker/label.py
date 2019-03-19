@@ -6,17 +6,14 @@ from os import makedirs, path as op
 from subprocess import run, Popen, PIPE
 import json
 from functools import partial
-import datetime
 
 import numpy as np
 import mapbox_vector_tile
 import pyproj
-import pandas as pd
 from shapely.geometry import shape, mapping, Polygon
 from shapely.errors import TopologicalError
 from rasterio.features import rasterize
 from geojson import Feature, FeatureCollection as fc
-from pandas.io.json import json_normalize
 from mercantile import tiles, feature, Tile
 from PIL import Image, ImageDraw
 from tilepie import tilereduce
@@ -74,7 +71,7 @@ def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, spar
         mbtiles_file_zoomed = op.join(dest_folder, '{}-z{!s}.mbtiles'.format(ctr, zoom))
 
         if not op.exists(mbtiles_file_zoomed):
-            filtered_geo = op.join(dest_folder, '{}.geojson'.format(ctr))
+            filtered_geo = kwargs.get('geojson') or op.join(dest_folder, '{}.geojson'.format(ctr))
             fast_parse = []
             if not op.exists(filtered_geo):
                 fast_parse = ['-P']
@@ -344,7 +341,7 @@ def _tile_results_summary(ml_type, classes):
 
     print('Total tiles: {}'.format(len(all_tiles)))
 
-def _create_empty_label(ml_type, classes, format):
+def _create_empty_label(ml_type, classes):
     if ml_type == 'classification':
         return np.zeros(len(classes) + 1, dtype=np.int)
     elif ml_type == 'object-detection':
