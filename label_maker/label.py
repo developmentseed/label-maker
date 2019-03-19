@@ -7,7 +7,6 @@ from subprocess import run, Popen, PIPE
 import json
 from functools import partial
 import datetime
-import subprocess
 
 import numpy as np
 import mapbox_vector_tile
