@@ -66,7 +66,7 @@ def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, spar
         Other properties from CLI config passed as keywords to other utility functions
     """
 
-    for ctr in country:
+    for ctr_idx, ctr in enumerate(country):
         mbtiles_file = op.join(dest_folder, '{}.mbtiles'.format(ctr))
         mbtiles_file_zoomed = op.join(dest_folder, '{}-z{!s}.mbtiles'.format(ctr, zoom))
 
@@ -129,9 +129,9 @@ def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, spar
         if ml_type == 'classification':
             features = []
             if ctr_idx == 0:
-                label_area = np.zeros((len(kwargs['classes'])+1,len(tile_results),len(country)),dtype=float)
-                label_bool = np.zeros((len(kwargs['classes'])+1,len(tile_results),len(country)),dtype=bool)
-            for i, tile, label in enumerate(tile_results.items()):
+                label_area = np.zeros((len(list(tile_results.values())[0]),len(tile_results),len(country)),dtype=float)
+                label_bool = np.zeros((len(list(tile_results.values())[0]),len(tile_results),len(country)),dtype=bool)
+            for i, (tile, label) in enumerate(tile_results.items()):
                 label_bool[:,i,ctr_idx] = np.asarray([bool(l) for l in label])
                 label_area[:,i,ctr_idx] = np.asarray([float(l) for l in label])
                 # if there are no classes, activate the background
@@ -142,7 +142,7 @@ def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, spar
                     features.append(Feature(geometry=feat['geometry'],
                                             properties=dict(feat_id=str(tile),
                                                             label=np.any(label_bool[:,i,:],axis=1).astype(int).tolist(),
-                                                            label_area=np.sum(label_area[:,i,:],axis=1).tolist()))
+                                                            label_area=np.sum(label_area[:,i,:],axis=1).tolist())))
             if ctr == country[-1]:
                 json.dump(fc(features), open(op.join(dest_folder, f'classification_{zoom}.geojson'), 'w'))
         elif ml_type == 'object-detection':
