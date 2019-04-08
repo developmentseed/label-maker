@@ -128,27 +128,21 @@ def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, spar
         # write out labels as GeoJSON or PNG
         if ml_type == 'classification':
             features = []
-            label_area = []
-            label_bool = []
-            i = 0
-            for tile, label in tile_results.items():
-                label_bool.append([int(bool(l)) for l in label])
-                label_area.append([float(l) for l in label])
-                if 'label_bool2' in locals() and 'label_area2' in locals():
-                    label_bool[i] = [int(bool(label_bool[i] + label_bool2[i])) for label_bool[i], label_bool2[i] in zip(label_bool[i], label_bool2[i])]
-                    label_area[i] = [label_area[i] + label_area2[i] for label_area[i], label_area2[i] in zip(label_area[i], label_area2[i])]
+            if ctr_idx == 0:
+                label_area = np.zeros((len(kwargs['classes'])+1,len(tile_results),len(country)),dtype=float)
+                label_bool = np.zeros((len(kwargs['classes'])+1,len(tile_results),len(country)),dtype=bool)
+            for i, tile, label in enumerate(tile_results.items()):
+                label_bool[:,i,ctr_idx] = np.asarray([bool(l) for l in label])
+                label_area[:,i,ctr_idx] = np.asarray([float(l) for l in label])
                 # if there are no classes, activate the background
                 if ctr == country[-1]:
-                    if all(v == 0 for v in label_bool[i]):
-                        label_bool[i][0] = 1
+                    if all(v == 0 for v in label_bool[:,i,ctr_idx]):
+                        label_bool[0,i,ctr_idx] = 1
                     feat = feature(Tile(*[int(t) for t in tile.split('-')]))
                     features.append(Feature(geometry=feat['geometry'],
                                             properties=dict(feat_id=str(tile),
-                                                            label=label_bool[i],
-                                                            label_area=label_area[i])))
-                i += 1
-            label_bool2 = label_bool
-            label_area2 = label_area
+                                                            label=np.any(label_bool[:,i,:],axis=1).astype(int).tolist(),
+                                                            label_area=np.sum(label_area[:,i,:],axis=1).tolist()))
             if ctr == country[-1]:
                 json.dump(fc(features), open(op.join(dest_folder, f'classification_{zoom}.geojson'), 'w'))
         elif ml_type == 'object-detection':
