@@ -116,16 +116,16 @@ class TestUtils(unittest.TestCase):
 
     def test_get_tile_wms(self):
         """Test reading of tile from a WMS endpoint"""
-        tile = '4686-6267-14'
+        tile = '146-195-9'
         # create tiles directory
         dest_folder = 'test'
         tiles_dir = op.join(dest_folder, 'tiles')
         if not op.isdir(tiles_dir):
             makedirs(tiles_dir)
 
-        usgs_url = 'https://basemap.nationalmap.gov/arcgis/services/USGSImageryOnly/MapServer/WMSServer?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&LAYERS=0&STYLES=&FORMAT=image%2Fjpeg&TRANSPARENT=false&HEIGHT=256&WIDTH=256&SRS=EPSG%3A3857&BBOX={bbox}'
+        nasa_url = 'https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi?SERVICE=WMS&REQUEST=GetMap&layers=MODIS_Aqua_CorrectedReflectance_TrueColor&version=1.3.0&crs=EPSG:4326&transparent=false&width=256&height=256&bbox={bbox}&format=image/jpeg&time=2019-03-05'
 
-        get_tile_wms(tile, usgs_url, tiles_dir, None)
+        get_tile_wms(tile, nasa_url, tiles_dir, None)
         test_tile = Image.open('test/tiles/{}.jpeg'.format(tile))
         fixture_tile = Image.open('test/fixtures/{}.jpeg'.format(tile))
         self.assertEqual(test_tile, fixture_tile)
