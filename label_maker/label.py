@@ -122,7 +122,7 @@ def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, spar
 
         # write out labels as numpy arrays
         labels_file = op.join(dest_folder, 'labels.npz')
-        # print('Writing out labels to {}'.format(labels_file))
+        print('Writing out labels to {}'.format(labels_file))
         np.savez(labels_file, **tile_results)
 
         # write out labels as GeoJSON or PNG

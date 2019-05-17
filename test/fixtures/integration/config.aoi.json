@@ -1,11 +1,6 @@
 {
   "country": ["portugal"],
-  "bounding_box": [
-    -9.4575,
-    38.8467,
-    -9.4510,
-    38.8513
-  ],
+  "aoi": "test/fixtures/integration/portugal_aoi.geojson",
   "zoom": 17,
   "classes": [
     { "name": "Water Tower", "filter": ["==", "man_made", "water_tower"] },
@@ -17,6 +12,6 @@
   ],
   "imagery": "https://api.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}.jpg?access_token=ACCESS_TOKEN",
   "background_ratio": 1,
-  "ml_type": "object-detection",
+  "ml_type": "classification",
   "seed": 19
 }
