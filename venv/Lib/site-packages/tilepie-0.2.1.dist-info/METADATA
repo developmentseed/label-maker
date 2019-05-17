@@ -1,0 +1,24 @@
+Metadata-Version: 2.0
+Name: tilepie
+Version: 0.2.1
+Summary: multiproc mbtile processing
+Home-page: https://github.com/kamicut/tilepie
+Author: Marc Farra
+Author-email: marcfarra@gmail.com
+License: MIT
+Description-Content-Type: UNKNOWN
+Platform: UNKNOWN
+
+tilepie 
+=======
+
+Simple ``.mbtiles`` processor for python. Built with the `QA Tiles <https://osmlab.github.io/osm-qa-tiles/>`_ in mind.
+Based on the map/reduce/end structure in `@mapbox/tilereduce <https://github.com/mapbox/tile-reduce>`_.
+
+Acknowledgements & pevious work
+--------------------------------
+- `mapbox/tilereduce <https://github.com/mapbox/tile-reduce>`_
+- `jwass/tile-reduce-py: <https://github.com/jwass/tile-reduce-py/>`_
+- `makinacorpus/landez: <https://github.com/makinacorpus/landez/>`_
+
+
