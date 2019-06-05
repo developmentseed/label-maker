@@ -144,7 +144,7 @@ def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, spar
                                                             label=np.any(label_bool[:,i,:],axis=1).astype(int).tolist(),
                                                             label_area=np.sum(label_area[:,i,:],axis=1).tolist())))
             if ctr == country[-1]:
-                json.dump(fc(features), open(op.join(dest_folder, f'classification_{zoom}.geojson'), 'w'))
+                json.dump(fc(features), open(op.join(dest_folder, f'classification.geojson'), 'w'))
         elif ml_type == 'object-detection':
             label_folder = op.join(dest_folder, 'labels')
             if not op.isdir(label_folder):

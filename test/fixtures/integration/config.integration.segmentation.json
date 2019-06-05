@@ -1,5 +1,5 @@
 {
-  "country": ^["portugal"],
+  "country": ["portugal"],
   "bounding_box": [
     -9.4575,
     38.8467,

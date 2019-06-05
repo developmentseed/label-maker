@@ -29,7 +29,57 @@ Building: 1 tiles
 Farmland: 0 tiles
 Ruins: 1 tiles
 Parking: 1 tiles
-Roads: 0 tiles
+Roads: 8 tiles
+Total tiles: 9
+Writing out labels to integration-cl/labels.npz
+Determining labels for each tile
+---
+Water Tower: 1 tiles
+Building: 1 tiles
+Farmland: 0 tiles
+Ruins: 1 tiles
+Parking: 1 tiles
+Roads: 8 tiles
+Total tiles: 9
+Writing out labels to integration-cl/labels.npz
+Determining labels for each tile
+---
+Water Tower: 1 tiles
+Building: 1 tiles
+Farmland: 0 tiles
+Ruins: 1 tiles
+Parking: 1 tiles
+Roads: 8 tiles
+Total tiles: 9
+Writing out labels to integration-cl/labels.npz
+Determining labels for each tile
+---
+Water Tower: 1 tiles
+Building: 1 tiles
+Farmland: 0 tiles
+Ruins: 1 tiles
+Parking: 1 tiles
+Roads: 8 tiles
+Total tiles: 9
+Writing out labels to integration-cl/labels.npz
+Determining labels for each tile
+---
+Water Tower: 1 tiles
+Building: 1 tiles
+Farmland: 0 tiles
+Ruins: 1 tiles
+Parking: 1 tiles
+Roads: 8 tiles
+Total tiles: 9
+Writing out labels to integration-cl/labels.npz
+Determining labels for each tile
+---
+Water Tower: 1 tiles
+Building: 1 tiles
+Farmland: 0 tiles
+Ruins: 1 tiles
+Parking: 1 tiles
+Roads: 8 tiles
 Total tiles: 9
 Writing out labels to integration-cl/labels.npz
 """
@@ -37,19 +87,20 @@ Writing out labels to integration-cl/labels.npz
         cmd = 'label-maker labels --dest integration-cl --config test/fixtures/integration/config.geojson.json'
         cmd = cmd.split(' ')
         with subprocess.Popen(cmd, universal_newlines=True, stdout=subprocess.PIPE) as p:
+            self.maxDiff = None
             self.assertEqual(expected_output, p.stdout.read())
 
         # our labels should look like this
         expected_labels = {
             '62092-50162-17': np.array([0, 0, 0, 0, 0, 0, 0]),
-            '62092-50163-17': np.array([0, 0, 0, 0, 0, 0, 0]),
-            '62092-50164-17': np.array([0, 0, 0, 0, 0, 0, 0]),
-            '62093-50162-17': np.array([0, 0, 0, 0, 0, 0, 0]),
-            '62093-50164-17': np.array([0, 0, 0, 0, 0, 0, 0]),
-            '62094-50162-17': np.array([0, 0, 0, 0, 0, 0, 0]),
-            '62094-50164-17': np.array([0, 0, 0, 0, 0, 0, 0]),
-            '62094-50163-17': np.array([0, 319, 0.5, 0, 0, 0, 0]),
-            '62093-50163-17': np.array([0, 0, 0, 0, 217, 1268, 0])
+            '62092-50163-17': np.array([0, 0, 0, 0, 0, 0, 32]),
+            '62092-50164-17': np.array([0, 0, 0, 0, 0, 0, 115.5]),
+            '62093-50162-17': np.array([0, 0, 0, 0, 0, 0, 76]),
+            '62093-50164-17': np.array([0, 0, 0, 0, 0, 0, 76]),
+            '62094-50162-17': np.array([0, 0, 0, 0, 0, 0, 82]),
+            '62094-50164-17': np.array([0, 0, 0, 0, 0, 0, 424.5]),
+            '62094-50163-17': np.array([0, 319, 0.5, 0, 0, 0, 62.5]),
+            '62093-50163-17': np.array([0, 0, 0, 0, 217, 1268, 71])
         }
 
         labels = np.load('integration-cl/labels.npz')
