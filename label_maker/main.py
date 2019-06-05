@@ -82,11 +82,11 @@ def cli():
     valid = v.validate(config)
     if not valid:
         raise Exception(v.errors)
-        
+
     # for aoi, overwrite bounding_box config key to correct labelling
     if 'aoi' in config.keys():
         config['bounding_box'] = get_bounds(json.load(open(config.get('aoi'), 'r')))
-        
+
     # custom validation for top level keys
     # require either: country & bounding_box or geojson
     if 'geojson' not in config.keys() and not ('country' in config.keys() and 'bounding_box' in config.keys()):
