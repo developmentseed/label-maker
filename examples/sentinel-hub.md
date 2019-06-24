@@ -15,7 +15,8 @@
   "classes": [
     { "name": "Building", "filter": ["has", "building"] }
   ],
-  "imagery": "https://services.sentinel-hub.com/ogc/wms/[WMS_ID]?service=WMS&request=GetMap&layers=1_TRUE_COLOR&styles=&format=image%2Fpng&transparent=true&version=1.1.1&showlogo=false&name=Sentinel-2%20L1C&width=256&height=256&pane=activeLayer&maxcc=100&time=2018-07-15%2F2018-07-15&srs=EPSG%3A3857&bbox={bbox}",
+  "imagery": "https://services.sentinel-hub.com/ogc/wms/[WMS_ID]?service=WMS&request=GetMap&layers=TRUE-COLOR-S2-L2A
+&styles=&format=image%2Fpng&transparent=true&version=1.1.1&showlogo=false&name=Sentinel-2%20L1C&width=256&height=256&pane=activeLayer&maxcc=100&time=2018-07-15%2F2018-07-15&srs=EPSG%3A3857&bbox={bbox}",
   "background_ratio": 1,
   "ml_type": "segmentation"
 }
