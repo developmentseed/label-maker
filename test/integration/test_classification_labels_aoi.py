@@ -1,5 +1,5 @@
 """Test that the following CLI command returns the expected outputs
-label-maker labels --dest integration-cl --config test/fixtures/integration/config.integration.json"""
+label-maker labels --dest integration-cl --config test/fixtures/integration/config.aoi.json"""
 import unittest
 import json
 from os import makedirs
@@ -27,14 +27,14 @@ class TestClassificationLabel(unittest.TestCase):
 Water Tower: 1 tiles
 Building: 1 tiles
 Farmland: 0 tiles
-Ruins: 1 tiles
+Ruins: 0 tiles
 Parking: 1 tiles
 Roads: 0 tiles
 Total tiles: 9
 Writing out labels to integration-cl/labels.npz
 """
 
-        cmd = 'label-maker labels --dest integration-cl --config test/fixtures/integration/config.integration.json'
+        cmd = 'label-maker labels --dest integration-cl --config test/fixtures/integration/config.aoi.json'
         cmd = cmd.split(' ')
         with subprocess.Popen(cmd, universal_newlines=True, stdout=subprocess.PIPE) as p:
             self.assertEqual(expected_output, p.stdout.read())
@@ -49,7 +49,7 @@ Writing out labels to integration-cl/labels.npz
             '62094-50162-17': np.array([0, 0, 0, 0, 0, 0, 0]),
             '62094-50164-17': np.array([0, 0, 0, 0, 0, 0, 0]),
             '62094-50163-17': np.array([0, 319, 0.5, 0, 0, 0, 0]),
-            '62093-50163-17': np.array([0, 0, 0, 0, 217, 1268, 0])
+            '62093-50163-17': np.array([0, 0, 0, 0, 0, 1268, 0])
         }
 
         labels = np.load('integration-cl/labels.npz')

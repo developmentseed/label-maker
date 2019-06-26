@@ -27,7 +27,7 @@ class TestOutsideDirectory(unittest.TestCase):
         chdir('..')
         directory = 'label-maker'
 
-        cmd = 'label-maker labels --dest {}/integration-cl --config {}/test/fixtures/integration/config.integration.json'.format(directory, directory)
+        cmd = 'label-maker labels --dest {}/integration-cl --config {}/test/fixtures/integration/config.integration_sparse.json'.format(directory, directory)
         cmd = cmd.split(' ')
         subprocess.run(cmd, universal_newlines=True)
 
@@ -41,7 +41,7 @@ class TestOutsideDirectory(unittest.TestCase):
             '62094-50162-17': np.array([0, 0, 0, 0, 0, 0, 0]),
             '62094-50164-17': np.array([0, 0, 0, 0, 0, 0, 0]),
             '62094-50163-17': np.array([0, 319, 0.5, 0, 0, 0, 0]),
-            '62093-50163-17': np.array([0, 0, 0, 0, 217, 1268, 0])
+            '62093-50163-17': np.array([0, 0, 0, 0, 0, 1268, 0])
         }
 
         # move back into the directory

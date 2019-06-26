@@ -12,7 +12,8 @@ class TestSegmentationLabel(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         makedirs('integration-sg')
-        copyfile('test/fixtures/integration/portugal-z17.mbtiles', 'integration-sg/portugal-z17.mbtiles')
+        copyfile('test/fixtures/integration/portugal-z10.mbtiles', 'integration-sg/portugal-z10.mbtiles')
+        copyfile('test/fixtures/integration/spain-z10.mbtiles', 'integration-sg/spain-z10.mbtiles')
 
     @classmethod
     def tearDownClass(cls):
@@ -26,15 +27,31 @@ class TestSegmentationLabel(unittest.TestCase):
 
         # our labels should look like this
         expected_sums = {
-            '62092-50162-17': 0,
-            '62092-50163-17': 2526,
-            '62092-50164-17': 13500,
-            '62093-50162-17': 36822,
-            '62093-50164-17': 2400,
-            '62094-50162-17': 21234,
-            '62094-50164-17': 19146,
-            '62094-50163-17': 21613,
-            '62093-50163-17': 31568
+            '492-394-10': 10,
+            '490-396-10': 1,
+            '491-394-10': 1,
+            '490-394-10': 2,
+            '490-395-10': 1,
+            '489-396-10': 1,
+            '488-395-10': 10,
+            '488-396-10': 3,
+            '488-397-10': 4,
+            '489-397-10': 11,
+            '488-394-10': 2,
+            '490-397-10': 5,
+            '489-394-10': 1,
+            '492-395-10': 2,
+            '492-396-10': 6,
+            '492-397-10': 9,
+            '493-394-10': 4,
+            '493-395-10': 2,
+            '489-395-10': 0,
+            '491-395-10': 0,
+            '491-396-10': 0,
+            '491-397-10': 0,
+            '493-396-10': 0,
+            '493-397-10': 0
+
         }
 
         labels = np.load('integration-sg/labels.npz')

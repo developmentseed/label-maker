@@ -27,7 +27,7 @@ class TestClassificationLabelSparse(unittest.TestCase):
 Water Tower: 1 tiles
 Building: 1 tiles
 Farmland: 0 tiles
-Ruins: 1 tiles
+Ruins: 0 tiles
 Parking: 1 tiles
 Roads: 0 tiles
 Total tiles: 9
@@ -43,7 +43,7 @@ Writing out labels to integration-cl/labels.npz
         # our labels should look like this
         expected_labels = {
             '62094-50163-17': np.array([0, 319, 0.5, 0, 0, 0, 0]),
-            '62093-50163-17': np.array([0, 0, 0, 0, 217, 1268, 0])
+            '62093-50163-17': np.array([0, 0, 0, 0, 0, 1268, 0])
         }
 
         labels = np.load('integration-cl/labels.npz')
@@ -52,7 +52,7 @@ Writing out labels to integration-cl/labels.npz
             self.assertTrue(np.array_equal(expected_labels[tile], labels[tile]))  # Now, content
 
         # our GeoJSON looks like the fixture
-        with open('test/fixtures/integration/classification.geojson') as fixture:
+        with open('test/fixtures/integration/classification_sparse.geojson') as fixture:
             with open('integration-cl/classification.geojson') as geojson_file:
                 expected_geojson = json.load(fixture)
                 geojson = json.load(geojson_file)

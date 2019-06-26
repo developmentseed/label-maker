@@ -159,25 +159,26 @@ def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, spar
                         draw.rectangle(((box[0], box[1]), (box[2], box[3])), outline=class_color(box[4]))
                     print('Writing {}'.format(label_file))
                     if op.isfile(op.join(label_folder, label_file)):
-                        img.paste(op.join(label_folder, label_file))
+                        old_img = Image.open(op.join(label_folder, label_file))
+                        img.paste(old_img)
                     else:
                         img.save(op.join(label_folder, label_file))
         elif ml_type == 'segmentation':
-            features = []
             label_folder = op.join(dest_folder, 'labels')
             if not op.isdir(label_folder):
                 makedirs(label_folder)
-                for tile, label in tile_results.items():
-                    # if we have any class pixels
-                    if np.sum(label):
-                        label_file = '{}.png'.format(tile)
-                        visible_label = np.array([class_color(l) for l in np.nditer(label)]).reshape(256, 256, 3)
-                        img = Image.fromarray(visible_label.astype(np.uint8))
-                        print('Writing {}'.format(label_file))
-                        if op.isfile(op.join(label_folder, label_file)):
-                            img.paste(op.join(label_folder, label_file))
-                        else:
-                            img.save(op.join(label_folder, label_file))
+            for tile, label in tile_results.items():
+                # if we have any class pixels
+                if np.sum(label):
+                    label_file = '{}.png'.format(tile)
+                    visible_label = np.array([class_color(l) for l in np.nditer(label)]).reshape(256, 256, 3)
+                    img = Image.fromarray(visible_label.astype(np.uint8))
+                    print('Writing {}'.format(label_file))
+                    if op.isfile(op.join(label_folder, label_file)):
+                        old_img = Image.open(op.join(label_folder, label_file))
+                        img.paste(old_img)
+                    else:
+                        img.save(op.join(label_folder, label_file))
 
 def _mapper(x, y, z, data, args):
     """Iterate over OSM QA Tiles and return a label for each tile
