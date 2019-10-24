@@ -9,7 +9,8 @@ from PIL import Image
 from label_maker.utils import is_tif
 
 
-def package_directory(dest_folder, classes, imagery, ml_type, seed=False, train_size=0.8, **kwargs):
+def package_directory(dest_folder, classes, imagery, ml_type, seed=False, split_names=['train', 'test'],
+                      split_vals=[0.8, .2], **kwargs):
     """Generate an .npz file containing arrays for training machine learning algorithms
 
     Parameters
@@ -37,6 +38,12 @@ def package_directory(dest_folder, classes, imagery, ml_type, seed=False, train_
     # if a seed is given, use it
     if seed:
         np.random.seed(seed)
+
+    assert len(split_names) == len(split_vals), "split_names and split_vals must be the same length." 
+    assert sum(split_vals) == 1, "split_vals must sum to one."
+
+
+
 
     # open labels file, create tile array
     labels_file = op.join(dest_folder, 'labels.npz')
