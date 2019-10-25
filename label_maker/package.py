@@ -46,7 +46,7 @@ def package_directory(dest_folder, classes, imagery, ml_type, seed=False, split_
 
     assert len(split_names) == 2 or len(split_names) == 3.
     assert len(split_names) == len(split_vals), "split_names and split_vals must be the same length."
-    assert sum(split_vals) == 1, "split_vals must sum to one."
+    assert np.isclose(sum(split_vals), 1), "split_vals must sum to one."
 
     # open labels file, create tile array
     labels_file = op.join(dest_folder, 'labels.npz')
