@@ -124,7 +124,7 @@ def package_directory(dest_folder, classes, imagery, ml_type, seed=False, split_
     if len(split_vals) == 3:
         np.savez(op.join(dest_folder, 'data.npz'),
                  x_train=x_vals_split_lst[0],
-                 y_train=y_vals_split_lst[1],
+                 y_train=y_vals_split_lst[0],
                  x_test=x_vals_split_lst[1],
                  y_test=y_vals_split_lst[1],
                  x_val=x_vals_split_lst[2],
