@@ -29,9 +29,14 @@ def package_directory(dest_folder, classes, imagery, ml_type, seed=False, split_
     ml_type: str
         Defines the type of machine learning. One of "classification", "object-detection", or "segmentation"
     seed: int
-        Random generator seed. Optional, use to make results reproducable.
-    train_size: float
-        Portion of the data to use in training, the remainder is used as test data (default 0.8)
+        Random generator seed. Optional, use to make results reproducible.
+
+    split_vals: lst
+        Percentage of data to put in each catagory listed in split_names. Must be floats and must sum to one.
+
+    split_names: lst
+        List of names for each subset of the data.
+
     **kwargs: dict
         Other properties from CLI config passed as keywords to other utility functions
     """
@@ -39,11 +44,8 @@ def package_directory(dest_folder, classes, imagery, ml_type, seed=False, split_
     if seed:
         np.random.seed(seed)
 
-    assert len(split_names) == len(split_vals), "split_names and split_vals must be the same length." 
+    assert len(split_names) == len(split_vals), "split_names and split_vals must be the same length."
     assert sum(split_vals) == 1, "split_vals must sum to one."
-
-
-
 
     # open labels file, create tile array
     labels_file = op.join(dest_folder, 'labels.npz')
@@ -67,7 +69,7 @@ def package_directory(dest_folder, classes, imagery, ml_type, seed=False, split_
     # open the images and load those plus the labels into the final arrays
     o = urlparse(imagery)
     _, image_format = op.splitext(o.path)
-    if is_tif(imagery): # if a TIF is provided, use jpg as tile format
+    if is_tif(imagery):  # if a TIF is provided, use jpg as tile format
         image_format = '.jpg'
     for tile in tiles:
         image_file = op.join(dest_folder, 'tiles', '{}{}'.format(tile, image_format))
@@ -93,16 +95,36 @@ def package_directory(dest_folder, classes, imagery, ml_type, seed=False, split_
         elif ml_type == 'segmentation':
             y_vals.append(labels[tile][..., np.newaxis])  # Add grayscale channel
 
-    # split into train and test
-    split_index = int(len(x_vals) * train_size)
-
     # convert lists to numpy arrays
     x_vals = np.array(x_vals, dtype=np.uint8)
     y_vals = np.array(y_vals, dtype=np.uint8)
 
+    x_vals_split_lst = np.split(x_vals,
+                                [int(split_vals[0] * len(x_vals)), int((split_vals[0] + split_vals[1]) * len(x_vals))])
+
+    if len(x_vals_split_lst[-1]) == 0:
+        x_vals_split_lst = x_vals_split_lst[:-1]
+
+    y_vals_split_lst = np.split(y_vals,
+                                [int(split_vals[0] * len(x_vals)), int((split_vals[0] + split_vals[1]) * len(x_vals))])
+
+    if len(y_vals_split_lst[-1]) == 0:
+        y_vals_split_lst = y_vals_split_lst[:-1]
+
     print('Saving packaged file to {}'.format(op.join(dest_folder, 'data.npz')))
-    np.savez(op.join(dest_folder, 'data.npz'),
-             x_train=x_vals[:split_index, ...],
-             y_train=y_vals[:split_index, ...],
-             x_test=x_vals[split_index:, ...],
-             y_test=y_vals[split_index:, ...])
+
+    if len(split_vals == 2):
+        np.savez(op.join(dest_folder, 'data.npz'),
+                 x_train=x_vals_split_lst[0],
+                 y_train=y_vals_split_lst[0],
+                 x_test=x_vals_split_lst[1],
+                 y_test=y_vals_split_lst[1])
+
+    if len(split_vals == 3):
+        np.savez(op.join(dest_folder, 'data.npz'),
+                 x_train=x_vals_split_lst[0],
+                 y_train=y_vals_split_lst[1],
+                 x_test=x_vals_split_lst[1],
+                 y_test=y_vals_split_lst[1],
+                 x_val=x_vals_split_lst[2],
+                 y_val=y_vals_split_lst[2])
