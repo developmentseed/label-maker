@@ -11,18 +11,12 @@ class TestClassificationPackage(unittest.TestCase):
     """Tests for classification package creation"""
     @classmethod
     def setUpClass(cls):
-        try:
-            makedirs('integration-cl')
-        except FileExistsError:
-            pass
+
+        makedirs('integration-cl')
         copyfile('test/fixtures/integration/labels-cl.npz', 'integration-cl/labels.npz')
         copytree('test/fixtures/integration/tiles', 'integration-cl/tiles')
 
-        try:
-            makedirs('integration-cl-split')
-
-        except FileExistsError:
-            pass
+        makedirs('integration-cl-split')
         copyfile('test/fixtures/integration/labels-cl.npz', 'integration-cl-split/labels.npz')
         copytree('test/fixtures/integration/tiles', 'integration-cl-split/tiles')
 
