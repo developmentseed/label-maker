@@ -16,6 +16,7 @@ from label_maker.preview import preview
 from label_maker.images import download_images
 from label_maker.package import package_directory
 from label_maker.validate import schema
+from label_maker.tfrecords_cl import convert_to_tfrecords
 
 logger = logging.getLogger(__name__)
 
@@ -47,6 +48,7 @@ def parse_args(args):
     subparsers.add_parser('download', parents=[pparser], help='', formatter_class=dhf)
     l = subparsers.add_parser('labels', parents=[pparser], help='', formatter_class=dhf)
     p = subparsers.add_parser('preview', parents=[pparser], help='', formatter_class=dhf)
+    t = subparsers.add_parser('tf_records', parents=[pparser], help='', formatter_class=dhf)
     subparsers.add_parser('images', parents=[pparser], help='', formatter_class=dhf)
     subparsers.add_parser('package', parents=[pparser], help='', formatter_class=dhf)
 
@@ -57,7 +59,9 @@ def parse_args(args):
     p.add_argument('-n', '--number', default=5, type=int,
                    help='number of examples images to create per class')
 
-    # turn namespace into dictinary
+    t.add_argument('-t', '--npz_path', default='data/data.npz', type=str, help='path to npz file created in package step')
+
+    # turn namespace into dictionary
     parsed_args = vars(parser.parse_args(args))
 
     return parsed_args
@@ -72,6 +76,7 @@ def cli():
     # read in configuration file and destination folder
     config = json.load(open(args.get('config')))
     dest_folder = args.get('dest')
+    npz_path = args.get('npz_path')
 
     # create destination folder if necessary
     if not op.isdir(dest_folder):
@@ -105,6 +110,8 @@ def cli():
         download_images(dest_folder=dest_folder, **config)
     elif cmd == 'package':
         package_directory(dest_folder=dest_folder, **config)
+    elif cmd == 'tf_records':
+        convert_to_tfrecords(dest_folder=dest_folder, npz_path=npz_path)
 
 if __name__ == "__main__":
     cli()
