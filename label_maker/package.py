@@ -107,7 +107,7 @@ def package_directory(dest_folder, classes, imagery, ml_type, seed=False, split_
         x_vals_split_lst = x_vals_split_lst[:-1]
 
     y_vals_split_lst = np.split(y_vals,
-                                [int(split_vals[0] * len(x_vals)), int((split_vals[0] + split_vals[1]) * len(x_vals))])
+                                [int(split_vals[0] * len(y_vals)), int((split_vals[0] + split_vals[1]) * len(y_vals))])
 
     if len(y_vals_split_lst[-1]) == 0:
         y_vals_split_lst = y_vals_split_lst[:-1]
