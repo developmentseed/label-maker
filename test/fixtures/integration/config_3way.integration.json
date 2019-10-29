@@ -19,5 +19,5 @@
   "ml_type": "classification",
   "seed": 19,
   "split_names": ["train", "test", "val"],
-  "split_vals": [0.6, 0.2, 0.2]
+  "split_vals": [0.7, 0.2, 0.1]
 }
