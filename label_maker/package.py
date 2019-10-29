@@ -103,7 +103,6 @@ def package_directory(dest_folder, classes, imagery, ml_type, seed=False, split_
 
     # Get number of data samples per split from the float proportions
     split_n_samps = np.rint([len(x_vals) * val for val in split_vals])
-    #print(split_n_samps)
 
     if np.any(split_n_samps == 0):
         raise ValueError('split must not generate zero samples per partition, change ratio of values in config file.')
