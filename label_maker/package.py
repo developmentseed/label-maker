@@ -97,36 +97,31 @@ def package_directory(dest_folder, classes, imagery, ml_type, seed=False, split_
         elif ml_type == 'segmentation':
             y_vals.append(labels[tile][..., np.newaxis])  # Add grayscale channel
 
-    # convert lists to numpy arrays
+    # Convert lists to numpy arrays
     x_vals = np.array(x_vals, dtype=np.uint8)
+    print(x_vals.shape)
     y_vals = np.array(y_vals, dtype=np.uint8)
+    print(y_vals).shape
 
-    x_vals_split_lst = np.split(x_vals,
-                                [int(split_vals[0] * len(x_vals)), int((split_vals[0] + split_vals[1]) * len(x_vals))])
+    # Get number of data samples per split from the float proportions
+    split_n_samps = np.rint([len(x_vals) * val for val in split_vals])
+    print(split_n_samps)
 
-    if len(x_vals_split_lst[-1]) == 0:
-        x_vals_split_lst = x_vals_split_lst[:-1]
+    if np.any(split_n_samps == 0):
+        raise ValueError
 
-    y_vals_split_lst = np.split(y_vals,
-                                [int(split_vals[0] * len(y_vals)), int((split_vals[0] + split_vals[1]) * len(y_vals))])
+    # Convert into a cumulative sum to get indices
+    split_inds = np.cumsum(split_n_samps).astype(np.integer)
 
-    if len(y_vals_split_lst[-1]) == 0:
-        y_vals_split_lst = y_vals_split_lst[:-1]
+    # Exclude last index as `np.split` handles splitting without that value
+    split_arrs_x = np.split(x_vals, split_inds[:-1])
+    split_arrs_y = np.split(y_vals, split_inds[:-1])
 
+    save_dict = {}
+
+    for si, split_name in enumerate(split_names):
+        save_dict[f'x_{split_name}'] = split_arrs_x[si]
+        save_dict[f'y_{split_name}'] = split_arrs_y[si]
+
+    np.savez(op.join(dest_folder, 'data.npz'), **save_dict)
     print('Saving packaged file to {}'.format(op.join(dest_folder, 'data.npz')))
-
-    if len(split_vals) == 2:
-        np.savez(op.join(dest_folder, 'data.npz'),
-                 x_train=x_vals_split_lst[0],
-                 y_train=y_vals_split_lst[0],
-                 x_test=x_vals_split_lst[1],
-                 y_test=y_vals_split_lst[1])
-
-    if len(split_vals) == 3:
-        np.savez(op.join(dest_folder, 'data.npz'),
-                 x_train=x_vals_split_lst[0],
-                 y_train=y_vals_split_lst[0],
-                 x_test=x_vals_split_lst[1],
-                 y_test=y_vals_split_lst[1],
-                 x_val=x_vals_split_lst[2],
-                 y_val=y_vals_split_lst[2])
