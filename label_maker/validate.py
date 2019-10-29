@@ -31,6 +31,6 @@ schema = {
     'ml_type': {'allowed': ['classification', 'object-detection', 'segmentation'], 'required': True},
     'seed': {'type': 'integer'},
     'imagery_offset': {'type': 'list', 'schema': {'type': 'integer'}, 'minlength': 2, 'maxlength': 2},
-    'split_vals': {'type': 'list', 'schema': {'type': 'float'}, 'minlength': 2, 'maxlength': 3},
-    'split_names': {'type': 'list', 'schema': {'type': 'string'}, 'minlength': 2, 'maxlength': 3}
+    'split_vals': {'type': 'list', 'schema': {'type': 'float'}},
+    'split_names': {'type': 'list', 'schema': {'type': 'string'}}
 }
