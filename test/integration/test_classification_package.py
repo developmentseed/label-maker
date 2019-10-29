@@ -73,5 +73,3 @@ class TestClassificationPackage(unittest.TestCase):
         self.assertEqual(data['y_train'].shape, (5, 7))
         self.assertEqual(data['y_test'].shape, (2, 7))
         self.assertEqual(data['y_val'].shape, (1, 7))
-
-
