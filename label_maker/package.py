@@ -30,13 +30,10 @@ def package_directory(dest_folder, classes, imagery, ml_type, seed=False, split_
         Defines the type of machine learning. One of "classification", "object-detection", or "segmentation"
     seed: int
         Random generator seed. Optional, use to make results reproducible.
-
-    split_vals: lst
+    split_vals: list
         Percentage of data to put in each catagory listed in split_names. Must be floats and must sum to one.
-
-    split_names: lst
+    split_names: list
         List of names for each subset of the data, either ['train', 'test'] or ['train', 'test', 'val']
-
     **kwargs: dict
         Other properties from CLI config passed as keywords to other utility functions
     """
