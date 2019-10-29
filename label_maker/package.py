@@ -31,9 +31,12 @@ def package_directory(dest_folder, classes, imagery, ml_type, seed=False, split_
     seed: int
         Random generator seed. Optional, use to make results reproducible.
     split_vals: list
-        Percentage of data to put in each catagory listed in split_names. Must be floats and must sum to one.
+        Default: [0.8, 0.2]
+        Percentage of data to put in each catagory listed in split_names.
+        Must be floats and must sum to one.
     split_names: list
-        List of names for each subset of the data, either ['train', 'test'] or ['train', 'test', 'val']
+        Default: ['train', 'test'] 
+        List of names for each subset of the data.
     **kwargs: dict
         Other properties from CLI config passed as keywords to other utility functions
     """
@@ -41,7 +44,7 @@ def package_directory(dest_folder, classes, imagery, ml_type, seed=False, split_
     if seed:
         np.random.seed(seed)
 
-    assert len(split_names) == 2 or len(split_names) == 3.
+    #assert len(split_names) == 2 or len(split_names) == 3.
     assert len(split_names) == len(split_vals), "split_names and split_vals must be the same length."
     assert np.isclose(sum(split_vals), 1), "split_vals must sum to one."
 
