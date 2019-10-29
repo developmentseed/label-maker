@@ -99,16 +99,14 @@ def package_directory(dest_folder, classes, imagery, ml_type, seed=False, split_
 
     # Convert lists to numpy arrays
     x_vals = np.array(x_vals, dtype=np.uint8)
-    print(x_vals.shape)
     y_vals = np.array(y_vals, dtype=np.uint8)
-    print(y_vals).shape
 
     # Get number of data samples per split from the float proportions
     split_n_samps = np.rint([len(x_vals) * val for val in split_vals])
-    print(split_n_samps)
+    #print(split_n_samps)
 
     if np.any(split_n_samps == 0):
-        raise ValueError
+        raise ValueError('split must not generate zero samples per partition, change ratio of values in config file.')
 
     # Convert into a cumulative sum to get indices
     split_inds = np.cumsum(split_n_samps).astype(np.integer)
