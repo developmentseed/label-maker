@@ -49,5 +49,13 @@ Here is the full list of configuration parameters you can specify in a ``config.
  	``'segmentation'``
  		Output is an array of shape ``(256, 256)`` with values matching the class index label at that position. The classes are applied sequentially according to ``config.json`` so latter classes will be written over earlier class labels if there is overlap.
 
+**split_vals:** list
+    Default: `[0.8, 0.2]`
+    Percentage of data to put in each catagory listed in split_names. Must be floats and must sum to one.
+
+**split_names**: list
+    Default: `['train', 'test']`
+    List of names for each subset of the data.
+
 **imagery_offset**:  list of ints
 	An optional list of integers representing the number of pixels to offset imagery. For example ``[15, -5]`` will move the images 15 pixels right and 5 pixels up relative to the requested tile bounds.
