@@ -59,8 +59,7 @@ class TestClassificationPackage(unittest.TestCase):
     def test_cli_3way_split(self):
         """Verify data.npz produced by CLI when split into train/test/val"""
 
-        cmd = 'label-maker package --dest integration-cl-split --config ' \
-              'test/fixtures/integration/config_3way.integration.json '
+        cmd = 'label-maker package --dest integration-cl-split --config test/fixtures/integration/config_3way.integration.json'
         cmd = cmd.split(' ')
         subprocess.run(cmd, universal_newlines=True)
 
