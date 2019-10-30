@@ -54,11 +54,11 @@ Here is the full list of configuration parameters you can specify in a ``config.
 
 **split_vals**: list
     Default: `[0.8, 0.2]`
-    Percentage of data to put in each catagory listed in split_names. Must be floats and must sum to one.
+    Percentage of data to put in each category listed in split_names. Must be a list of floats that sum to one and match the length of `split-names`. For train, validate, and test data, a list like `[0.7, 0.2, 0.1]` is suggested.
 
 **split_names**: list
     Default: `['train', 'test']`
-    List of names for each subset of the data.
+    List of names for each subset of the data. Length of list must match length of `split_vals`.
 
 **imagery_offset**:  list of ints
 	An optional list of integers representing the number of pixels to offset imagery. For example ``[15, -5]`` will move the images 15 pixels right and 5 pixels up relative to the requested tile bounds.
