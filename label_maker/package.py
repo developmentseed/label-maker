@@ -9,7 +9,8 @@ from PIL import Image
 from label_maker.utils import is_tif
 
 
-def package_directory(dest_folder, classes, imagery, ml_type, seed=False, train_size=0.8, **kwargs):
+def package_directory(dest_folder, classes, imagery, ml_type, seed=False, split_names=['train', 'test'],
+                      split_vals=[0.8, .2], **kwargs):
     """Generate an .npz file containing arrays for training machine learning algorithms
 
     Parameters
@@ -28,15 +29,25 @@ def package_directory(dest_folder, classes, imagery, ml_type, seed=False, train_
     ml_type: str
         Defines the type of machine learning. One of "classification", "object-detection", or "segmentation"
     seed: int
-        Random generator seed. Optional, use to make results reproducable.
-    train_size: float
-        Portion of the data to use in training, the remainder is used as test data (default 0.8)
+        Random generator seed. Optional, use to make results reproducible.
+    split_vals: list
+        Default: [0.8, 0.2]
+        Percentage of data to put in each catagory listed in split_names.
+        Must be floats and must sum to one.
+    split_names: list
+        Default: ['train', 'test']
+        List of names for each subset of the data.
     **kwargs: dict
         Other properties from CLI config passed as keywords to other utility functions
     """
     # if a seed is given, use it
     if seed:
         np.random.seed(seed)
+
+    if len(split_names) != len(split_vals):
+        raise ValueError('`split_names` and `split_vals` must be the same length. Please update your config.')
+    if not np.isclose(sum(split_vals), 1):
+        raise ValueError('`split_vals` must sum to one. Please update your config.')
 
     # open labels file, create tile array
     labels_file = op.join(dest_folder, 'labels.npz')
@@ -60,7 +71,7 @@ def package_directory(dest_folder, classes, imagery, ml_type, seed=False, train_
     # open the images and load those plus the labels into the final arrays
     o = urlparse(imagery)
     _, image_format = op.splitext(o.path)
-    if is_tif(imagery): # if a TIF is provided, use jpg as tile format
+    if is_tif(imagery):  # if a TIF is provided, use jpg as tile format
         image_format = '.jpg'
     for tile in tiles:
         image_file = op.join(dest_folder, 'tiles', '{}{}'.format(tile, image_format))
@@ -86,16 +97,28 @@ def package_directory(dest_folder, classes, imagery, ml_type, seed=False, train_
         elif ml_type == 'segmentation':
             y_vals.append(labels[tile][..., np.newaxis])  # Add grayscale channel
 
-    # split into train and test
-    split_index = int(len(x_vals) * train_size)
-
-    # convert lists to numpy arrays
+    # Convert lists to numpy arrays
     x_vals = np.array(x_vals, dtype=np.uint8)
     y_vals = np.array(y_vals, dtype=np.uint8)
 
+    # Get number of data samples per split from the float proportions
+    split_n_samps = [len(x_vals) * val for val in split_vals]
+
+    if np.any(split_n_samps == 0):
+        raise ValueError('split must not generate zero samples per partition, change ratio of values in config file.')
+
+    # Convert into a cumulative sum to get indices
+    split_inds = np.cumsum(split_n_samps).astype(np.integer)
+
+    # Exclude last index as `np.split` handles splitting without that value
+    split_arrs_x = np.split(x_vals, split_inds[:-1])
+    split_arrs_y = np.split(y_vals, split_inds[:-1])
+
+    save_dict = {}
+
+    for si, split_name in enumerate(split_names):
+        save_dict[f'x_{split_name}'] = split_arrs_x[si]
+        save_dict[f'y_{split_name}'] = split_arrs_y[si]
+
+    np.savez(op.join(dest_folder, 'data.npz'), **save_dict)
     print('Saving packaged file to {}'.format(op.join(dest_folder, 'data.npz')))
-    np.savez(op.join(dest_folder, 'data.npz'),
-             x_train=x_vals[:split_index, ...],
-             y_train=y_vals[:split_index, ...],
-             x_test=x_vals[split_index:, ...],
-             y_test=y_vals[split_index:, ...])
