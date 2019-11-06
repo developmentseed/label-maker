@@ -1,3 +1,14 @@
+0.6.0 (2018-11-06)
+------------------
+
+- Use sys.exectuable in place of python string (#124)
+- Correct script reference to fix bug in skynet train example (#129)
+- Add s3 requirement to rasterio (#137)
+- users can split data into more groups than train and test, for example train/test/validate, and specify the ratio for
+each split (#149)
+
+
+
 0.5.1 (2018-11-12)
 ------------------
 - Skip invalid or empty geometries which prevent segmentation rendering (#118)
