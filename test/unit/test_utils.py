@@ -81,7 +81,7 @@ class TestUtils(unittest.TestCase):
         if not op.isdir(tiles_dir):
             makedirs(tiles_dir)
 
-        get_tile_tif(tile, 'test/fixtures/drone.tif', tiles_dir, None)
+        get_tile_tif(tile, 'test/fixtures/drone.tif', tiles_dir, None, {})
         test_tile = Image.open('test/tiles/{}.jpg'.format(tile))
         fixture_tile = Image.open('test/fixtures/{}.jpg'.format(tile))
         self.assertEqual(test_tile, fixture_tile)
@@ -95,7 +95,7 @@ class TestUtils(unittest.TestCase):
         if not op.isdir(tiles_dir):
             makedirs(tiles_dir)
 
-        get_tile_tif(tile, 'test/fixtures/drone.tif', tiles_dir, [128, 64])
+        get_tile_tif(tile, 'test/fixtures/drone.tif', tiles_dir, [128, 64], {})
         test_tile = Image.open('test/tiles/{}.jpg'.format(tile))
         fixture_tile = Image.open('test/fixtures/{}_offset.jpg'.format(tile))
         self.assertEqual(test_tile, fixture_tile)
@@ -109,7 +109,7 @@ class TestUtils(unittest.TestCase):
         if not op.isdir(tiles_dir):
             makedirs(tiles_dir)
 
-        get_tile_tif(tile, 'test/fixtures/drone.vrt', tiles_dir, None)
+        get_tile_tif(tile, 'test/fixtures/drone.vrt', tiles_dir, None, {})
         test_tile = Image.open('test/tiles/{}.jpg'.format(tile))
         fixture_tile = Image.open('test/fixtures/{}.jpg'.format(tile))
         self.assertEqual(test_tile, fixture_tile)
@@ -125,7 +125,7 @@ class TestUtils(unittest.TestCase):
 
         nasa_url = 'https://gibs.earthdata.nasa.gov/wms/epsg4326/best/wms.cgi?SERVICE=WMS&REQUEST=GetMap&layers=MODIS_Aqua_CorrectedReflectance_TrueColor&version=1.3.0&crs=EPSG:4326&transparent=false&width=256&height=256&bbox={bbox}&format=image/jpeg&time=2019-03-05'
 
-        get_tile_wms(tile, nasa_url, tiles_dir, None)
+        get_tile_wms(tile, nasa_url, tiles_dir, None, {})
         test_tile = Image.open('test/tiles/{}.jpeg'.format(tile))
         fixture_tile = Image.open('test/fixtures/{}.jpeg'.format(tile))
         self.assertEqual(test_tile, fixture_tile)
