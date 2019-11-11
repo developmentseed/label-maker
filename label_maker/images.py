@@ -72,4 +72,4 @@ def download_images(dest_folder, classes, imagery, ml_type, background_ratio, im
     image_function = get_image_function(imagery)
 
     for tile in tiles:
-        image_function(tile, imagery, tiles_dir, imagery_offset)
+        image_function(tile, imagery, tiles_dir, imagery_offset, kwargs)
