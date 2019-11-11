@@ -94,8 +94,8 @@ def cli():
         config['bounding_box'] = get_bounds(json.load(open(config.get('geojson'), 'r')))
 
     # Convert HTTP auth from list to tuple if it exists
-    if 'auth' in config.keys():
-        config['auth'] = tuple(config['auth'])
+    if 'http_auth' in config.keys():
+        config['http_auth'] = tuple(config['http_auth'])
 
     if cmd == 'download':
         download_mbtiles(dest_folder=dest_folder, **config)
