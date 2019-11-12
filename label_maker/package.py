@@ -117,8 +117,8 @@ def package_directory(dest_folder, classes, imagery, ml_type, seed=False, split_
     save_dict = {}
 
     for si, split_name in enumerate(split_names):
-        save_dict[f'x_{split_name}'] = split_arrs_x[si]
-        save_dict[f'y_{split_name}'] = split_arrs_y[si]
+        save_dict['x_{}'.format(split_name)] = split_arrs_x[si]
+        save_dict['y_{}'.format(split_name)] = split_arrs_y[si]
 
     np.savez(op.join(dest_folder, 'data.npz'), **save_dict)
     print('Saving packaged file to {}'.format(op.join(dest_folder, 'data.npz')))
