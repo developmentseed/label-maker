@@ -24,17 +24,18 @@ def class_match(ml_type, label, i):
         return np.count_nonzero(label == i)
     return None
 
-def download_tile_tms(tile, imagery, folder, *args):
+def download_tile_tms(tile, imagery, folder, kwargs):
     """Download a satellite image tile from a tms endpoint"""
     o = urlparse(imagery)
     _, image_format = op.splitext(o.path)
-    r = requests.get(url(tile.split('-'), imagery))
+    r = requests.get(url(tile.split('-'), imagery),
+                     auth=kwargs.get('http_auth'))
     tile_img = op.join(folder, '{}{}'.format(tile, image_format))
     with open(tile_img, 'wb')as w:
         w.write(r.content)
     return tile_img
 
-def get_tile_tif(tile, imagery, folder, imagery_offset):
+def get_tile_tif(tile, imagery, folder, imagery_offset, kwargs):
     """
     Read a GeoTIFF with a window corresponding to a TMS tile
 
@@ -87,7 +88,7 @@ def get_tile_tif(tile, imagery, folder, imagery_offset):
 
     return tile_img
 
-def get_tile_wms(tile, imagery, folder, imagery_offset):
+def get_tile_wms(tile, imagery, folder, imagery_offset, kwargs):
     """
     Read a WMS endpoint with query parameters corresponding to a TMS tile
 
@@ -118,7 +119,7 @@ def get_tile_wms(tile, imagery, folder, imagery_offset):
 
     # request the image with the transformed bounding box and save
     wms_url = imagery.replace('{bbox}', ','.join([str(b) for b in bbox]))
-    r = requests.get(wms_url)
+    r = requests.get(wms_url, auth=kwargs.get('http_auth'))
     tile_img = op.join(folder, '{}.{}'.format(tile, image_format))
     with open(tile_img, 'wb') as w:
         w.write(r.content)

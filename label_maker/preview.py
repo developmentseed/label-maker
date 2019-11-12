@@ -64,7 +64,8 @@ def preview(dest_folder, number, classes, imagery, ml_type, imagery_offset=False
             if n >= number:
                 break
 
-            tile_img = image_function(tile, imagery, class_dir, imagery_offset)
+            tile_img = image_function(tile, imagery, class_dir, imagery_offset,
+                                      kwargs)
 
             if ml_type == 'object-detection':
                 img = Image.open(tile_img)

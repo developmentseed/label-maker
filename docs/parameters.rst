@@ -34,6 +34,9 @@ Here is the full list of configuration parameters you can specify in a ``config.
 
  		Remote files like a `WMS endpoint <http://www.opengeospatial.org/standards/wms>`_ ``GetMap`` request. Fill out all necessary parameters except ``bbox`` which should be set as ``{bbox}``. Ex: ``'https://basemap.nationalmap.gov/arcgis/services/USGSImageryOnly/MapServer/WMSServer?SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&LAYERS=0&STYLES=&FORMAT=image%2Fjpeg&TRANSPARENT=false&HEIGHT=256&WIDTH=256&SRS=EPSG%3A3857&BBOX={bbox}'``
 
+**http_auth**: list
+	Optional parameter to specify a username and password for restricted WMS services. For example, ``['my_username', 'my_password']``.
+
 **background_ratio**: float
 	Specify how many background (or "negative") training examples to create when there is only one class specified with the ``classes`` parameter. Label Maker will generate ``background_ratio`` times the number of images matching the one class.
 

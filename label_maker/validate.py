@@ -27,6 +27,7 @@ schema = {
     'zoom': {'type': 'integer', 'required': True},
     'classes': {'type': 'list', 'schema': class_schema, 'required': True},
     'imagery': {'type': 'string', 'required': True},
+    'http_auth': {'type': 'list', 'schema': {'type': 'string'}},
     'background_ratio': {'type': 'float'},
     'ml_type': {'allowed': ['classification', 'object-detection', 'segmentation'], 'required': True},
     'seed': {'type': 'integer'},

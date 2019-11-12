@@ -93,6 +93,10 @@ def cli():
         config['country'] = op.splitext(op.basename(config.get('geojson')))[0]
         config['bounding_box'] = get_bounds(json.load(open(config.get('geojson'), 'r')))
 
+    # Convert HTTP auth from list to tuple if it exists
+    if 'http_auth' in config.keys():
+        config['http_auth'] = tuple(config['http_auth'])
+
     if cmd == 'download':
         download_mbtiles(dest_folder=dest_folder, **config)
     elif cmd == 'labels':
