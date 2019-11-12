@@ -9,8 +9,9 @@ from PIL import Image
 from label_maker.utils import is_tif
 
 
-def package_directory(dest_folder, classes, imagery, ml_type, seed=False, split_names=['train', 'test'],
-                      split_vals=[0.8, .2], **kwargs):
+def package_directory(dest_folder, classes, imagery, ml_type, seed=False,
+                      split_names=('train', 'test'), split_vals=(0.8, .2),
+                      **kwargs):
     """Generate an .npz file containing arrays for training machine learning algorithms
 
     Parameters
@@ -18,8 +19,8 @@ def package_directory(dest_folder, classes, imagery, ml_type, seed=False, split_
     dest_folder: str
         Folder to save labels, tiles, and final numpy arrays into
     classes: list
-        A list of classes for machine learning training. Each class is defined as a dict
-        with two required properties:
+        A list of classes for machine learning training. Each class is defined
+        as a dict with two required properties:
           - name: class name
           - filter: A Mapbox GL Filter.
         See the README for more details
@@ -27,25 +28,27 @@ def package_directory(dest_folder, classes, imagery, ml_type, seed=False, split_
         Imagery template to download satellite images from.
         Ex: http://a.tiles.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}.jpg?access_token=ACCESS_TOKEN
     ml_type: str
-        Defines the type of machine learning. One of "classification", "object-detection", or "segmentation"
+        Defines the type of machine learning. One of "classification",
+        "object-detection", or "segmentation"
     seed: int
         Random generator seed. Optional, use to make results reproducible.
-    split_vals: list
-        Default: [0.8, 0.2]
-        Percentage of data to put in each catagory listed in split_names.
-        Must be floats and must sum to one.
-    split_names: list
-        Default: ['train', 'test']
+    split_vals: tuple
+        Percentage of data to put in each catagory listed in split_names. Must
+        be floats and must sum to one. Default: (0.8, 0.2)
+    split_names: tupel
+        Default: ('train', 'test')
         List of names for each subset of the data.
     **kwargs: dict
-        Other properties from CLI config passed as keywords to other utility functions
+        Other properties from CLI config passed as keywords to other utility
+        functions.
     """
     # if a seed is given, use it
     if seed:
         np.random.seed(seed)
 
     if len(split_names) != len(split_vals):
-        raise ValueError('`split_names` and `split_vals` must be the same length. Please update your config.')
+        raise ValueError('`split_names` and `split_vals` must be the same '
+                         'length. Please update your config.')
     if not np.isclose(sum(split_vals), 1):
         raise ValueError('`split_vals` must sum to one. Please update your config.')
 
@@ -105,7 +108,8 @@ def package_directory(dest_folder, classes, imagery, ml_type, seed=False, split_
     split_n_samps = [len(x_vals) * val for val in split_vals]
 
     if np.any(split_n_samps == 0):
-        raise ValueError('split must not generate zero samples per partition, change ratio of values in config file.')
+        raise ValueError('Split must not generate zero samples per partition. '
+                         'Change ratio of values in config file.')
 
     # Convert into a cumulative sum to get indices
     split_inds = np.cumsum(split_n_samps).astype(np.integer)
