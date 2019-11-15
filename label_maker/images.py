@@ -1,6 +1,7 @@
 # pylint: disable=unused-argument
 """Generate an .npz file containing arrays for training machine learning algorithms"""
 
+import pickle
 from os import makedirs, path as op
 from random import shuffle
 
@@ -35,8 +36,10 @@ def download_images(dest_folder, classes, imagery, ml_type, background_ratio, im
         Other properties from CLI config passed as keywords to other utility functions
     """
     # open labels file
-    labels_file = op.join(dest_folder, 'labels.npz')
-    tiles = np.load(labels_file)
+    #labels_file = op.join(dest_folder, 'labels.npz')
+    #tiles = np.load(labels_file)
+    with open(op.join(dest_folder, 'labels.pkl'), 'rb') as f:
+        tiles = pickle.load(f)
 
     # create tiles directory
     tiles_dir = op.join(dest_folder, 'tiles')
@@ -53,14 +56,14 @@ def download_images(dest_folder, classes, imagery, ml_type, background_ratio, im
         elif ml_type == 'classification':
             return value[0] == 0
         return None
-    class_tiles = [tile for tile in tiles.files if class_test(tiles[tile])]
 
+    class_tiles = [key for key, tile in tiles.items() if class_test(tile)]
     # for classification problems with a single class, we also get background
     # tiles up to len(class_tiles) * config.get('background_ratio')
     background_tiles = []
     limit = len(class_tiles) * background_ratio
     if ml_type == 'classification' and len(classes) == 1:
-        background_tiles_full = [tile for tile in tiles.files if tile not in class_tiles]
+        background_tiles_full = [tile for tile in tiles if tile not in class_tiles]
         shuffle(background_tiles_full)
         background_tiles = background_tiles_full[:limit]
 

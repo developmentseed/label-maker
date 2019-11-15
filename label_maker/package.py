@@ -1,6 +1,7 @@
 # pylint: disable=unused-argument
 """Generate an .npz file containing arrays for training machine learning algorithms"""
 
+import pickle
 from os import path as op
 from urllib.parse import urlparse
 import numpy as np
@@ -53,9 +54,11 @@ def package_directory(dest_folder, classes, imagery, ml_type, seed=False,
         raise ValueError('`split_vals` must sum to one. Please update your config.')
 
     # open labels file, create tile array
-    labels_file = op.join(dest_folder, 'labels.npz')
-    labels = np.load(labels_file)
-    tile_names = [tile for tile in labels.files]
+    labels_file = op.join(dest_folder, 'labels.pkl')
+    #labels = np.load(labels_file)
+    with open(labels_file, 'rb') as f:
+        labels = pickle.load(f)
+    tile_names = [tile for tile in labels]
     tile_names.sort()
     tiles = np.array(tile_names)
     np.random.shuffle(tiles)
@@ -63,7 +66,7 @@ def package_directory(dest_folder, classes, imagery, ml_type, seed=False,
     # find maximum number of features in advance so numpy shapes match
     if ml_type == 'object-detection':
         max_features = 0
-        for tile in labels.files:
+        for tile in labels:
             features = len(labels[tile])
             if features > max_features:
                 max_features = features

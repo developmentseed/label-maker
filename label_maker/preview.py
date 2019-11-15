@@ -1,6 +1,7 @@
 # pylint: disable=unused-argument
 """Produce imagery examples for specified classes"""
 
+import pickle
 from os import path as op
 from os import makedirs
 
@@ -36,8 +37,10 @@ def preview(dest_folder, number, classes, imagery, ml_type, imagery_offset=False
         Other properties from CLI config passed as keywords to other utility functions
     """
     # open labels file
-    labels_file = op.join(dest_folder, 'labels.npz')
-    tiles = np.load(labels_file)
+    labels_file = op.join(dest_folder, 'labels.pkl')
+    #tiles = np.load(labels_file)
+    with open(labels_file, 'rb') as f:
+        tiles = pickle.load(f)
 
     # create example tiles directory
     examples_dir = op.join(dest_folder, 'examples')
@@ -57,8 +60,7 @@ def preview(dest_folder, number, classes, imagery, ml_type, imagery_offset=False
         if not op.isdir(class_dir):
             makedirs(class_dir)
 
-        class_tiles = (t for t in tiles.files
-                       if class_match(ml_type, tiles[t], i + 1))
+        class_tiles = (t for t in tiles if class_match(ml_type, tiles[t], i + 1))
         print('Downloading at most {} tiles for class {}'.format(number, cl.get('name')))
         for n, tile in enumerate(class_tiles):
             if n >= number:
