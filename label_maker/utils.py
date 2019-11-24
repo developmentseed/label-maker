@@ -24,7 +24,7 @@ def class_match(ml_type, label, i):
         return np.count_nonzero(label == i)
     return None
 
-def download_tile_tms(tile, imagery, folder, kwargs):
+def download_tile_tms(tile, imagery, folder,imagery_offset, kwargs):
     """Download a satellite image tile from a tms endpoint"""
     o = urlparse(imagery)
     _, image_format = op.splitext(o.path)
