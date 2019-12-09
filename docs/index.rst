@@ -104,7 +104,7 @@ CLI Step 4: images
 
 Downloads all imagery tiles needed to create the training data. Requires the ``labels.npz`` file from the ``label-maker labels`` step.
 The number of background tiles added depends on the `background_ratio` parameter specified in the `config.json` file.
-A background_ratio of -1 or 0 will return no background tiles. 
+A background_ratio of 0 will return no background tiles. 
 
 .. code-block:: bash
 
