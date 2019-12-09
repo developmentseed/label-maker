@@ -71,7 +71,7 @@ Retiles the OSM data to the desired zoom level, creates label data (``labels.npz
 
 Accepts one additional flag:
 
-	``-s`` or ``--sparse``: boolean 
+	``-s`` or ``--sparse``: boolean
 		Specifies if features in the class of interest are sparse. If ``True``, only save labels for up to ``n`` background tiles, where ``n`` is equal to ``background_ratio`` times the number of tiles with a class label. Defaults to ``False``.
 
 .. code-block:: bash
@@ -103,6 +103,8 @@ CLI Step 4: images
 ^^^^^^^^^^^^^^^^^^
 
 Downloads all imagery tiles needed to create the training data. Requires the ``labels.npz`` file from the ``label-maker labels`` step.
+The number of background tiles added depends on the `background_ratio` parameter specified in the `config.json` file.
+A background_ratio of -1 or 0 will return no background tiles. 
 
 .. code-block:: bash
 
