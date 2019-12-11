@@ -24,7 +24,7 @@ def class_match(ml_type, label, i):
         return np.count_nonzero(label == i)
     return None
 
-def download_tile_tms(tile, imagery, folder,imagery_offset, kwargs):
+def download_tile_tms(tile, imagery, folder, kwargs):
     """Download a satellite image tile from a tms endpoint"""
     o = urlparse(imagery)
     _, image_format = op.splitext(o.path)
@@ -35,7 +35,7 @@ def download_tile_tms(tile, imagery, folder,imagery_offset, kwargs):
         w.write(r.content)
     return tile_img
 
-def get_tile_tif(tile, imagery, folder, imagery_offset, kwargs):
+def get_tile_tif(tile, imagery, folder, kwargs):
     """
     Read a GeoTIFF with a window corresponding to a TMS tile
 
@@ -46,7 +46,7 @@ def get_tile_tif(tile, imagery, folder, imagery_offset, kwargs):
     http://www.cogeo.org/in-depth.html
     """
     bound = bounds(*[int(t) for t in tile.split('-')])
-    imagery_offset = imagery_offset or [0, 0]
+    imagery_offset = kwargs.get('imagery_offset') or [0, 0]
     with rasterio.open(imagery) as src:
         x_res, y_res = src.transform[0], src.transform[4]
         p1 = Proj({'init': 'epsg:4326'})
@@ -88,7 +88,7 @@ def get_tile_tif(tile, imagery, folder, imagery_offset, kwargs):
 
     return tile_img
 
-def get_tile_wms(tile, imagery, folder, imagery_offset, kwargs):
+def get_tile_wms(tile, imagery, folder, kwargs):
     """
     Read a WMS endpoint with query parameters corresponding to a TMS tile
 
