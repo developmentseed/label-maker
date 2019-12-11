@@ -70,6 +70,7 @@ def download_images(dest_folder, classes, imagery, ml_type, background_ratio, im
 
     # get image acquisition function based on imagery string
     image_function = get_image_function(imagery)
+    kwargs['imagery_offset'] = imagery_offset 
 
     for tile in tiles:
-        image_function(tile, imagery, tiles_dir, imagery_offset, kwargs)
+        image_function(tile, imagery, tiles_dir, kwargs)
