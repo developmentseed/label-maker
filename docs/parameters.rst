@@ -38,7 +38,7 @@ Here is the full list of configuration parameters you can specify in a ``config.
 	Optional parameter to specify a username and password for restricted WMS services. For example, ``['my_username', 'my_password']``.
 
 **background_ratio**: float
-	Specify how many background (or "negative") training examples to create when there is only one class specified with the ``classes`` parameter. Label Maker will generate ``background_ratio`` times the number of images matching the one class.
+	Specify how many background (or "negative") training examples to create. Label Maker will generate ``background_ratio`` times the number of images matching the total number class tiles.
 
 **ml_type**: string
 	One of ``'classification'``, ``'object-detection'``, or ``'segmentation'``. This defines the output format for the final label numpy arrays (``y_train`` and ``y_test``).

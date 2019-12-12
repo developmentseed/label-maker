@@ -7,6 +7,6 @@
     { "name": "Buildings", "filter": ["has", "building"] }
   ],
   "imagery": "http://a.tiles.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}.jpg?access_token=ACCESS_TOKEN",
-  "background_ratio": 1,
+  "background_ratio": 0,
   "ml_type": "classification"
 }
