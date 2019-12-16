@@ -7,7 +7,8 @@ import unittest
 import numpy as np
 from PIL import Image
 
-from label_maker.utils import url, class_match, get_tile_tif, get_tile_wms, is_tif
+from label_maker.utils.gen_utils import (url, class_match, get_tile_tif,
+                                         get_tile_wms, is_tif)
 
 class TestUtils(unittest.TestCase):
     """Tests for utility functions"""

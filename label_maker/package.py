@@ -6,7 +6,7 @@ from urllib.parse import urlparse
 import numpy as np
 from PIL import Image
 
-from label_maker.utils import is_tif
+from label_maker.utils.gen_utils import is_tif
 
 
 def package_directory(dest_folder, classes, imagery, ml_type, seed=False,

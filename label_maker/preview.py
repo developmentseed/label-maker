@@ -7,7 +7,7 @@ from os import makedirs
 import numpy as np
 from PIL import Image, ImageDraw
 
-from label_maker.utils import class_match, get_image_function
+from label_maker.utils.gen_utils import class_match, get_image_function
 
 def preview(dest_folder, number, classes, imagery, ml_type, imagery_offset=False, **kwargs):
     """Produce imagery examples for specified classes

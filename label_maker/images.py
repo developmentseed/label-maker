@@ -6,7 +6,7 @@ from random import shuffle
 
 import numpy as np
 
-from label_maker.utils import get_image_function
+from label_maker.utils.gen_utils import get_image_function
 
 def download_images(dest_folder, classes, imagery, ml_type, background_ratio, imagery_offset=False, **kwargs):
     """Download satellite images specified by a URL and a label.npz file
