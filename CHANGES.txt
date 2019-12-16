@@ -1,3 +1,8 @@
+0.7.1 (2019-12-16)
+------------------
+- Consolidated utils.py and utils/ directory (#164).
+- Fixed bug with label-maker preview still using old func call (#163).
+
 0.7.0 (2019-12-13)
 ------------------
 - Fixed bug introduced by HTTP Authentication (#157 and #161)
