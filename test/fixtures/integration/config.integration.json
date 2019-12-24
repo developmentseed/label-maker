@@ -1,12 +1,12 @@
 {
-  "country": "portugal",
+  "country": ["portugal","spain"],
   "bounding_box": [
-    -9.4575,
-    38.8467,
-    -9.4510,
-    38.8513
+    -8.4302,
+    37.1825,
+    -6.3850,
+    38.2298
   ],
-  "zoom": 17,
+  "zoom": 10,
   "classes": [
     { "name": "Water Tower", "filter": ["==", "man_made", "water_tower"] },
     { "name": "Building", "filter": ["has", "building"] },

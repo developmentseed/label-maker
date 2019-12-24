@@ -1,0 +1,17 @@
+{
+  "country": ["portugal"],
+  "aoi": "test/fixtures/integration/portugal_aoi.geojson",
+  "zoom": 17,
+  "classes": [
+    { "name": "Water Tower", "filter": ["==", "man_made", "water_tower"] },
+    { "name": "Building", "filter": ["has", "building"] },
+    { "name": "Farmland", "filter": ["==", "landuse", "farmland"] },
+    { "name": "Ruins", "filter": ["==", "historic", "ruins"] },
+    { "name": "Parking", "filter": ["==", "amenity", "parking"] },
+    { "name": "Roads", "filter": ["has", "highway"] }
+  ],
+  "imagery": "https://api.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}.jpg?access_token=ACCESS_TOKEN",
+  "background_ratio": 1,
+  "ml_type": "classification",
+  "seed": 19
+}

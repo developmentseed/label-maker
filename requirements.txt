@@ -10,7 +10,7 @@ numpy==1.13.3
 olefile==0.44
 Pillow==4.3.0
 protobuf==3.5.0.post1
-pyclipper==1.0.6
+pyclipper>=1.0.6
 pycurl==7.43.0.1
 pyproj==1.9.5.1
 rasterio[s3]==1.0a12

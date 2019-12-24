@@ -17,7 +17,7 @@ class TestLabel(unittest.TestCase):
         ml_type = 'classification'
         tile, label = _mapper(x, y, z, test_tile_data, dict(ml_type=ml_type, classes=classes))
         self.assertEqual(tile, ('{!s}-{!s}-{!s}'.format(x, y, z)))
-        self.assertTrue(np.array_equal(label, np.array([0, 1], dtype=np.int)))
+        self.assertTrue(np.array_equal(label, np.array([0, 169], dtype=np.int)))
 
         # for object-detection we return the bounding box and class
         ml_type = 'object-detection'

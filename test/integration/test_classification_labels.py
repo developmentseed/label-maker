@@ -13,7 +13,8 @@ class TestClassificationLabel(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         makedirs('integration-cl')
-        copyfile('test/fixtures/integration/portugal-z17.mbtiles', 'integration-cl/portugal-z17.mbtiles')
+        copyfile('test/fixtures/integration/portugal-z10.mbtiles', 'integration-cl/portugal-z10.mbtiles')
+        copyfile('test/fixtures/integration/spain-z10.mbtiles', 'integration-cl/spain-z10.mbtiles')
 
     @classmethod
     def tearDownClass(cls):
@@ -24,13 +25,23 @@ class TestClassificationLabel(unittest.TestCase):
         # our command line output should look like this
         expected_output = """Determining labels for each tile
 ---
-Water Tower: 1 tiles
+Water Tower: 0 tiles
+Building: 0 tiles
+Farmland: 11 tiles
+Ruins: 0 tiles
+Parking: 2 tiles
+Roads: 0 tiles
+Total tiles: 24
+Writing out labels to integration-cl/labels.npz
+Determining labels for each tile
+---
+Water Tower: 0 tiles
 Building: 1 tiles
-Farmland: 0 tiles
-Ruins: 1 tiles
-Parking: 1 tiles
-Roads: 8 tiles
-Total tiles: 9
+Farmland: 11 tiles
+Ruins: 0 tiles
+Parking: 5 tiles
+Roads: 0 tiles
+Total tiles: 24
 Writing out labels to integration-cl/labels.npz
 """
 
@@ -41,16 +52,32 @@ Writing out labels to integration-cl/labels.npz
 
         # our labels should look like this
         expected_labels = {
-            '62092-50162-17': np.array([1, 0, 0, 0, 0, 0, 0]),
-            '62092-50163-17': np.array([0, 0, 0, 0, 0, 0, 1]),
-            '62092-50164-17': np.array([0, 0, 0, 0, 0, 0, 1]),
-            '62093-50162-17': np.array([0, 0, 0, 0, 0, 0, 1]),
-            '62093-50164-17': np.array([0, 0, 0, 0, 0, 0, 1]),
-            '62094-50162-17': np.array([0, 0, 0, 0, 0, 0, 1]),
-            '62094-50164-17': np.array([0, 0, 0, 0, 0, 0, 1]),
-            '62094-50163-17': np.array([0, 1, 1, 0, 0, 0, 1]),
-            '62093-50163-17': np.array([0, 0, 0, 0, 1, 1, 1])
-        }
+            '491-396-10': np.array([0, 0, 0, 0, 0, 0, 0]),
+            '491-397-10': np.array([0, 0, 0, 0, 0, 0, 0]),
+            '492-395-10': np.array([0, 0, 0, 0, 0, 0, 0]),
+            '491-395-10': np.array([0, 0, 0, 0, 0, 0, 0]),
+            '492-394-10': np.array([0, 0, 0, 0, 0, 0, 0]),
+            '491-394-10': np.array([0, 0, 0, 1.5, 0, 0, 0]),
+            '488-395-10': np.array([0, 0, 0, 12, 0, 0, 0]),
+            '489-396-10': np.array([0, 0, 0, 1.5, 0, 0, 0]),
+            '489-397-10': np.array([0, 0, 0, 0, 0, 0, 0]),
+            '490-395-10': np.array([0, 0, 0, 0, 0, 0, 0]),
+            '490-396-10': np.array([0, 0, 0, 0, 0, 0, 0]),
+            '490-394-10': np.array([0, 0, 0, 6, 0, 0, 0]),
+            '488-396-10': np.array([0, 0, 0, 11, 0, 0, 0]),
+            '488-394-10': np.array([0, 0, 0, 1, 0, 0.5, 0]),
+            '488-397-10': np.array([0, 0, 0, 7, 0, 0, 0]),
+            '489-395-10': np.array([0, 0, 0, 2.5, 0, 0, 0]),
+            '489-394-10': np.array([0, 0, 0, 0, 0, 1, 0]),
+            '490-397-10': np.array([0, 0, 0, 1, 0, 0, 0]),
+            '492-396-10': np.array([0, 0, 0, 0, 0, 0, 0]),
+            '492-397-10': np.array([0, 0, 1.5, 56, 0, 0.5, 0]),
+            '493-394-10': np.array([0, 0, 0, 0, 0, 0, 0]),
+            '493-395-10': np.array([0, 0, 0, 0, 0, 0, 0]),
+            '493-396-10': np.array([0, 0, 0, 17.5, 0, 0.5, 0]),
+            '493-397-10': np.array([0, 0, 0, 0, 0, 1, 0])
+            }
+
 
         labels = np.load('integration-cl/labels.npz')
         self.assertEqual(len(labels.files), len(expected_labels.keys()))  # First check number of tiles

@@ -1,19 +1,15 @@
 {
-  "country": "portugal",
+  "country": ["portugal","spain"],
   "bounding_box": [
-    -9.4575,
-    38.8467,
-    -9.4510,
-    38.8513
+    -8.4302,
+    37.1825,
+    -6.3850,
+    38.2298
   ],
-  "zoom": 17,
+  "zoom": 10,
   "classes": [
-    { "name": "Water Tower", "filter": ["==", "man_made", "water_tower"], "buffer": 5 },
-    { "name": "Building", "filter": ["has", "building"] },
-    { "name": "Farmland", "filter": ["==", "landuse", "farmland"] },
-    { "name": "Ruins", "filter": ["==", "historic", "ruins"] },
-    { "name": "Parking", "filter": ["==", "amenity", "parking"] },
-    { "name": "Roads", "filter": ["has", "highway"], "buffer": 3 }
+    { "name": "Water Tower", "filter": ["==", "man_made", "water_tower"] },
+    { "name": "Ruins", "filter": ["==", "historic", "ruins"] }
   ],
   "imagery": "https://api.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}.jpg?access_token=ACCESS_TOKEN",
   "background_ratio": 1,
