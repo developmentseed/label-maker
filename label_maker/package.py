@@ -46,6 +46,7 @@ def package_directory(dest_folder, classes, imagery, ml_type, seed=False,
     if seed:
         np.random.seed(seed)
 
+    print(split_names)
     if len(split_names) != len(split_vals):
         raise ValueError('`split_names` and `split_vals` must be the same '
                          'length. Please update your config.')
@@ -54,8 +55,10 @@ def package_directory(dest_folder, classes, imagery, ml_type, seed=False,
 
     # open labels file, create tile array
     labels_file = op.join(dest_folder, 'labels.npz')
+    print(labels_file)
     labels = np.load(labels_file)
     tile_names = [tile for tile in labels.files]
+    print(len(tile_names))
     tile_names.sort()
     tiles = np.array(tile_names)
     np.random.shuffle(tiles)

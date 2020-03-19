@@ -37,6 +37,7 @@ def download_images(dest_folder, classes, imagery, ml_type, background_ratio, im
     # open labels file
     labels_file = op.join(dest_folder, 'labels.npz')
     tiles = np.load(labels_file)
+    print('labels file loaded')
 
     # create tiles directory
     tiles_dir = op.join(dest_folder, 'tiles')
@@ -48,21 +49,26 @@ def download_images(dest_folder, classes, imagery, ml_type, background_ratio, im
         """Determine if a label matches a given class index"""
         if ml_type == 'object-detection':
             return len(value)
+            print(len(vale))
         elif ml_type == 'segmentation':
             return np.sum(value) > 0
         elif ml_type == 'classification':
             return value[0] == 0
         return None
     class_tiles = [tile for tile in tiles.files if class_test(tiles[tile])]
+    print(len(class_tiles))
 
     # for classification problems, we also get background
     # tiles up to len(class_tiles) * config.get('background_ratio')
     background_tiles = []
-    if ml_type == 'classification':
+    if ml_type in ['classification', 'object-detection']:
         limit = len(class_tiles) * background_ratio
+        print(limit)
+        limit2 = int(limit)
+        print(limit2)
         background_tiles_full = [tile for tile in tiles.files if tile not in class_tiles]
         shuffle(background_tiles_full)
-        background_tiles = background_tiles_full[:limit]
+        background_tiles = background_tiles_full[:limit2]
 
     # download tiles
     tiles = class_tiles + background_tiles

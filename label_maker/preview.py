@@ -37,6 +37,7 @@ def preview(dest_folder, number, classes, imagery, ml_type, imagery_offset=False
     """
     # open labels file
     labels_file = op.join(dest_folder, 'labels.npz')
+    print(labels_file)
     tiles = np.load(labels_file)
 
     # create example tiles directory
@@ -66,7 +67,7 @@ def preview(dest_folder, number, classes, imagery, ml_type, imagery_offset=False
 
             kwargs['imagery_offset'] = imagery_offset
             tile_img = image_function(tile, imagery, class_dir, kwargs)
-
+            print(tile_img)
             if ml_type == 'object-detection':
                 img = Image.open(tile_img)
                 draw = ImageDraw.Draw(img)

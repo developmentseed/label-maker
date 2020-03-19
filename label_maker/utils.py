@@ -27,7 +27,8 @@ def class_match(ml_type, label, i):
 def download_tile_tms(tile, imagery, folder, kwargs):
     """Download a satellite image tile from a tms endpoint"""
     o = urlparse(imagery)
-    _, image_format = op.splitext(o.path)
+   # _, image_format = op.splitext(o.path)
+    image_format = '.png'
     r = requests.get(url(tile.split('-'), imagery),
                      auth=kwargs.get('http_auth'))
     tile_img = op.join(folder, '{}{}'.format(tile, image_format))
