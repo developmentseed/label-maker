@@ -49,8 +49,8 @@ def get_tile_tif(tile, imagery, folder, kwargs):
     imagery_offset = kwargs.get('imagery_offset') or [0, 0]
     with rasterio.open(imagery) as src:
         x_res, y_res = src.transform[0], src.transform[4]
-        p1 = Proj({'init': 'epsg:4326'})
-        p2 = Proj(**src.crs)
+        p1 = Proj('epsg:4326')
+        p2 = Proj(str(src.crs))
 
         # offset our imagery in the "destination pixel" space
         offset_bound = dict()
@@ -106,8 +106,8 @@ def get_tile_wms(tile, imagery, folder, kwargs):
 
     # find our tile bounding box
     bound = bounds(*[int(t) for t in tile.split('-')])
-    p1 = Proj({'init': 'epsg:4326'})
-    p2 = Proj({'init': wms_srs})
+    p1 = Proj('epsg:4326')
+    p2 = Proj(wms_srs)
 
     # project the tile bounding box from lat/lng to WMS SRS
     tile_ll_proj = transform(p1, p2, bound.west, bound.south)

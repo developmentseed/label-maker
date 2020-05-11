@@ -329,5 +329,6 @@ def _create_empty_label(ml_type, classes):
 # Use with 'transform' to project to EPSG:4326
 project = partial(
     pyproj.transform,
-    pyproj.Proj(init='epsg:3857'),
-    pyproj.Proj(init='epsg:4326'))
+    pyproj.Proj('epsg:3857'),
+    pyproj.Proj('epsg:4326')
+)
