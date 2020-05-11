@@ -10,3 +10,4 @@ rasterio[s3]>=1.1
 requests>=2.20.0
 Shapely>=1.6.3
 tilepie==0.2.1
+tqdm>=4.46.0
