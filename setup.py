@@ -8,12 +8,14 @@ __version__ = load_source('label_maker.version', 'label_maker/version.py').__ver
 
 here = op.abspath(op.dirname(__file__))
 
+extra_reqs = {
+    "test": ["pytest", "pytest-cov"],
+    "dev": ["pytest", "pytest-cov", "pre-commit"],
+}
+
 # get the dependencies and installs
 with io.open(op.join(here, 'requirements.txt'), encoding='utf-8') as f:
-    all_reqs = f.read().split('\n')
-
-install_requires = [x.strip() for x in all_reqs if 'git+' not in x]
-dependency_links = [x.strip().replace('git+', '') for x in all_reqs if 'git+' not in x]
+    install_requires = f.read().split('\n')
 
 # readme
 with open('README.md') as f:
@@ -39,7 +41,7 @@ setup(
     packages=find_packages(exclude=['docs', 'tests*']),
     include_package_data=True,
     install_requires=install_requires,
-    dependency_links=dependency_links,
+    extras_require=extra_reqs,
     long_description=readme,
     long_description_content_type="text/markdown"
 )

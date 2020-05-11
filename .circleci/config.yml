@@ -1,36 +1,51 @@
 version: 2
+common: &common
+  working_directory: ~/label-maker
+  steps:
+    - checkout
+    - run:
+        name: install dependencies
+        command: pip install tox codecov --user
+    - run:
+        name: install tippecanoe
+        command: .circleci/install_tippecanoe.sh
+    - run:
+        name: run tox
+        command: ~/.local/bin/tox
 jobs:
-  build:
+  "python-3.6":
+    <<: *common
     docker:
-      - image: circleci/python:3.6-stretch
+      - image: circleci/python:3.6.5
+        environment:
+          - TOXENV=py36
 
+  "python-3.7":
+    <<: *common
+    docker:
+      - image: circleci/python:3.7.2
+        environment:
+          - TOXENV=py37
+
+  deploy:
+    docker:
+      - image: circleci/python:3.7.2
+        environment:
+          - TOXENV=release
     working_directory: ~/label-maker
     steps:
       - checkout
       - run:
-          name: Installing Dependencies
+          name: verify git tag vs. version
           command: |
-            sudo apt-get update
-            sudo apt-get install libgdal-dev
-            sudo pip install numpy==1.13.3
-            sudo pip install -r requirements.txt
-            sudo pip install -r requirements-dev.txt
-            git clone git@github.com:mapbox/tippecanoe.git
-            cd tippecanoe
-            sudo make -j
-            sudo make install
-
+            VERSION=$(python setup.py --version)
+            if [ "$VERSION" = "$CIRCLE_TAG" ]; then exit 0; else exit 3; fi
       - run:
-          name: Pylint
-          command: pylint ~/label-maker/label_maker --rcfile=~/label-maker/.config/pylintrc
-      - run:
-          name: Unit Tests
-          command: python -m unittest discover -v -s test/unit
-      - run:
-          name: Integration Tests
+          name: init .pypirc
           command: |
-            sudo pip install .
-            python -m unittest discover -v -s test/integration
+            echo -e "[pypi]" >> ~/.pypirc
+            echo -e "username = $PYPI_USER" >> ~/.pypirc
+            echo -e "password = $PYPI_PASSWORD" >> ~/.pypirc
 
       - add_ssh_keys:
           fingerprints:
@@ -40,6 +55,7 @@ jobs:
           name: Deploy documentation
           command: |
             if [ "${CIRCLE_BRANCH}" == "${PRODUCTION_BRANCH}" ]; then
+              pip install -r requirements-dev.txt
               cd docs
               make html
               cd _build/html
@@ -56,3 +72,20 @@ jobs:
             else
               echo "Not the branch you're looking for, skipping documentation deploy"
             fi
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - "python-3.6"
+      - "python-3.7":
+          filters:  # required since `deploy` has tag filters AND requires `build`
+            tags:
+              only: /.*/
+      - deploy:
+          requires:
+            - "python-3.7"
+          filters:
+            tags:
+              only: /^[0-9]+.*/
+            branches:
+              ignore: /.*/
