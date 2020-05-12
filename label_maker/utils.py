@@ -4,7 +4,7 @@ from os import path as op
 from urllib.parse import urlparse, parse_qs
 
 from mercantile import bounds
-from pyproj import Proj, Transformer
+from pyproj import Transformer
 from PIL import Image
 import numpy as np
 import requests
@@ -49,8 +49,8 @@ def get_tile_tif(tile, imagery, folder, kwargs):
     imagery_offset = kwargs.get('imagery_offset') or [0, 0]
     with rasterio.open(imagery) as src:
         x_res, y_res = src.transform[0], src.transform[4]
-        p1 = Proj('epsg:4326')
-        p2 = Proj(str(src.crs))
+        p1 = 'epsg:4326'
+        p2 = str(src.crs)
         transformer = Transformer.from_crs(p1, p2)
 
         # offset our imagery in the "destination pixel" space
@@ -107,8 +107,8 @@ def get_tile_wms(tile, imagery, folder, kwargs):
 
     # find our tile bounding box
     bound = bounds(*[int(t) for t in tile.split('-')])
-    p1 = Proj('epsg:4326')
-    p2 = Proj(wms_srs)
+    p1 = 'epsg:4326'
+    p2 = wms_srs
     transformer = Transformer.from_crs(p1, p2)
 
     # project the tile bounding box from lat/lng to WMS SRS
