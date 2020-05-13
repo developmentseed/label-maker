@@ -9,7 +9,6 @@ from functools import partial
 
 import numpy as np
 import mapbox_vector_tile
-import pyproj
 from shapely.geometry import shape, mapping, Polygon
 from shapely.errors import TopologicalError
 from rasterio.features import rasterize
@@ -325,9 +324,3 @@ def _create_empty_label(ml_type, classes):
     elif ml_type == 'segmentation':
         return np.zeros((256, 256), dtype=np.int)
     return None
-
-# Use with 'transform' to project to EPSG:4326
-project = partial(
-    pyproj.transform,
-    pyproj.Proj(init='epsg:3857'),
-    pyproj.Proj(init='epsg:4326'))

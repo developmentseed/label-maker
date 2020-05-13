@@ -3,8 +3,27 @@
 from os import path
 import tempfile
 import gzip
-from homura import download
+import requests
+from tqdm import tqdm
 
+def download(url, path):
+    """Download url to target path"""
+    file_size = int(requests.head(url).headers["Content-Length"])
+    header = {"Range": "bytes=%s-%s" % (0, file_size)}
+    pbar = tqdm(
+        total=file_size,
+        unit='B',
+        unit_scale=True,
+        desc=url.split('/')[-1]
+    )
+    req = requests.get(url, headers=header, stream=True)
+    with(open(path, 'ab')) as f:
+        for chunk in req.iter_content(chunk_size=1024):
+            if chunk:
+                f.write(chunk)
+                pbar.update(1024)
+    pbar.close()
+    return file_size
 
 def download_mbtiles(dest_folder, country, **kwargs):
     """Download QA Tiles for the selected country.
