@@ -4,11 +4,14 @@ from os import path as op
 from urllib.parse import urlparse, parse_qs
 
 from mercantile import bounds
-from pyproj import Proj, Transformer
 from PIL import Image
 import numpy as np
 import requests
 import rasterio
+from rasterio.crs import CRS
+from rasterio.warp import transform, transform_bounds
+
+WGS84_CRS = CRS.from_epsg(4326)
 
 def url(tile, imagery):
     """Return a tile url provided an imagery template and a tile"""
@@ -49,9 +52,6 @@ def get_tile_tif(tile, imagery, folder, kwargs):
     imagery_offset = kwargs.get('imagery_offset') or [0, 0]
     with rasterio.open(imagery) as src:
         x_res, y_res = src.transform[0], src.transform[4]
-        p1 = Proj('epsg:4326')
-        p2 = Proj(str(src.crs))
-        transformer = Transformer.from_crs(p1, p2)
 
         # offset our imagery in the "destination pixel" space
         offset_bound = dict()
@@ -64,8 +64,12 @@ def get_tile_tif(tile, imagery, folder, kwargs):
         offset_bound['south'] = bound.south + imagery_offset[1] * deg_per_pix_y
 
         # project tile boundaries from lat/lng to source CRS
-        tile_ul_proj = transformer.transform(offset_bound['west'], offset_bound['north'])
-        tile_lr_proj = transformer.transform(offset_bound['east'], offset_bound['south'])
+        x, y = transform(WGS84_CRS, src.crs, [offset_bound['west']], [offset_bound['north']])
+        tile_ul_proj = x[0], y[0]
+
+        x, y = transform(WGS84_CRS, src.crs, [offset_bound['east']], [offset_bound['south']])
+        tile_lr_proj = x[0], y[0]
+
         # get origin point from the TIF
         tif_ul_proj = (src.bounds.left, src.bounds.top)
 
@@ -107,17 +111,12 @@ def get_tile_wms(tile, imagery, folder, kwargs):
 
     # find our tile bounding box
     bound = bounds(*[int(t) for t in tile.split('-')])
-    p1 = Proj('epsg:4326')
-    p2 = Proj(wms_srs)
-    transformer = Transformer.from_crs(p1, p2)
+    xmin, ymin, xmax, ymax = transform_bounds(WGS84_CRS, CRS.from_string(wms_srs), *bound, densify_pts=21)
 
     # project the tile bounding box from lat/lng to WMS SRS
-    tile_ll_proj = transformer.transform(bound.west, bound.south)
-    tile_ur_proj = transformer.transform(bound.east, bound.north)
-    if wms_version == '1.3.0':
-        bbox = tile_ll_proj[::-1] + tile_ur_proj[::-1]
-    else:
-        bbox = tile_ll_proj + tile_ur_proj
+    bbox = (
+        [ymin, xmin, ymax, xmax] if wms_version == "1.3.0" else [xmin, ymin, xmax, ymax]
+    )
 
     # request the image with the transformed bounding box and save
     wms_url = imagery.replace('{bbox}', ','.join([str(b) for b in bbox]))

@@ -5,7 +5,6 @@ mapbox-vector-tile==1.2.0
 mercantile>=1.0.3
 numpy>=1.18.4
 Pillow==7.1.2
-pyproj>=2.6.1
 rasterio[s3]>=1.1
 requests>=2.20.0
 Shapely>=1.6.3
