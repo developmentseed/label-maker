@@ -46,11 +46,15 @@ jobs:
             echo -e "[pypi]" >> ~/.pypirc
             echo -e "username = $PYPI_USER" >> ~/.pypirc
             echo -e "password = $PYPI_PASSWORD" >> ~/.pypirc
-
+      - run:
+          name: install dependencies
+          command: pip install tox --user
+      - run:
+          name: run tox
+          command: ~/.local/bin/tox
       - add_ssh_keys:
           fingerprints:
             - "79:16:39:74:e9:b3:39:52:87:2c:90:aa:ee:3c:09:13"
-
       - run:
           name: Deploy documentation
           command: |
