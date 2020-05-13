@@ -111,8 +111,8 @@ def get_tile_wms(tile, imagery, folder, kwargs):
 
     # find our tile bounding box
     bound = bounds(*[int(t) for t in tile.split('-')])
-    # bbox = transform_bounds(WGS84_CRS, CRS.from_string(wms_srs), *bound, densify_pts=21)
     xmin, ymin, xmax, ymax = transform_bounds(WGS84_CRS, CRS.from_string(wms_srs), *bound, densify_pts=21)
+
     # project the tile bounding box from lat/lng to WMS SRS
     bbox = (
         [ymin, xmin, ymax, xmax] if wms_version == "1.3.0" else [xmin, ymin, xmax, ymax]
