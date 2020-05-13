@@ -1,3 +1,10 @@
+0.8.0 (2020-05-13)
+------------------
+- Maintenance release
+- Add tox for tests/automation
+- Automate pypi releases
+- Dependency removal (homura/pycurl/pyproj) and upgrades (rasterio/numpy)
+
 0.7.0 (2019-12-13)
 ------------------
 - Fixed bug introduced by HTTP Authentication (#157 and #161)
