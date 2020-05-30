@@ -25,12 +25,8 @@ logger = logging.getLogger(__name__)
 def get_bounds(feature_collection):
     """Get a bounding box for a FeatureCollection"""
     features = [f for f in feature_collection['features']]
-    shape_lst = []
-    for x in np.arange(0, len(features)):
-        shape_lst.append(shape(features[x]['geometry']))
-
-    bounds = unary_union(shape_lst).bounds
-    return bounds
+    shape_lst = [shape(geom['geometry']) for geom in f]
+    return unary_union(shape_lst).bounds
 
 
 def parse_args(args):
