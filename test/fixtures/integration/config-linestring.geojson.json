@@ -1,0 +1,17 @@
+{
+  "zoom": 18,
+  "classes": [
+    {"name": "tertiary", "filter":  ["in","highway","tertiary"]},
+    {"name": "motorway", "filter": ["in", "highway", "motorway"]},
+    {"name": "primary", "filter": ["in", "highway", "primary"]},
+    {"name": "secondary", "filter": ["in", "highway", "secondary"]},
+    {"name": "residential", "filter": ["in", "highway", "residential"]},
+    {"name": "unclassified", "filter": ["in", "highway", "unclassified"]}
+    ],
+  "geojson": "/Users/marthamorrissey/repos/label-maker/test/fixtures/integration/labels-linestring.geojson",
+  "imagery": "https://api.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}.jpg?access_token=ACCESS_TOKEN",
+  "background_ratio": 1,
+  "split_vals": [1.0, 0.0, 0.0],
+  "split_names": ["train", "validation", "test"],
+  "ml_type": "classification"
+}
