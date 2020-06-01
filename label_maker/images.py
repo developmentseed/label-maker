@@ -3,7 +3,7 @@
 
 from os import makedirs, path as op
 from random import shuffle
-
+import pdb
 import numpy as np
 
 from label_maker.utils import get_image_function
@@ -36,8 +36,8 @@ def download_images(dest_folder, classes, imagery, ml_type, background_ratio, im
     """
     # open labels file
     labels_file = op.join(dest_folder, 'labels.npz')
-    tiles = np.load(labels_file)
-
+    tiles = np.load(labels_file,allow_pickle=True)
+    # pdb.set_trace()
     # create tiles directory
     tiles_dir = op.join(dest_folder, 'tiles')
     if not op.isdir(tiles_dir):
@@ -53,7 +53,9 @@ def download_images(dest_folder, classes, imagery, ml_type, background_ratio, im
         elif ml_type == 'classification':
             return value[0] == 0
         return None
-    class_tiles = [tile for tile in tiles.files if class_test(tiles[tile])]
+
+    # class_tiles = [tile for tile in tiles.files if class_test(tiles[tile][0])]
+    class_tiles = [tile for tile in tiles.files if class_test(tiles[tile][0])]
 
     # for classification problems, we also get background
     # tiles up to len(class_tiles) * config.get('background_ratio')
@@ -71,6 +73,9 @@ def download_images(dest_folder, classes, imagery, ml_type, background_ratio, im
     # get image acquisition function based on imagery string
     image_function = get_image_function(imagery)
     kwargs['imagery_offset'] = imagery_offset
-
+    
     for tile in tiles:
-        image_function(tile, imagery, tiles_dir, kwargs)
+        print(tile)
+        tile_img = op.join('data','tiles', '{}.jpg'.format(tile))
+        if not op.exists(tile_img):
+            image_function(tile, imagery, tiles_dir, kwargs)
