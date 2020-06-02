@@ -4,10 +4,13 @@ import sys
 import argparse
 import logging
 import json
+import numpy as np
 from os import makedirs, path as op
 
 from cerberus import Validator
 from shapely.geometry import MultiPolygon, Polygon
+from shapely.geometry import shape
+from shapely.ops import unary_union
 
 from label_maker.version import __version__
 from label_maker.download import download_mbtiles
@@ -20,9 +23,9 @@ from label_maker.validate import schema
 logger = logging.getLogger(__name__)
 
 def get_bounds(feature_collection):
-    """Get a bounding box for a FeatureCollection of Polygon Features"""
-    features = [f for f in feature_collection['features'] if f['geometry']['type'] in ['Polygon']]
-    return MultiPolygon(list(map(lambda x: Polygon(x['geometry']['coordinates'][0]), features))).bounds
+    """Get a bounding box for a FeatureCollection"""
+    shape_lst = [shape(f['geometry']) for f in feature_collection['features']]
+    return unary_union(shape_lst).bounds
 
 
 def parse_args(args):
