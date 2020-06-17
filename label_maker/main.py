@@ -50,7 +50,7 @@ def parse_args(args):
     subparsers.add_parser('download', parents=[pparser], help='', formatter_class=dhf)
     l = subparsers.add_parser('labels', parents=[pparser], help='', formatter_class=dhf)
     p = subparsers.add_parser('preview', parents=[pparser], help='', formatter_class=dhf)
-    subparsers.add_parser('images', parents=[pparser], help='', formatter_class=dhf)
+    i = subparsers.add_parser('images', parents=[pparser], help='', formatter_class=dhf)
     subparsers.add_parser('package', parents=[pparser], help='', formatter_class=dhf)
 
     # labels has an optional parameter
@@ -59,6 +59,9 @@ def parse_args(args):
     # preview has an optional parameter
     p.add_argument('-n', '--number', default=5, type=int,
                    help='number of examples images to create per class')
+
+    #i.add_argument('-m', '--multispectral', action='store_true') #this should be in the config not argument
+
 
     # turn namespace into dictinary
     parsed_args = vars(parser.parse_args(args))

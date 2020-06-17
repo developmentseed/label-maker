@@ -3,7 +3,7 @@
 from os import path as op
 from urllib.parse import urlparse, parse_qs
 
-from mercantile import bounds
+from mercantile import bounds, Tile, children
 from PIL import Image
 import numpy as np
 import requests
@@ -31,11 +31,36 @@ def download_tile_tms(tile, imagery, folder, kwargs):
     """Download a satellite image tile from a tms endpoint"""
     o = urlparse(imagery)
     _, image_format = op.splitext(o.path)
-    r = requests.get(url(tile.split('-'), imagery),
-                     auth=kwargs.get('http_auth'))
+
+    tile = tile.split('-')
+
     tile_img = op.join(folder, '{}{}'.format(tile, image_format))
-    with open(tile_img, 'wb')as w:
-        w.write(r.content)
+    if over_zoom:
+        #get children
+        child_tiles = children(*tile, zoom=tile[2] + over_zoom)
+        child_tiles.sort()
+
+        #request children
+        with rasterio.open(tile_img, 'w', driver=image_format, height=256,
+                        width=256, count=3, dtype=np.unit8) as w:
+            for t in child_tiles:
+                r = request.get(url(t, imagery),
+                                auth=kwargs.get('http_auth'))
+                #r.content (is byte string, will convert to numpy array), then windowed reading and writing
+                # can directly write bytes with pillow
+                w.
+        
+
+
+        #stich back together in correct order
+        r = requests.get(url)
+
+
+    else:
+        r = requests.get(url(tile, imagery),
+                         auth=kwargs.get('http_auth'))
+        with open(tile_img, 'wb')as w:
+            w.write(r.content)
     return tile_img
 
 def get_tile_tif(tile, imagery, folder, kwargs):
