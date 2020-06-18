@@ -34,6 +34,8 @@ def download_tile_tms(tile, imagery, folder, kwargs):
 
     tile = tile.split('-')
 
+    zoom_offset = tile[2] - over_zoom
+
     tile_img = op.join(folder, '{}{}'.format(tile, image_format))
     if over_zoom:
         #get children
@@ -41,16 +43,19 @@ def download_tile_tms(tile, imagery, folder, kwargs):
         child_tiles.sort()
 
         #request children
-        with rasterio.open(tile_img, 'w', driver=image_format, height=256,
-                        width=256, count=3, dtype=np.unit8) as w:
+        with rasterio.open(tile_img, 'w', driver=image_format, height=512,
+                        width=512, count=3, dtype=np.unit8) as w:
             for t in child_tiles:
                 r = request.get(url(t, imagery),
                                 auth=kwargs.get('http_auth'))
                 #r.content (is byte string, will convert to numpy array), then windowed reading and writing
                 # can directly write bytes with pillow
-                w.
-        
+                img = np.from_string(r.content, unit8)
 
+                for i in range (2 ** zoom_offset):
+                    for j in range(2 ** zoom_offset):
+                        window = Window(i * sz, j * sz, (i + 1) * sz, (j + 1) * sz)
+                        w.write(img, window=Window(window))
 
         #stich back together in correct order
         r = requests.get(url)
