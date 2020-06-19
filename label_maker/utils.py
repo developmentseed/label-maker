@@ -5,11 +5,13 @@ from urllib.parse import urlparse, parse_qs
 
 from mercantile import bounds, Tile, children
 from PIL import Image
+import io
 import numpy as np
 import requests
 import rasterio
 from rasterio.crs import CRS
 from rasterio.warp import transform, transform_bounds
+from rasterio.windows import Window
 
 WGS84_CRS = CRS.from_epsg(4326)
 
@@ -27,38 +29,58 @@ def class_match(ml_type, label, i):
         return np.count_nonzero(label == i)
     return None
 
-def download_tile_tms(tile, imagery, folder, kwargs):
+def download_tile_tms(tile, imagery, folder,kwargs, over_zoom=1,):
     """Download a satellite image tile from a tms endpoint"""
     o = urlparse(imagery)
     _, image_format = op.splitext(o.path)
 
+
+    image_format = '.jpg'
+    tile_img = op.join(folder, '{}{}'.format(tile, image_format))
     tile = tile.split('-')
 
-    zoom_offset = tile[2] - over_zoom
+    zoom_offset = int(tile[2]) - over_zoom
 
-    tile_img = op.join(folder, '{}{}'.format(tile, image_format))
+    z = int(tile[2]) + 1
+    #print(z)
+
     if over_zoom:
         #get children
-        child_tiles = children(*tile, zoom=tile[2] + over_zoom)
+        #print(tile)
+        child_tiles = children(int(tile[0]), int(tile[1]), int(tile[2]))
         child_tiles.sort()
+        #print(child_tiles)
+        print(child_tiles)
 
+
+        w_lst = [Window(0, 0, 256, 256), Window(0, 256, 256, 256), Window(256, 0, 256, 256), Window(256, 256, 256, 256)]
         #request children
-        with rasterio.open(tile_img, 'w', driver=image_format, height=512,
-                        width=512, count=3, dtype=np.unit8) as w:
-            for t in child_tiles:
-                r = request.get(url(t, imagery),
-                                auth=kwargs.get('http_auth'))
-                #r.content (is byte string, will convert to numpy array), then windowed reading and writing
-                # can directly write bytes with pillow
-                img = np.from_string(r.content, unit8)
+        with rasterio.open(tile_img, 'w', driver='jpeg', height=512,
+                        width=512, count=3, dtype=rasterio.uint8) as w:
+                for num, t in enumerate(child_tiles):
+                    print(t)
+                    t = [str(t[0]), str(t[1]), str(t[2])]
+                    #print(t)
+                    r = requests.get(url(t, imagery),
+                                    auth=kwargs.get('http_auth'))
+                    #r.content (is byte string, will convert to numpy array), then windowed reading and writing
+                    # can directly write bytes with pillow
+                    #img = np.fromstring(r.content, dtype=np.uint8)
 
-                for i in range (2 ** zoom_offset):
-                    for j in range(2 ** zoom_offset):
-                        window = Window(i * sz, j * sz, (i + 1) * sz, (j + 1) * sz)
-                        w.write(img, window=Window(window))
+                    img = np.array(Image.open(io.BytesIO(r.content)), dtype=np.uint8)
+
+                    #print(img.shape)
+                    img = img.reshape((256, 256, 4))
+                    #print(img.shape)
+                    img = img[:, :, :3]
+                    img = np.rollaxis(img, 2, 0)
+                    #print(img.shape)
+
+                    #sz = 256
+                    w.write(img, window=w_lst[num])
 
         #stich back together in correct order
-        r = requests.get(url)
+        #r = requests.get(url)
 
 
     else:
