@@ -72,10 +72,15 @@ def package_directory(dest_folder, classes, imagery, ml_type, seed=False,
     y_vals = []
 
     # open the images and load those plus the labels into the final arrays
-    o = urlparse(imagery)
-    _, image_format = op.splitext(o.path)
+
+
+    if kwargs['tms_image_format']:
+            image_format =  kwargs['tms_image_format']
     if is_tif(imagery):  # if a TIF is provided, use jpg as tile format
-        image_format = '.jpg'
+            image_format = '.jpg'
+    else:
+        o = urlparse(imagery)
+        _, image_format = op.splitext(o.path)
     for tile in tiles:
         image_file = op.join(dest_folder, 'tiles', '{}{}'.format(tile, image_format))
         try:
