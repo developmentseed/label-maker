@@ -70,9 +70,7 @@ def package_directory(dest_folder, classes, imagery, ml_type, seed=False,
 
     x_vals = []
     y_vals = []
-
-    print(kwargs.keys())
-
+    
     # open the images and load those plus the labels into the final arrays
     if is_tif(imagery):  # if a TIF is provided, use jpg as tile format
         image_format = '.jpg'
