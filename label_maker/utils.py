@@ -29,29 +29,21 @@ def class_match(ml_type, label, i):
         return np.count_nonzero(label == i)
     return None
 
-def download_tile_tms(tile, imagery, folder,kwargs, over_zoom=1,):
+def download_tile_tms(tile, imagery, folder, kwargs):
     """Download a satellite image tile from a tms endpoint"""
     o = urlparse(imagery)
-    _, image_format = op.splitext(o.path)
-
-
+    #_, image_format = op.splitext(o.path)
     image_format = '.jpg'
     tile_img = op.join(folder, '{}{}'.format(tile, image_format))
     tile = tile.split('-')
 
-    zoom_offset = int(tile[2]) - over_zoom
 
-    z = int(tile[2]) + 1
-    #print(z)
+    over_zoom = kwargs.get('imagery_offset') or 0
 
     if over_zoom:
         #get children
-        #print(tile)
         child_tiles = children(int(tile[0]), int(tile[1]), int(tile[2]))
         child_tiles.sort()
-        #print(child_tiles)
-        print(child_tiles)
-
 
         w_lst = [Window(0, 0, 256, 256), Window(0, 256, 256, 256), Window(256, 0, 256, 256), Window(256, 256, 256, 256)]
         #request children
@@ -63,26 +55,11 @@ def download_tile_tms(tile, imagery, folder,kwargs, over_zoom=1,):
                     #print(t)
                     r = requests.get(url(t, imagery),
                                     auth=kwargs.get('http_auth'))
-                    #r.content (is byte string, will convert to numpy array), then windowed reading and writing
-                    # can directly write bytes with pillow
-                    #img = np.fromstring(r.content, dtype=np.uint8)
-
                     img = np.array(Image.open(io.BytesIO(r.content)), dtype=np.uint8)
-
-                    #print(img.shape)
-                    img = img.reshape((256, 256, 4))
-                    #print(img.shape)
+                    img = img.reshape((256, 256, 4)) #4 channels returned from some endpoints, but not all
                     img = img[:, :, :3]
                     img = np.rollaxis(img, 2, 0)
-                    #print(img.shape)
-
-                    #sz = 256
                     w.write(img, window=w_lst[num])
-
-        #stich back together in correct order
-        #r = requests.get(url)
-
-
     else:
         r = requests.get(url(tile, imagery),
                          auth=kwargs.get('http_auth'))
