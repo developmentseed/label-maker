@@ -40,6 +40,7 @@ def download_tile_tms(tile, imagery, folder, kwargs):
     over_zoom = kwargs.get('over_zoom') or 0
     new_zoom = over_zoom + kwargs.get('zoom')
     if over_zoom:
+        print('creating supertiles')
         #get children
         child_tiles = children(int(tile[0]), int(tile[1]), int(tile[2]), zoom=new_zoom)
         child_tiles.sort()
@@ -56,13 +57,14 @@ def download_tile_tms(tile, imagery, folder, kwargs):
         with rasterio.open(tile_img, 'w', driver='jpeg', height=new_dim,
                         width=new_dim, count=3, dtype=rasterio.uint8) as w:
                 for num, t in enumerate(child_tiles):
-                    print(t)
                     t = [str(t[0]), str(t[1]), str(t[2])]
-                    #print(t)
                     r = requests.get(url(t, imagery),
                                     auth=kwargs.get('http_auth'))
                     img = np.array(Image.open(io.BytesIO(r.content)), dtype=np.uint8)
-                    img = img.reshape((256, 256, 4)) #4 channels returned from some endpoints, but not all
+                    try:
+                        img = img.reshape((256, 256, 3)) #4 channels returned from some endpoints, but not all
+                    except ValueError:
+                        img = img.reshape((256, 256, 4))
                     img = img[:, :, :3]
                     img = np.rollaxis(img, 2, 0)
                     w.write(img, window=w_lst[num])
