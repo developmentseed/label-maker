@@ -21,10 +21,15 @@ class TestClassificationPackage(unittest.TestCase):
         copyfile('test/fixtures/integration/labels-cl.npz', 'integration-cl-split/labels.npz')
         copytree('test/fixtures/integration/tiles', 'integration-cl-split/tiles')
 
+        makedirs('integration-cl-overzoom')
+        copyfile('test/fixtures/integration/labels-cl.npz', 'integration-cl-overzoom/labels.npz')
+        copytree('test/fixtures/integration/tiles_overzoom', 'integration-cl-overzoom/tiles')
+
     @classmethod
     def tearDownClass(cls):
         rmtree('integration-cl')
         rmtree('integration-cl-split')
+        rmtree('integration-cl-overzoom')
 
     def test_cli(self):
         """Verify data.npz produced by CLI"""
@@ -74,3 +79,15 @@ class TestClassificationPackage(unittest.TestCase):
         self.assertEqual(data['y_train'].shape, (5, 7))
         self.assertEqual(data['y_test'].shape, (2, 7))
         self.assertEqual(data['y_val'].shape, (1, 7))
+
+    def test_overzoom(self):
+        """Verify data.npz produced by CLI when overzoom is used"""
+        cmd = 'label-maker package --dest integration-cl-overzoom --config test/fixtures/integration/config_overzoom.integration.json'
+        cmd = cmd.split(' ')
+        subprocess.run(cmd, universal_newlines=True)
+
+        data = np.load('integration-cl-overzoom/data.npz')
+
+        self.assertEqual(data['x_train'].shape, (6, 512, 512, 3))
+        self.assertEqual(data['x_test'].shape, (2, 512, 512, 3))
+        self.assertEqual(data['x_val'].shape, (1, 512, 512, 3))
