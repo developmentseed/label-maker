@@ -32,23 +32,29 @@ def class_match(ml_type, label, i):
 def download_tile_tms(tile, imagery, folder, kwargs):
     """Download a satellite image tile from a tms endpoint"""
     o = urlparse(imagery)
-    #_, image_format = op.splitext(o.path)
-    image_format = '.jpg'
+    _, image_format = op.splitext(o.path)
     tile_img = op.join(folder, '{}{}'.format(tile, image_format))
     tile = tile.split('-')
 
 
-    over_zoom = kwargs.get('imagery_offset') or 0
-
+    over_zoom = kwargs.get('over_zoom') or 0
+    new_zoom = over_zoom + kwargs.get('zoom')
     if over_zoom:
         #get children
-        child_tiles = children(int(tile[0]), int(tile[1]), int(tile[2]))
+        child_tiles = children(int(tile[0]), int(tile[1]), int(tile[2]), zoom=new_zoom)
         child_tiles.sort()
 
-        w_lst = [Window(0, 0, 256, 256), Window(0, 256, 256, 256), Window(256, 0, 256, 256), Window(256, 256, 256, 256)]
+        new_dim = 256 * (2 * over_zoom)
+
+        w_lst = []
+        for i in range (2 * over_zoom):
+            for j in range(2 * over_zoom):
+                window = Window(i * 256, j * 256, 256, 256)
+                w_lst.append(window)
+
         #request children
-        with rasterio.open(tile_img, 'w', driver='jpeg', height=512,
-                        width=512, count=3, dtype=rasterio.uint8) as w:
+        with rasterio.open(tile_img, 'w', driver='jpeg', height=new_dim,
+                        width=new_dim, count=3, dtype=rasterio.uint8) as w:
                 for num, t in enumerate(child_tiles):
                     print(t)
                     t = [str(t[0]), str(t[1]), str(t[2])]
