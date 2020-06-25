@@ -9,12 +9,12 @@ import subprocess
 
 import numpy as np
 
-class TestClassificationLabelGeoJSON(unittest.TestCase):
+class TestClassificationLabelLineStringGeoJSON(unittest.TestCase):
     """Tests for classification label creation"""
     @classmethod
     def setUpClass(cls):
         makedirs('integration-cl')
-        copyfile('test/fixtures/integration/labels-linestring.geojson', 'integration-cl/labels.geojson')
+        copyfile('test/fixtures/integration/labels-linestring.geojson', 'integration-cl/labels-linestring.geojson')
 
     @classmethod
     def tearDownClass(cls):

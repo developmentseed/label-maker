@@ -8,7 +8,7 @@
     {"name": "residential", "filter": ["in", "highway", "residential"]},
     {"name": "unclassified", "filter": ["in", "highway", "unclassified"]}
     ],
-  "geojson": "/Users/marthamorrissey/repos/label-maker/test/fixtures/integration/labels-linestring.geojson",
+  "geojson": "integration-cl/labels-linestring.geojson",
   "imagery": "https://api.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}.jpg?access_token=ACCESS_TOKEN",
   "background_ratio": 1,
   "split_vals": [1.0, 0.0, 0.0],
