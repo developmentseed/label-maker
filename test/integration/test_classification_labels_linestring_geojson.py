@@ -2,18 +2,19 @@
 label-maker labels --dest integration-cl --config test/fixtures/integration/config.geojson.json"""
 import unittest
 import json
+import os
 from os import makedirs
 from shutil import copyfile, rmtree
 import subprocess
 
 import numpy as np
 
-class TestClassificationLabelGeoJSON(unittest.TestCase):
+class TestClassificationLabelLineStringGeoJSON(unittest.TestCase):
     """Tests for classification label creation"""
     @classmethod
     def setUpClass(cls):
         makedirs('integration-cl')
-        copyfile('test/fixtures/integration/labels-linestring.geojson', 'integration-cl/labels.geojson')
+        copyfile('test/fixtures/integration/labels-linestring.geojson', 'integration-cl/labels-linestring.geojson')
 
     @classmethod
     def tearDownClass(cls):
@@ -37,7 +38,10 @@ Writing out labels to integration-cl/labels.npz
         cmd = 'label-maker labels --dest integration-cl --config test/fixtures/integration/config-linestring.geojson.json'
         cmd = cmd.split(' ')
         with subprocess.Popen(cmd, universal_newlines=True, stdout=subprocess.PIPE) as p:
-            self.assertEqual(expected_output, p.stdout.read())
+            with open(os.path.join('test' ,'artifacts', type(self).__name__), 'w') as w:
+                output = p.stdout.read()
+                w.write(output)
+            self.assertEqual(expected_output, output)
 
         # our labels should look like this
 
