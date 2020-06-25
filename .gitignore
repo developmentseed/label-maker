@@ -14,5 +14,6 @@ stdout*
 /integration*
 .idea/
 docs/_build/
-
+test/artifacts/*
+!test/artifacts/.gitkeep
 .tox
