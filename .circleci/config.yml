@@ -52,6 +52,8 @@ jobs:
       - run:
           name: run tox
           command: ~/.local/bin/tox
+      - store_artifacts:
+          path: test/artifacts
       - add_ssh_keys:
           fingerprints:
             - "79:16:39:74:e9:b3:39:52:87:2c:90:aa:ee:3c:09:13"
