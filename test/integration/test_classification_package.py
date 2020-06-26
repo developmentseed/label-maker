@@ -21,25 +21,21 @@ class TestClassificationPackage(unittest.TestCase):
         copyfile('test/fixtures/integration/labels-cl.npz', 'integration-cl-split/labels.npz')
         copytree('test/fixtures/integration/tiles', 'integration-cl-split/tiles')
 
-<<<<<<< HEAD
+
         makedirs('integration-cl-overzoom')
         copyfile('test/fixtures/integration/labels-cl.npz', 'integration-cl-overzoom/labels.npz')
         copytree('test/fixtures/integration/tiles_overzoom', 'integration-cl-overzoom/tiles')
-=======
+        
         makedirs('integration-cl-img-f')
         copyfile('test/fixtures/integration/labels-cl-img-f.npz', 'integration-cl-img-f/labels.npz')
         copytree('test/fixtures/integration/tiles_png', 'integration-cl-img-f/tiles')
->>>>>>> 5f15bcd4fca153f79e281d03701939e935cb656a
 
     @classmethod
     def tearDownClass(cls):
         rmtree('integration-cl')
         rmtree('integration-cl-split')
-<<<<<<< HEAD
         rmtree('integration-cl-overzoom')
-=======
         rmtree('integration-cl-img-f')
->>>>>>> 5f15bcd4fca153f79e281d03701939e935cb656a
 
     def test_cli(self):
         """Verify data.npz produced by CLI"""
