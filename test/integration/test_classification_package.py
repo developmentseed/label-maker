@@ -21,10 +21,15 @@ class TestClassificationPackage(unittest.TestCase):
         copyfile('test/fixtures/integration/labels-cl.npz', 'integration-cl-split/labels.npz')
         copytree('test/fixtures/integration/tiles', 'integration-cl-split/tiles')
 
+        makedirs('integration-cl-img-f')
+        copyfile('test/fixtures/integration/labels-cl-img-f.npz', 'integration-cl-img-f/labels.npz')
+        copytree('test/fixtures/integration/tiles_png', 'integration-cl-img-f/tiles')
+
     @classmethod
     def tearDownClass(cls):
         rmtree('integration-cl')
         rmtree('integration-cl-split')
+        rmtree('integration-cl-img-f')
 
     def test_cli(self):
         """Verify data.npz produced by CLI"""
@@ -74,3 +79,20 @@ class TestClassificationPackage(unittest.TestCase):
         self.assertEqual(data['y_train'].shape, (5, 7))
         self.assertEqual(data['y_test'].shape, (2, 7))
         self.assertEqual(data['y_val'].shape, (1, 7))
+
+    def test_tms_img_format(self):
+        """Verify data.npz produced by CLI"""
+
+        cmd = 'label-maker package --dest integration-cl-img-f --config test/fixtures/integration/config_tms_format_img.json'
+        cmd = cmd.split(' ')
+        subprocess.run(cmd, universal_newlines=True)
+
+        data = np.load('integration-cl-img-f/data.npz')
+
+        # validate our image data with shapes
+        self.assertEqual(data['x_train'].shape, (9, 256, 256, 3))
+        self.assertEqual(data['x_test'].shape, (3, 256, 256, 3))
+
+        # validate label data with shapes
+        self.assertEqual(data['y_train'].shape, (9, 3))
+        self.assertEqual(data['y_test'].shape, (3, 3))
