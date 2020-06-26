@@ -90,7 +90,6 @@ class TestClassificationPackage(unittest.TestCase):
         self.assertEqual(data['y_test'].shape, (2, 7))
         self.assertEqual(data['y_val'].shape, (1, 7))
 
-<<<<<<< HEAD
     def test_overzoom(self):
         """Verify data.npz produced by CLI when overzoom is used"""
         cmd = 'label-maker package --dest integration-cl-overzoom --config test/fixtures/integration/config_overzoom.integration.json'
@@ -102,7 +101,7 @@ class TestClassificationPackage(unittest.TestCase):
         self.assertEqual(data['x_train'].shape, (6, 512, 512, 3))
         self.assertEqual(data['x_test'].shape, (2, 512, 512, 3))
         self.assertEqual(data['x_val'].shape, (1, 512, 512, 3))
-=======
+
     def test_tms_img_format(self):
         """Verify data.npz produced by CLI"""
 
@@ -119,4 +118,3 @@ class TestClassificationPackage(unittest.TestCase):
         # validate label data with shapes
         self.assertEqual(data['y_train'].shape, (9, 3))
         self.assertEqual(data['y_test'].shape, (3, 3))
->>>>>>> 5f15bcd4fca153f79e281d03701939e935cb656a
