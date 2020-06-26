@@ -70,17 +70,18 @@ def package_directory(dest_folder, classes, imagery, ml_type, seed=False,
 
     x_vals = []
     y_vals = []
-    
+
     # open the images and load those plus the labels into the final arrays
     if is_tif(imagery):  # if a TIF is provided, use jpg as tile format
         image_format = '.jpg'
 
-    try:
-        kwargs['tms_image_format']
-        image_format =  kwargs['tms_image_format']
-    except KeyError:
-        o = urlparse(imagery)
-        _, image_format = op.splitext(o.path)
+    else:
+        try:
+            kwargs['tms_image_format']
+            image_format =  kwargs['tms_image_format']
+        except KeyError:
+            o = urlparse(imagery)
+            _, image_format = op.splitext(o.path)
     for tile in tiles:
         image_file = op.join(dest_folder, 'tiles', '{}{}'.format(tile, image_format))
         try:
