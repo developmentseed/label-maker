@@ -60,9 +60,6 @@ def parse_args(args):
     p.add_argument('-n', '--number', default=5, type=int,
                    help='number of examples images to create per class')
 
-    #i.add_argument('-m', '--multispectral', action='store_true') #this should be in the config not argument
-
-
     # turn namespace into dictinary
     parsed_args = vars(parser.parse_args(args))
 
