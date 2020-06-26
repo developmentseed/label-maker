@@ -6,7 +6,7 @@ from urllib.parse import urlparse
 import numpy as np
 from PIL import Image
 
-from label_maker.utils import is_tif
+from label_maker.utils import is_tif, get_image_format
 
 
 def package_directory(dest_folder, classes, imagery, ml_type, seed=False,
@@ -72,10 +72,12 @@ def package_directory(dest_folder, classes, imagery, ml_type, seed=False,
     y_vals = []
 
     # open the images and load those plus the labels into the final arrays
-    o = urlparse(imagery)
-    _, image_format = op.splitext(o.path)
     if is_tif(imagery):  # if a TIF is provided, use jpg as tile format
         image_format = '.jpg'
+
+    else:
+        image_format = get_image_format(imagery, kwargs)
+
     for tile in tiles:
         image_file = op.join(dest_folder, 'tiles', '{}{}'.format(tile, image_format))
         try:

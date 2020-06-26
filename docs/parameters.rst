@@ -66,5 +66,7 @@ Here is the full list of configuration parameters you can specify in a ``config.
 **imagery_offset**:  list of ints
 	An optional list of integers representing the number of pixels to offset imagery. For example ``[15, -5]`` will move the images 15 pixels right and 5 pixels up relative to the requested tile bounds.
 
-**over_zoom**: int
-	An integer greater than 0, if set for XYZ tiles, it will fetch a tiles from a zoom level higher than specified, to fill out the bounds of the original zoom level. 
+**tms_image_format**: string
+ An option string that has the downloaded imagery's format such as `.jpg` or `.png` when it isn't provided by the endpoint
+ **over_zoom**: int
+ 	An integer greater than 0, if set for XYZ tiles, it will fetch a tiles from a zoom level higher than specified, to fill out the bounds of the original zoom level.

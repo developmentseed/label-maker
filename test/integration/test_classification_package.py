@@ -21,15 +21,25 @@ class TestClassificationPackage(unittest.TestCase):
         copyfile('test/fixtures/integration/labels-cl.npz', 'integration-cl-split/labels.npz')
         copytree('test/fixtures/integration/tiles', 'integration-cl-split/tiles')
 
+<<<<<<< HEAD
         makedirs('integration-cl-overzoom')
         copyfile('test/fixtures/integration/labels-cl.npz', 'integration-cl-overzoom/labels.npz')
         copytree('test/fixtures/integration/tiles_overzoom', 'integration-cl-overzoom/tiles')
+=======
+        makedirs('integration-cl-img-f')
+        copyfile('test/fixtures/integration/labels-cl-img-f.npz', 'integration-cl-img-f/labels.npz')
+        copytree('test/fixtures/integration/tiles_png', 'integration-cl-img-f/tiles')
+>>>>>>> 5f15bcd4fca153f79e281d03701939e935cb656a
 
     @classmethod
     def tearDownClass(cls):
         rmtree('integration-cl')
         rmtree('integration-cl-split')
+<<<<<<< HEAD
         rmtree('integration-cl-overzoom')
+=======
+        rmtree('integration-cl-img-f')
+>>>>>>> 5f15bcd4fca153f79e281d03701939e935cb656a
 
     def test_cli(self):
         """Verify data.npz produced by CLI"""
@@ -80,6 +90,7 @@ class TestClassificationPackage(unittest.TestCase):
         self.assertEqual(data['y_test'].shape, (2, 7))
         self.assertEqual(data['y_val'].shape, (1, 7))
 
+<<<<<<< HEAD
     def test_overzoom(self):
         """Verify data.npz produced by CLI when overzoom is used"""
         cmd = 'label-maker package --dest integration-cl-overzoom --config test/fixtures/integration/config_overzoom.integration.json'
@@ -91,3 +102,21 @@ class TestClassificationPackage(unittest.TestCase):
         self.assertEqual(data['x_train'].shape, (6, 512, 512, 3))
         self.assertEqual(data['x_test'].shape, (2, 512, 512, 3))
         self.assertEqual(data['x_val'].shape, (1, 512, 512, 3))
+=======
+    def test_tms_img_format(self):
+        """Verify data.npz produced by CLI"""
+
+        cmd = 'label-maker package --dest integration-cl-img-f --config test/fixtures/integration/config_tms_format_img.json'
+        cmd = cmd.split(' ')
+        subprocess.run(cmd, universal_newlines=True)
+
+        data = np.load('integration-cl-img-f/data.npz')
+
+        # validate our image data with shapes
+        self.assertEqual(data['x_train'].shape, (9, 256, 256, 3))
+        self.assertEqual(data['x_test'].shape, (3, 256, 256, 3))
+
+        # validate label data with shapes
+        self.assertEqual(data['y_train'].shape, (9, 3))
+        self.assertEqual(data['y_test'].shape, (3, 3))
+>>>>>>> 5f15bcd4fca153f79e281d03701939e935cb656a
