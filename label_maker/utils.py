@@ -27,7 +27,7 @@ def class_match(ml_type, label, i):
         return np.count_nonzero(label == i)
     return None
 
-def get_endpoint(imagery, kwargs):
+def get_image_format(imagery, kwargs):
     if kwargs.get('tms_image_format'):
         image_format =  kwargs.get('tms_image_format')
     else:
@@ -38,7 +38,7 @@ def get_endpoint(imagery, kwargs):
 def download_tile_tms(tile, imagery, folder, kwargs):
     """Download a satellite image tile from a tms endpoint"""
 
-    image_format = get_endpoint(imagery, kwargs)
+    image_format = get_image_format(imagery, kwargs)
 
     r = requests.get(url(tile.split('-'), imagery),
                      auth=kwargs.get('http_auth'))

@@ -6,7 +6,7 @@ from urllib.parse import urlparse
 import numpy as np
 from PIL import Image
 
-from label_maker.utils import is_tif, get_endpoint
+from label_maker.utils import is_tif, get_image_format
 
 
 def package_directory(dest_folder, classes, imagery, ml_type, seed=False,
@@ -76,7 +76,7 @@ def package_directory(dest_folder, classes, imagery, ml_type, seed=False,
         image_format = '.jpg'
 
     else:
-        image_format = get_endpoint(imagery, kwargs)
+        image_format = get_image_format(imagery, kwargs)
 
     for tile in tiles:
         image_file = op.join(dest_folder, 'tiles', '{}{}'.format(tile, image_format))
