@@ -14,7 +14,7 @@
     { "name": "Parking", "filter": ["==", "amenity", "parking"] },
     { "name": "Roads", "filter": ["has", "highway"] }
   ],
-  "imagery": "https://api.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}.jpg?access_token=TOKEN",
+  "imagery": "https://api.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}.jpg?access_token=IMAGE_TOKEN",
   "background_ratio": 1,
   "ml_type": "classification",
   "seed": 19,
