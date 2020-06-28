@@ -71,7 +71,10 @@ def download_tile_tms(tile, imagery, folder, kwargs):
                 for num, t in enumerate(child_tiles):
                     t = [str(t[0]), str(t[1]), str(t[2])]
                     token = os.environ.get('IMAGE_TOKEN')
+<<<<<<< HEAD
                     print(token)
+=======
+>>>>>>> 6180e6d1fb33a0ef8e3170b51a9215f7456ce28e
                     fullUrl = imagery + token
                     print(fullUrl)
                     r = requests.get(url(t, fullUrl),
