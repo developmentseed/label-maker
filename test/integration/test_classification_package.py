@@ -89,6 +89,10 @@ class TestClassificationPackage(unittest.TestCase):
     def test_overzoom(self):
         """Verify data.npz produced by CLI when overzoom is used"""
         cmd = 'label-maker images --dest integration-cl-overzoom --config test/fixtures/integration/config_overzoom.integration.json'
+        cmd = cmd.split(' ')
+        subprocess.run(cmd, universal_newlines=True)
+
+
         cmd = 'label-maker package --dest integration-cl-overzoom --config test/fixtures/integration/config_overzoom.integration.json'
         cmd = cmd.split(' ')
         subprocess.run(cmd, universal_newlines=True)
