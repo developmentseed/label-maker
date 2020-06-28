@@ -72,7 +72,6 @@ def download_tile_tms(tile, imagery, folder, kwargs):
                     t = [str(t[0]), str(t[1]), str(t[2])]
                     token = os.environ.get("IMAGE_TOKEN")
                     fullUrl = imagery + token
-                    print(fullUrl)
                     r = requests.get(url(t, fullUrl),
                                     auth=kwargs.get('http_auth'))
                     img = np.array(Image.open(io.BytesIO(r.content)), dtype=np.uint8)
