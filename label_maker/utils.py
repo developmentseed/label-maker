@@ -1,5 +1,6 @@
 # pylint: disable=unused-argument
 """Provide utility functions"""
+import os
 from os import path as op
 from urllib.parse import urlparse, parse_qs
 
@@ -69,7 +70,10 @@ def download_tile_tms(tile, imagery, folder, kwargs):
                         width=new_dim, count=3, dtype=rasterio.uint8) as w:
                 for num, t in enumerate(child_tiles):
                     t = [str(t[0]), str(t[1]), str(t[2])]
-                    r = requests.get(url(t, imagery),
+                    token = os.environ.get("IMAGE_TOKEN")
+                    fullUrl = imagery + token
+                    print(fullUrl)
+                    r = requests.get(url(t, fullUrl),
                                     auth=kwargs.get('http_auth'))
                     img = np.array(Image.open(io.BytesIO(r.content)), dtype=np.uint8)
                     try:
