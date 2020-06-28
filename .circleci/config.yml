@@ -10,11 +10,11 @@ common: &common
         name: install tippecanoe
         command: .circleci/install_tippecanoe.sh
     - run:
-        name: imagery token
-        command: IMAGE_TOKEN=$IMAGE_TOKEN
-    - run:
         name: run tox
-        command: ~/.local/bin/tox
+        command: |
+          IMAGE_TOKEN=$IMAGE_TOKEN
+          ~/.local/bin/tox
+
 jobs:
   "python-3.6":
     <<: *common
