@@ -70,10 +70,11 @@ def download_tile_tms(tile, imagery, folder, kwargs):
                         width=new_dim, count=3, dtype=rasterio.uint8) as w:
                 for num, t in enumerate(child_tiles):
                     t = [str(t[0]), str(t[1]), str(t[2])]
-                    token = os.environ.get('TOKEN')
+                    token = os.environ.get('IMAGE_TOKEN') #have this happen in main.py so it works everywhere, update documentation,
+                    #call it access_token, only get inserted if not in config
                     print(token)
-                    fullUrl = imagery + token
-                    print(fullUrl)
+                    fullurl = imagery + token #fullurl= imagery.format(token) only insert if they have {TOKEN} in config
+                    print(fullurl)
                     r = requests.get(url(t, fullUrl),
                                     auth=kwargs.get('http_auth'))
                     img = np.array(Image.open(io.BytesIO(r.content)), dtype=np.uint8)

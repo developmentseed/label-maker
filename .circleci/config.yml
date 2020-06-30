@@ -12,8 +12,7 @@ common: &common
     - run:
         name: run tox
         command: |
-          echo 'export TOKEN=${IMAGE_TOKEN}' >> $BASH_ENV
-          echo $TOKEN
+          echo $IMAGE_TOKEN
           ~/.local/bin/tox
 
 jobs:
