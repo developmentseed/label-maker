@@ -29,6 +29,7 @@ Here is the full list of configuration parameters you can specify in a ``config.
 	Label Maker expects to receive imagery tiles that are 256 x 256 pixels. You can specific the source of the imagery with one of:
 
  		A template string for a tiled imagery service. Note that you will generally need an API key to obtain images and there may be associated costs. The above example requires a `Mapbox access token <https://www.mapbox.com/help/how-access-tokens-work/>`_. Also see `OpenAerialMap <https://openaerialmap.org/>`_ for open imagery.
+		The access token for TMS image formats can be read from an environment variable https://api.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}.jpg?access_token={access_token}" or put into the imagery string. 
 
  		A GeoTIFF file location. Works with local files: ``'http://oin-hotosm.s3.amazonaws.com/593ede5ee407d70011386139/0/3041615b-2bdb-40c5-b834-36f580baca29.tif'``
 
