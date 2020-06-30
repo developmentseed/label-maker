@@ -16,6 +16,10 @@ from rasterio.windows import Window
 
 WGS84_CRS = CRS.from_epsg(4326)
 
+class SafeDict(dict):
+    def __missing__(self, key):
+        return '{' + key + '}'
+
 def url(tile, imagery):
     """Return a tile url provided an imagery template and a tile"""
     return imagery.replace('{x}', tile[0]).replace('{y}', tile[1]).replace('{z}', tile[2])
@@ -42,6 +46,10 @@ def download_tile_tms(tile, imagery, folder, kwargs):
     """Download a satellite image tile from a tms endpoint"""
 
     image_format = get_image_format(imagery, kwargs)
+
+    if os.environ.get('ACCESS_TOKEN'):
+        token = os.environ.get('ACCESS_TOKEN')
+        imagery = imagery.format_map(SafeDict(access_token=token))
 
     r = requests.get(url(tile.split('-'), imagery),
                      auth=kwargs.get('http_auth'))
@@ -70,12 +78,7 @@ def download_tile_tms(tile, imagery, folder, kwargs):
                         width=new_dim, count=3, dtype=rasterio.uint8) as w:
                 for num, t in enumerate(child_tiles):
                     t = [str(t[0]), str(t[1]), str(t[2])]
-                    token = os.environ.get('IMAGE_TOKEN') #have this happen in main.py so it works everywhere, update documentation,
-                    #call it access_token, only get inserted if not in config
-                    print(token)
-                    fullurl = imagery + token #fullurl= imagery.format(token) only insert if they have {TOKEN} in config
-                    print(fullurl)
-                    r = requests.get(url(t, fullUrl),
+                    r = requests.get(url(t, imagery),
                                     auth=kwargs.get('http_auth'))
                     img = np.array(Image.open(io.BytesIO(r.content)), dtype=np.uint8)
                     try:
