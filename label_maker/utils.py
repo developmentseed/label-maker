@@ -49,19 +49,17 @@ def download_tile_tms(tile, imagery, folder, kwargs):
 
     if os.environ.get('ACCESS_TOKEN'):
         token = os.environ.get('ACCESS_TOKEN')
-        imagery = imagery.format_map(SafeDict(access_token=token))
+        imagery = imagery.format_map(SafeDict(ACCESS_TOKEN=token))
 
     r = requests.get(url(tile.split('-'), imagery),
                      auth=kwargs.get('http_auth'))
     tile_img = op.join(folder, '{}{}'.format(tile, image_format))
     tile = tile.split('-')
 
-
-    over_zoom = kwargs.get('over_zoom') or 0
-    new_zoom = over_zoom + kwargs.get('zoom')
+    over_zoom = kwargs.get('over_zoom')
     if over_zoom:
-        print('creating supertiles')
-        #get children
+        new_zoom = over_zoom + kwargs.get('zoom')
+        # get children
         child_tiles = children(int(tile[0]), int(tile[1]), int(tile[2]), zoom=new_zoom)
         child_tiles.sort()
 
@@ -73,7 +71,7 @@ def download_tile_tms(tile, imagery, folder, kwargs):
                 window = Window(i * 256, j * 256, 256, 256)
                 w_lst.append(window)
 
-        #request children
+        # request children
         with rasterio.open(tile_img, 'w', driver='jpeg', height=new_dim,
                         width=new_dim, count=3, dtype=rasterio.uint8) as w:
                 for num, t in enumerate(child_tiles):
@@ -82,7 +80,7 @@ def download_tile_tms(tile, imagery, folder, kwargs):
                                     auth=kwargs.get('http_auth'))
                     img = np.array(Image.open(io.BytesIO(r.content)), dtype=np.uint8)
                     try:
-                        img = img.reshape((256, 256, 3)) #4 channels returned from some endpoints, but not all
+                        img = img.reshape((256, 256, 3)) # 4 channels returned from some endpoints, but not all
                     except ValueError:
                         img = img.reshape((256, 256, 4))
                     img = img[:, :, :3]

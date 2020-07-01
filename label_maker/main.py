@@ -50,7 +50,7 @@ def parse_args(args):
     subparsers.add_parser('download', parents=[pparser], help='', formatter_class=dhf)
     l = subparsers.add_parser('labels', parents=[pparser], help='', formatter_class=dhf)
     p = subparsers.add_parser('preview', parents=[pparser], help='', formatter_class=dhf)
-    i = subparsers.add_parser('images', parents=[pparser], help='', formatter_class=dhf)
+    subparsers.add_parser('images', parents=[pparser], help='', formatter_class=dhf)
     subparsers.add_parser('package', parents=[pparser], help='', formatter_class=dhf)
 
     # labels has an optional parameter

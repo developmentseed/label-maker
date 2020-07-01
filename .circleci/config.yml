@@ -12,7 +12,6 @@ common: &common
     - run:
         name: run tox
         command: |
-          echo $IMAGE_TOKEN
           ~/.local/bin/tox
 
 jobs:

@@ -24,7 +24,6 @@ class TestClassificationPackage(unittest.TestCase):
 
         makedirs('integration-cl-overzoom')
         copyfile('test/fixtures/integration/labels-cl.npz', 'integration-cl-overzoom/labels.npz')
-        #copytree('test/fixtures/integration/tiles_overzoom', 'integration-cl-overzoom/tiles')
 
         makedirs('integration-cl-img-f')
         copyfile('test/fixtures/integration/labels-cl-img-f.npz', 'integration-cl-img-f/labels.npz')
@@ -91,7 +90,6 @@ class TestClassificationPackage(unittest.TestCase):
         cmd = 'label-maker images --dest integration-cl-overzoom --config test/fixtures/integration/config_overzoom.integration.json'
         cmd = cmd.split(' ')
         subprocess.run(cmd, universal_newlines=True)
-
 
         cmd = 'label-maker package --dest integration-cl-overzoom --config test/fixtures/integration/config_overzoom.integration.json'
         cmd = cmd.split(' ')
