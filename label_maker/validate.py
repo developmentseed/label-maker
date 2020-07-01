@@ -34,5 +34,6 @@ schema = {
     'imagery_offset': {'type': 'list', 'schema': {'type': 'integer'}, 'minlength': 2, 'maxlength': 2},
     'split_vals': {'type': 'list', 'schema': {'type': 'float'}},
     'split_names': {'type': 'list', 'schema': {'type': 'string'}},
-    'tms_image_format': {'type': 'string'}
+    'tms_image_format': {'type': 'string'},
+    'over_zoom': {'type': 'integer', 'min': 1}
 }

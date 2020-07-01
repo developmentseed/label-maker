@@ -11,7 +11,9 @@ common: &common
         command: .circleci/install_tippecanoe.sh
     - run:
         name: run tox
-        command: ~/.local/bin/tox
+        command: |
+          ~/.local/bin/tox
+
 jobs:
   "python-3.6":
     <<: *common

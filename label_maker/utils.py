@@ -1,17 +1,24 @@
 # pylint: disable=unused-argument
 """Provide utility functions"""
+import os
 from os import path as op
 from urllib.parse import urlparse, parse_qs
 
-from mercantile import bounds
+from mercantile import bounds, Tile, children
 from PIL import Image
+import io
 import numpy as np
 import requests
 import rasterio
 from rasterio.crs import CRS
 from rasterio.warp import transform, transform_bounds
+from rasterio.windows import Window
 
 WGS84_CRS = CRS.from_epsg(4326)
+
+class SafeDict(dict):
+    def __missing__(self, key):
+        return '{' + key + '}'
 
 def url(tile, imagery):
     """Return a tile url provided an imagery template and a tile"""
@@ -40,11 +47,50 @@ def download_tile_tms(tile, imagery, folder, kwargs):
 
     image_format = get_image_format(imagery, kwargs)
 
+    if os.environ.get('ACCESS_TOKEN'):
+        token = os.environ.get('ACCESS_TOKEN')
+        imagery = imagery.format_map(SafeDict(ACCESS_TOKEN=token))
+
     r = requests.get(url(tile.split('-'), imagery),
                      auth=kwargs.get('http_auth'))
     tile_img = op.join(folder, '{}{}'.format(tile, image_format))
-    with open(tile_img, 'wb')as w:
-        w.write(r.content)
+    tile = tile.split('-')
+
+    over_zoom = kwargs.get('over_zoom')
+    if over_zoom:
+        new_zoom = over_zoom + kwargs.get('zoom')
+        # get children
+        child_tiles = children(int(tile[0]), int(tile[1]), int(tile[2]), zoom=new_zoom)
+        child_tiles.sort()
+
+        new_dim = 256 * (2 * over_zoom)
+
+        w_lst = []
+        for i in range (2 * over_zoom):
+            for j in range(2 * over_zoom):
+                window = Window(i * 256, j * 256, 256, 256)
+                w_lst.append(window)
+
+        # request children
+        with rasterio.open(tile_img, 'w', driver='jpeg', height=new_dim,
+                        width=new_dim, count=3, dtype=rasterio.uint8) as w:
+                for num, t in enumerate(child_tiles):
+                    t = [str(t[0]), str(t[1]), str(t[2])]
+                    r = requests.get(url(t, imagery),
+                                    auth=kwargs.get('http_auth'))
+                    img = np.array(Image.open(io.BytesIO(r.content)), dtype=np.uint8)
+                    try:
+                        img = img.reshape((256, 256, 3)) # 4 channels returned from some endpoints, but not all
+                    except ValueError:
+                        img = img.reshape((256, 256, 4))
+                    img = img[:, :, :3]
+                    img = np.rollaxis(img, 2, 0)
+                    w.write(img, window=w_lst[num])
+    else:
+        r = requests.get(url(tile, imagery),
+                         auth=kwargs.get('http_auth'))
+        with open(tile_img, 'wb')as w:
+            w.write(r.content)
     return tile_img
 
 def get_tile_tif(tile, imagery, folder, kwargs):
