@@ -76,6 +76,6 @@ Here is the full list of configuration parameters you can specify in a ``config.
 **band_count**: int 
 	An integret greater than 1. If not specified defaults to 3 for the typical r,g,b imagery. 
 
-**band_indicies**: tuple 
-	A tuple of band incidies to pull from a tiff. Defaults to (1, 2, 3) if not specified. For using non-RGB tifs, ie MS tifs this should be over-written 
-	for example to (5, 3, 2, 7) to extract Red, Green, Blue, and NIR bands from the MS spacenet imagery. 
+**band_indicies**: list
+	A list of band incidies to pull from a tiff. Defaults to (1, 2, 3) if not specified. For using non-RGB tifs, ie MS tifs this should be over-written 
+	for example to [5, 3, 2, 7] to extract Red, Green, Blue, and NIR bands from the MS spacenet imagery. 

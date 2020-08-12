@@ -146,7 +146,7 @@ def get_tile_tif(tile, imagery, folder, kwargs):
     
         try:
             kwargs['band_indicies']
-            band_count =  kwargs['band_indicies']
+            band_count =  tuple(kwargs['band_indicies'])
         except KeyError:
             band_indicies = (1, 2, 3)
 

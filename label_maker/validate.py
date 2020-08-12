@@ -37,5 +37,5 @@ schema = {
     'tms_image_format': {'type': 'string'},
     'over_zoom': {'type': 'integer', 'min': 1}, 
     'band_count': {'type': 'integer', 'min': 1},
-    'band_indicies': {'type': 'tuple'}
+    'band_indicies': {'type': 'list'}
 }
