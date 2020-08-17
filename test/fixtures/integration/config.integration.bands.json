@@ -1,0 +1,13 @@
+{
+    "zoom": 18,
+    "classes": [
+        {"name": "paved", "filter": ["in", "paved", "1"]},
+        {"name": "unpaved", "filter": ["in", "paved", "2"]}
+        ],
+    "geojson": "integration/labels.npz" ,
+    "imagery": "integration/ms-img.tif",
+    "background_ratio": 0,
+    "ml_type": "classification",
+    "band_count": 2,
+    "band_indicies": [5, 7]
+  }
