@@ -90,7 +90,8 @@ def package_directory(dest_folder, classes, imagery, ml_type, seed=False,
     for tile in tiles:
         image_file = op.join(dest_folder, 'tiles', '{}{}'.format(tile, image_format))
         try:
-            img = Image.open(image_file)
+            #img = Image.open(image_file)
+            img = rasterio.open(image_file)
         except FileNotFoundError:
             # we often don't download images for each label (e.g. background tiles)
             continue
@@ -98,8 +99,11 @@ def package_directory(dest_folder, classes, imagery, ml_type, seed=False,
             print('Couldn\'t open {}, skipping'.format(image_file))
             continue
 
-        np_image = np.array(img)
+        i = np.array(img.read())
+        print(i.shape)
+        np_image = np.moveaxis(i, 0, 2)
         img.close()
+
 
         x_vals.append(np_image)
         if ml_type == 'classification':
