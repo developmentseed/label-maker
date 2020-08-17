@@ -106,6 +106,7 @@ def get_tile_tif(tile, imagery, folder, kwargs):
     bound = bounds(*[int(t) for t in tile.split('-')])
     imagery_offset = kwargs.get('imagery_offset') or [0, 0]
     with rasterio.open(imagery) as src:
+        profile = src.profile
         x_res, y_res = src.transform[0], src.transform[4]
 
         # offset our imagery in the "destination pixel" space
@@ -143,22 +144,26 @@ def get_tile_tif(tile, imagery, folder, kwargs):
             band_count =  kwargs['band_count']
         except KeyError:
             band_count = 3
-    
         try:
             kwargs['band_indicies']
-            band_count =  tuple(kwargs['band_indicies'])
+            band_indicies =  tuple(kwargs['band_indicies'])
         except KeyError:
             band_indicies = (1, 2, 3)
 
-        data = np.empty(shape=(band_count, 256, 256)).astype(src.profile['dtype'])
-        for k in band_indicies:
-            src.read(k, window=window, out=data[k - 1], boundless=True)
-
+        arr_shape = tuple([band_count, 256, 256])
+        data = np.empty(shape=(arr_shape)).astype(src.profile['dtype'])
+        for i, k in enumerate(band_indicies):
+            src.read(k, window=window, out=data[i], boundless=True)
         # save
-        tile_img = op.join(folder, '{}{}'.format(tile, '.jpg'))
-        img = Image.fromarray(np.moveaxis(data, 0, -1), mode='RGB')
-        img.save(tile_img)
-
+        if band_indicies == (1, 2, 3) and band_count == 3:
+            tile_img = op.join(folder, '{}{}'.format(tile, '.jpg'))
+            img = Image.fromarray(np.moveaxis(data, 0, -1))
+            img.save(tile_img)
+        else:
+            tile_img = op.join(folder, '{}{}'.format(tile, '.png'))
+            with rasterio.open(tile_img, 'w', driver='png', height=256,
+                    width=256, count=band_count, dtype=profile['dtype']) as w:
+                    w.write(data)
     return tile_img
 
 def get_tile_wms(tile, imagery, folder, kwargs):
