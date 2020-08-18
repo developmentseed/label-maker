@@ -8,6 +8,5 @@
     "imagery": "integration-ms/ms-img.tif",
     "background_ratio": 0,
     "ml_type": "classification",
-    "band_count": 2,
     "band_indicies": [5, 7]
   }

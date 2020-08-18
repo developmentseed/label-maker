@@ -73,9 +73,6 @@ Here is the full list of configuration parameters you can specify in a ``config.
 **over_zoom**: int
  	An integer greater than 0. If set for XYZ tiles, it will fetch tiles from `zoom` + `over_zoom`, to create higher resolution tiles which fill out the bounds of the original zoom level.
 
-**band_count**: int 
-	An integret greater than 1. If not specified defaults to 3 for the typical r,g,b imagery. 
-
 **band_indicies**: list
-	A list of band incidies to pull from a tiff. Defaults to (1, 2, 3) if not specified. For using non-RGB tifs, ie MS tifs this should be over-written 
-	for example to [5, 3, 2, 7] to extract Red, Green, Blue, and NIR bands from the MS spacenet imagery. 
+	A list of band incidies to pull from a tiff. Defaults to (1, 2, 3) if not specified. For using non-RGB tifs, ie MS tifs this should be over-written
+	for example to [5, 3, 2, 7] to extract Red, Green, Blue, and NIR bands from the MS spacenet imagery.

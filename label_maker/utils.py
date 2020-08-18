@@ -138,24 +138,21 @@ def get_tile_tif(tile, imagery, folder, kwargs):
         window = ((top, bottom), (left, right))
 
         # read the first three bands (assumed RGB) of the TIF into an array
-
-        try:
-            kwargs['band_count']
-            band_count =  kwargs['band_count']
-        except KeyError:
-            band_count = 3
         try:
             kwargs['band_indicies']
             band_indicies =  tuple(kwargs['band_indicies'])
+            band_count = len(kwargs['band_indicies'])
         except KeyError:
             band_indicies = (1, 2, 3)
+            band_count = 3
 
         arr_shape = tuple([band_count, 256, 256])
         data = np.empty(shape=(arr_shape)).astype(src.profile['dtype'])
+
         for i, k in enumerate(band_indicies):
             src.read(k, window=window, out=data[i], boundless=True)
         # save
-        if band_indicies == (1, 2, 3) and band_count == 3:
+        if band_indicies == (1, 2, 3):
             tile_img = op.join(folder, '{}{}'.format(tile, '.jpg'))
             img = Image.fromarray(np.moveaxis(data, 0, -1))
             img.save(tile_img)
