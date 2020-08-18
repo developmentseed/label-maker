@@ -4,8 +4,8 @@
         {"name": "paved", "filter": ["in", "paved", "1"]},
         {"name": "unpaved", "filter": ["in", "paved", "2"]}
         ],
-    "geojson": "integration/labels.npz" ,
-    "imagery": "integration/ms-img.tif",
+    "geojson": "integration-ms/ms-roads.geojson",
+    "imagery": "integration-ms/ms-img.tif",
     "background_ratio": 0,
     "ml_type": "classification",
     "band_count": 2,
