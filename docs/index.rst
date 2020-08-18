@@ -8,6 +8,8 @@ Label Maker Documentation
 
 Label Maker generates training data for ML algorithms focused on overhead imagery (e.g., from satellites or drones). It downloads OpenStreetMap QA Tile information and overhead imagery tiles and saves them as an Numpy `.npz <https://docs.scipy.org/doc/numpy/reference/generated/numpy.savez.html>`_ file for easy use in ML pipelines. For more details, see the `inaugural blog post <https://developmentseed.org/blog/2018/01/11/label-maker/>`_.
 
+*version*: |version|
+
 Requirements
 ============
 * `Python 3.6 <https://www.python.org/>`_

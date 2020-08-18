@@ -62,24 +62,20 @@ jobs:
       - run:
           name: Deploy documentation
           command: |
-            if [ "${CIRCLE_BRANCH}" == "${PRODUCTION_BRANCH}" ]; then
-              pip install -r requirements-dev.txt
-              cd docs
-              make html
-              cd _build/html
-              git init
-              git config user.name "Devseed-CI"
-              git config user.email "dev@developmentseed.org"
-              touch .nojekyll # Add this so GitHub doesn't try and build site
-              git add .
-              git commit -m "CI deploy [skip ci]"
-              git remote add origin git@github.com:developmentseed/label-maker.git
-              git fetch
-              git push origin --force --quiet HEAD:gh-pages
-              rm -rf .git
-            else
-              echo "Not the branch you're looking for, skipping documentation deploy"
-            fi
+            pip install -r requirements-dev.txt
+            cd docs
+            make html
+            cd _build/html
+            git init
+            git config user.name "Devseed-CI"
+            git config user.email "dev@developmentseed.org"
+            touch .nojekyll # Add this so GitHub doesn't try and build site
+            git add .
+            git commit -m "CI deploy [skip ci]"
+            git remote add origin git@github.com:developmentseed/label-maker.git
+            git fetch
+            git push origin --force --quiet HEAD:gh-pages
+            rm -rf .git
 workflows:
   version: 2
   build_and_deploy:
