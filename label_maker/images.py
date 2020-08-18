@@ -59,8 +59,7 @@ def download_images(dest_folder, classes, imagery, ml_type, background_ratio, im
     # tiles up to len(class_tiles) * config.get('background_ratio')
     background_tiles = []
     if ml_type == 'classification':
-        #limit = len(class_tiles) * background_ratio
-        limit = 900
+        limit = len(class_tiles) * background_ratio
         background_tiles_full = [tile for tile in tiles.files if tile not in class_tiles]
         shuffle(background_tiles_full)
         background_tiles = background_tiles_full[:limit]

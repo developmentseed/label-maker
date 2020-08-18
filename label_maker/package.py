@@ -75,13 +75,7 @@ def package_directory(dest_folder, classes, imagery, ml_type, seed=False,
     # open the images and load those plus the labels into the final arrays
     if is_tif(imagery):  # if a TIF is provided, use jpg as tile format
         img_dtype = rasterio.open(imagery).profile['dtype']
-        try:
-            # MS bands written to png
-            kwargs['band_indicies']
-            image_format = '.png'
-        except KeyError:
-            # 3 band RGB written to jpg
-            image_format = '.jpg'
+        image_format = '.tif'
 
     else:
         img_dtype = np.uint8
@@ -90,7 +84,6 @@ def package_directory(dest_folder, classes, imagery, ml_type, seed=False,
     for tile in tiles:
         image_file = op.join(dest_folder, 'tiles', '{}{}'.format(tile, image_format))
         try:
-            #img = Image.open(image_file)
             img = rasterio.open(image_file)
         except FileNotFoundError:
             # we often don't download images for each label (e.g. background tiles)
@@ -100,7 +93,6 @@ def package_directory(dest_folder, classes, imagery, ml_type, seed=False,
             continue
 
         i = np.array(img.read())
-        print(i.shape)
         np_image = np.moveaxis(i, 0, 2)
         img.close()
 

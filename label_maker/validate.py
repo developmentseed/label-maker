@@ -36,5 +36,5 @@ schema = {
     'split_names': {'type': 'list', 'schema': {'type': 'string'}},
     'tms_image_format': {'type': 'string'},
     'over_zoom': {'type': 'integer', 'min': 1},
-    'band_indicies': {'type': 'list'}
+    'band_indices': {'type': 'list'}
 }

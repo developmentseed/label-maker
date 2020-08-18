@@ -35,12 +35,12 @@ class TestClassificationPackage(unittest.TestCase):
         data = np.load('integration-ms/data.npz')
 
         # validate our label data with exact matches in shape
-        self.assertEqual(data['x_train'].shape, (12, 256, 256, 2))
-        self.assertEqual(data['x_test'].shape, (4, 256, 256, 2))
+        self.assertEqual(data['x_train'].shape, (8, 256, 256, 2))
+        self.assertEqual(data['x_test'].shape, (3, 256, 256, 2))
 
         # validate our label data with exact matches in shape
-        self.assertEqual(data['y_train'].shape, (12, 3))
-        self.assertEqual(data['y_test'].shape, (4, 3))
+        self.assertEqual(data['y_train'].shape, (8, 3))
+        self.assertEqual(data['y_test'].shape, (3, 3))
 
         #validate img dtype
         self.assertEqual(np.uint16, data['x_train'].dtype)
