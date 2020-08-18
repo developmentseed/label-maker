@@ -148,8 +148,6 @@ def get_tile_tif(tile, imagery, folder, kwargs):
             src.read(k, window=window, out=data[i], boundless=True)
         # save
         tile_img = op.join(folder, '{}{}'.format(tile, '.tif'))
-        print('tile_img')
-        print(tile_img)
         with rasterio.open(tile_img, 'w', driver='GTiff', height=256,
                 width=256, count=band_count, dtype=profile['dtype']) as w:
                 w.write(data)
