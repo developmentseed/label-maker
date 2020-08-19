@@ -1,0 +1,256 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Label Maker Documentation &#8212; label-maker 0.9.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Parameters" href="parameters.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="label-maker-documentation">
+<h1>Label Maker Documentation<a class="headerlink" href="#label-maker-documentation" title="Permalink to this headline">¶</a></h1>
+<p>Label Maker generates training data for ML algorithms focused on overhead imagery (e.g., from satellites or drones). It downloads OpenStreetMap QA Tile information and overhead imagery tiles and saves them as an Numpy <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.savez.html">.npz</a> file for easy use in ML pipelines. For more details, see the <a class="reference external" href="https://developmentseed.org/blog/2018/01/11/label-maker/">inaugural blog post</a>.</p>
+<p><em>version</em>: 0.9.0</p>
+<div class="section" id="requirements">
+<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference external" href="https://www.python.org/">Python 3.6</a></li>
+<li><a class="reference external" href="https://github.com/mapbox/tippecanoe">tippecanoe</a></li>
+</ul>
+</div>
+<div class="section" id="standard-pip-install">
+<h2>Standard pip install<a class="headerlink" href="#standard-pip-install" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install label-maker
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Label Maker requires <code class="docutils literal notranslate"><span class="pre">tippecanoe</span></code> to be available from your command-line. Confirm this before proceeding.</p>
+</div>
+</div>
+<div class="section" id="configuration">
+<h2>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h2>
+<p>Before you can use Label Maker, you must specify inputs to the data-creation process within <code class="docutils literal notranslate"><span class="pre">config.json</span></code> file. Below is a simple example. To see the complete list of parameters and options for imagery access, check out the <a class="reference external" href="parameters.html">parameters page</a>.</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="nt">&quot;country&quot;</span><span class="p">:</span> <span class="s2">&quot;togo&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;bounding_box&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.09725</span><span class="p">,</span> <span class="mf">6.05520</span><span class="p">,</span> <span class="mf">1.34582</span><span class="p">,</span> <span class="mf">6.30915</span><span class="p">],</span>
+  <span class="nt">&quot;zoom&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span>
+  <span class="nt">&quot;classes&quot;</span><span class="p">:</span> <span class="p">[</span>
+    <span class="p">{</span> <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Roads&quot;</span><span class="p">,</span> <span class="nt">&quot;filter&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;has&quot;</span><span class="p">,</span> <span class="s2">&quot;highway&quot;</span><span class="p">]</span> <span class="p">},</span>
+    <span class="p">{</span> <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Buildings&quot;</span><span class="p">,</span> <span class="nt">&quot;filter&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;has&quot;</span><span class="p">,</span> <span class="s2">&quot;building&quot;</span><span class="p">]</span> <span class="p">}</span>
+  <span class="p">],</span>
+  <span class="nt">&quot;imagery&quot;</span><span class="p">:</span> <span class="s2">&quot;http://a.tiles.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}.jpg?access_token=ACCESS_TOKEN&quot;</span><span class="p">,</span>
+  <span class="nt">&quot;background_ratio&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="nt">&quot;ml_type&quot;</span><span class="p">:</span> <span class="s2">&quot;classification&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Before using this configuration, make sure to replace <code class="docutils literal notranslate"><span class="pre">ACCESS_TOKEN</span></code> with your <a class="reference external" href="https://www.mapbox.com/help/how-access-tokens-work/">Mapbox Access Token</a></p>
+</div>
+<div class="section" id="command-line-interface-cli">
+<h2>Command line interface (CLI)<a class="headerlink" href="#command-line-interface-cli" title="Permalink to this headline">¶</a></h2>
+<p>Label Maker is most easily used as a command line tool. There are five commands documented below. You should run them in order as each operation builds on the previous one and commands accept two flags:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><code class="docutils literal notranslate"><span class="pre">-d</span></code> or <code class="docutils literal notranslate"><span class="pre">--dest</span></code>: string</dt>
+<dd>Directory for storing output files. Defaults to <code class="docutils literal notranslate"><span class="pre">'./data'</span></code></dd>
+<dt><code class="docutils literal notranslate"><span class="pre">-c</span></code> or <code class="docutils literal notranslate"><span class="pre">--config</span></code>: string</dt>
+<dd>Location of <code class="docutils literal notranslate"><span class="pre">config.json</span></code> file. Defaults to <code class="docutils literal notranslate"><span class="pre">'./config.json'</span></code></dd>
+</dl>
+</div></blockquote>
+<div class="section" id="cli-step-1-download">
+<h3>CLI Step 1: download<a class="headerlink" href="#cli-step-1-download" title="Permalink to this headline">¶</a></h3>
+<p>Download and unzip OSM QA tiles containing feature information.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ label-maker download
+Saving QA tiles to data/ghana.mbtiles
+   <span class="m">100</span>%     <span class="m">18</span>.6 MiB       <span class="m">1</span>.8 MiB/s            <span class="m">0</span>:00:00 ETA
+</pre></div>
+</div>
+</div>
+<div class="section" id="cli-step-2-labels">
+<h3>CLI Step 2: labels<a class="headerlink" href="#cli-step-2-labels" title="Permalink to this headline">¶</a></h3>
+<p>Retiles the OSM data to the desired zoom level, creates label data (<code class="docutils literal notranslate"><span class="pre">labels.npz</span></code>), calculates class statistics, creates visual label files (either GeoJSON or PNG files depending upon <code class="docutils literal notranslate"><span class="pre">ml_type</span></code>). Requires the mbtiles file from the <code class="docutils literal notranslate"><span class="pre">label-maker</span> <span class="pre">download</span></code> step.</p>
+<p>Accepts one additional flag:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><code class="docutils literal notranslate"><span class="pre">-s</span></code> or <code class="docutils literal notranslate"><span class="pre">--sparse</span></code>: boolean</dt>
+<dd>Specifies if features in the class of interest are sparse. If <code class="docutils literal notranslate"><span class="pre">True</span></code>, only save labels for up to <code class="docutils literal notranslate"><span class="pre">n</span></code> background tiles, where <code class="docutils literal notranslate"><span class="pre">n</span></code> is equal to <code class="docutils literal notranslate"><span class="pre">background_ratio</span></code> times the number of tiles with a class label. Defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</dd>
+</dl>
+</div></blockquote>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ label-maker labels
+Determining labels <span class="k">for</span> each tile
+---
+Residential: <span class="m">638</span> tiles
+Total tiles: <span class="m">1189</span>
+Write out labels to data/labels.npz
+</pre></div>
+</div>
+</div>
+<div class="section" id="cli-step-3-preview-optional">
+<h3>CLI Step 3: preview (optional)<a class="headerlink" href="#cli-step-3-preview-optional" title="Permalink to this headline">¶</a></h3>
+<p>Downloads example overhead images for each class. Requires the <code class="docutils literal notranslate"><span class="pre">labels.npz</span></code> file from the <code class="docutils literal notranslate"><span class="pre">label-maker</span> <span class="pre">labels</span></code> step.</p>
+<p>Accepts one additional flag:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt><code class="docutils literal notranslate"><span class="pre">-n</span></code> or <code class="docutils literal notranslate"><span class="pre">--number</span></code>: int</dt>
+<dd>Specifies the number of examples images to create per class. Defaults to <code class="docutils literal notranslate"><span class="pre">5</span></code>.</dd>
+</dl>
+</div></blockquote>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ label-maker preview -n <span class="m">10</span>
+Writing example images to data/examples
+Downloading <span class="m">10</span> tiles <span class="k">for</span> class Residential
+</pre></div>
+</div>
+</div>
+<div class="section" id="cli-step-4-images">
+<h3>CLI Step 4: images<a class="headerlink" href="#cli-step-4-images" title="Permalink to this headline">¶</a></h3>
+<p>Downloads all imagery tiles needed to create the training data. Requires the <code class="docutils literal notranslate"><span class="pre">labels.npz</span></code> file from the <code class="docutils literal notranslate"><span class="pre">label-maker</span> <span class="pre">labels</span></code> step.
+The number of background tiles added depends on the <cite>background_ratio</cite> parameter specified in the <cite>config.json</cite> file.
+A background_ratio of 0 will return no background tiles.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ label-maker images
+Downloading <span class="m">1189</span> tiles to data/tiles
+</pre></div>
+</div>
+</div>
+<div class="section" id="cli-step-5-package">
+<h3>CLI Step 5: package<a class="headerlink" href="#cli-step-5-package" title="Permalink to this headline">¶</a></h3>
+<p>Bundles the images and OSM labels to create a final <code class="docutils literal notranslate"><span class="pre">data.npz</span></code> file. Requires the <code class="docutils literal notranslate"><span class="pre">labels.npz</span></code> file from the <code class="docutils literal notranslate"><span class="pre">label-maker</span> <span class="pre">labels</span></code> step and downloaded image tiles from the <code class="docutils literal notranslate"><span class="pre">label-maker</span> <span class="pre">images</span></code> step.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ label-maker package
+Saving packaged file to data/data.npz
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="using-the-packaged-data">
+<h2>Using the packaged data<a class="headerlink" href="#using-the-packaged-data" title="Permalink to this headline">¶</a></h2>
+<p>Once you have a create <code class="docutils literal notranslate"><span class="pre">data.npz</span></code> file using the above commands, you can use <a class="reference external" href="https://docs.scipy.org/doc/numpy/reference/generated/numpy.load.html">numpy.load</a> to load it. For example, you can supply the created data to a <a class="reference external" href="https://keras.io/">Keras</a> <code class="docutils literal notranslate"><span class="pre">Model</span></code> as follows:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Load the data, shuffled and split between train and test sets</span>
+<span class="nv">npz</span> <span class="o">=</span> np.load<span class="o">(</span><span class="s1">&#39;data.npz&#39;</span><span class="o">)</span>
+<span class="nv">x_train</span> <span class="o">=</span> npz<span class="o">[</span><span class="s1">&#39;x_train&#39;</span><span class="o">]</span>
+<span class="nv">y_train</span> <span class="o">=</span> npz<span class="o">[</span><span class="s1">&#39;y_train&#39;</span><span class="o">]</span>
+<span class="nv">x_test</span> <span class="o">=</span> npz<span class="o">[</span><span class="s1">&#39;x_test&#39;</span><span class="o">]</span>
+<span class="nv">y_test</span> <span class="o">=</span> npz<span class="o">[</span><span class="s1">&#39;y_test&#39;</span><span class="o">]</span>
+
+<span class="c1"># Define your model here, example usage in Keras</span>
+<span class="nv">model</span> <span class="o">=</span> Sequential<span class="o">()</span>
+<span class="c1"># ...</span>
+model.compile<span class="o">(</span>...<span class="o">)</span>
+
+<span class="c1"># Train</span>
+model.fit<span class="o">(</span>x_train, y_train, <span class="nv">batch_size</span><span class="o">=</span><span class="m">16</span>, <span class="nv">epochs</span><span class="o">=</span><span class="m">50</span><span class="o">)</span>
+model.evaluate<span class="o">(</span>x_test, y_test, <span class="nv">batch_size</span><span class="o">=</span><span class="m">16</span><span class="o">)</span>
+</pre></div>
+</div>
+<p>For more detailed walkthroughs, see the <a class="reference external" href="examples.html">examples page</a>.</p>
+</div>
+<div class="section" id="acknowledgements">
+<h2>Acknowledgements<a class="headerlink" href="#acknowledgements" title="Permalink to this headline">¶</a></h2>
+<p>This library builds on the concepts of <a class="reference external" href="https://github.com/developmentseed/skynet-data">skynet-data</a>. It wouldn’t be possible without the excellent data from OpenStreetMap and Mapbox under the following licenses:</p>
+<ul class="simple">
+<li>OSM QA tile data <a class="reference external" href="http://www.openstreetmap.org/copyright">copyright OpenStreetMap contributors</a> and licensed under <a class="reference external" href="http://opendatacommons.org/licenses/odbl/">ODbL</a>.</li>
+<li>Mapbox Satellite data can be <a class="reference external" href="https://www.mapbox.com/tos/#%5BYmtMIywt%5D">traced for noncommercial purposes</a>.</li>
+<li>Marc Farra’s <a class="reference external" href="https://github.com/kamicut/tilepie">tilepie</a> to asynchronously process vector tiles.</li>
+</ul>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="#">label-maker</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="parameters.html">Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+      <li>Next: <a href="parameters.html" title="next chapter">Parameters</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Development Seed.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

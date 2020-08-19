@@ -1,0 +1,184 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Parameters &#8212; label-maker 0.9.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Examples" href="examples.html" />
+    <link rel="prev" title="Label Maker Documentation" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="parameters">
+<h1>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h1>
+<p>Here is the full list of configuration parameters you can specify in a <code class="docutils literal notranslate"><span class="pre">config.json</span></code> file.</p>
+<dl class="docutils">
+<dt><strong>country</strong>: string</dt>
+<dd>The <a class="reference external" href="https://osmlab.github.io/osm-qa-tiles/">OSM QA Tile</a> extract to download. The string should be a country matching a one of the options in <code class="docutils literal notranslate"><span class="pre">label_maker/countries.txt</span></code></dd>
+<dt><strong>bounding_box</strong>: list of floats</dt>
+<dd>The bounding box to create images from. This should be given in the form: <code class="docutils literal notranslate"><span class="pre">[xmin,</span> <span class="pre">ymin,</span> <span class="pre">xmax,</span> <span class="pre">ymax]</span></code> as longitude and latitude values between <code class="docutils literal notranslate"><span class="pre">[-180,</span> <span class="pre">180]</span></code> and <code class="docutils literal notranslate"><span class="pre">[-90,</span> <span class="pre">90]</span></code>, respectively. Values should use the WGS84 datum, with longitude and latitude units in decimal degrees.</dd>
+<dt><strong>geojson</strong>: string</dt>
+<dd>An input file containing a <cite>GeoJSON FeatureCollection</cite> representing labels. Adding this parameter will override the values in the <code class="docutils literal notranslate"><span class="pre">country</span></code> and <code class="docutils literal notranslate"><span class="pre">bounding_box</span></code> parameters.</dd>
+<dt><strong>zoom</strong>: int</dt>
+<dd>The <a class="reference external" href="http://wiki.openstreetmap.org/wiki/Zoom_levels">zoom level</a> used to create images. This functions as a rough proxy for resolution. Value should be given as an int on the interval [0, 19].</dd>
+<dt><strong>classes</strong>: list of dicts</dt>
+<dd><p class="first">The training classes. Each class is defined as dict object with two required keys:</p>
+<dl class="last docutils">
+<dt><strong>name</strong>: string</dt>
+<dd>The class name.</dd>
+<dt><strong>filter</strong>: list of strings</dt>
+<dd>A <a class="reference external" href="https://www.mapbox.com/mapbox-gl-js/style-spec#other-filter">Mapbox GL Filter</a> to define any vector features matching this class. Filters are applied with the standalone <a class="reference external" href="https://github.com/mapbox/mapbox-gl-js/tree/master/src/style-spec/feature_filter">featureFilter</a> from Mapbox GL JS.</dd>
+</dl>
+</dd>
+<dt><strong>buffer</strong>: int</dt>
+<dd>Optional paramter to buffer labels in <code class="docutils literal notranslate"><span class="pre">'object-detection'</span></code> and <code class="docutils literal notranslate"><span class="pre">'segmentation'</span></code> tasks by an arbitrary number of pixels. Accepts both positive and negative integers. It uses <a class="reference external" href="https://shapely.readthedocs.io/en/latest/manual.html#object.buffer">Shapely object.buffer</a> to calculate the final geometry. You can verify that your buffer options create the desired labels by inspecting the files created in <code class="docutils literal notranslate"><span class="pre">data/labels/</span></code> after running the <code class="docutils literal notranslate"><span class="pre">label-maker</span> <span class="pre">labels</span></code> command.</dd>
+<dt><strong>imagery</strong>: string</dt>
+<dd><p class="first">Label Maker expects to receive imagery tiles that are 256 x 256 pixels. You can specific the source of the imagery with one of:</p>
+<ul class="last">
+<li><p class="first">A template string for a tiled imagery service. Note that you will generally need an API key to obtain images and there may be associated costs. The above example requires a <a class="reference external" href="https://www.mapbox.com/help/how-access-tokens-work/">Mapbox access token</a>. Also see <a class="reference external" href="https://openaerialmap.org/">OpenAerialMap</a> for open imagery. The access token for TMS image formats can be read from an environment variable <code class="docutils literal notranslate"><span class="pre">'https://api.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}.jpg?access_token={ACCESS_TOKEN}'</span></code> or added directly the imagery string.</p>
+</li>
+<li><p class="first">A GeoTIFF file location. Works with local files: <code class="docutils literal notranslate"><span class="pre">'http://oin-hotosm.s3.amazonaws.com/593ede5ee407d70011386139/0/3041615b-2bdb-40c5-b834-36f580baca29.tif'</span></code></p>
+</li>
+<li><p class="first">Remote files like a <a class="reference external" href="http://www.opengeospatial.org/standards/wms">WMS endpoint</a> <code class="docutils literal notranslate"><span class="pre">GetMap</span></code> request. Fill out all necessary parameters except <code class="docutils literal notranslate"><span class="pre">bbox</span></code> which should be set as <code class="docutils literal notranslate"><span class="pre">{bbox}</span></code>. Ex:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&#39;https://basemap.nationalmap.gov/arcgis/services/USGSImageryOnly/MapServer/WMSServer?SERVICE=WMS&amp;REQUEST=GetMap&amp;VERSION=1.1.1&amp;LAYERS=0&amp;STYLES=&amp;FORMAT=image%2Fjpeg&amp;TRANSPARENT=false&amp;HEIGHT=256&amp;WIDTH=256&amp;SRS=EPSG%3A3857&amp;BBOX={bbox}&#39;
+</pre></div>
+</div>
+</li>
+</ul>
+</dd>
+<dt><strong>http_auth</strong>: list</dt>
+<dd>Optional parameter to specify a username and password for restricted WMS services. For example, <code class="docutils literal notranslate"><span class="pre">['my_username',</span> <span class="pre">'my_password']</span></code>.</dd>
+<dt><strong>background_ratio</strong>: float</dt>
+<dd>Specify how many background (or “negative”) training examples to create. Label Maker will generate <code class="docutils literal notranslate"><span class="pre">background_ratio</span></code> times the number of images matching the total number class tiles.</dd>
+<dt><strong>ml_type</strong>: string</dt>
+<dd><p class="first">One of <code class="docutils literal notranslate"><span class="pre">'classification'</span></code>, <code class="docutils literal notranslate"><span class="pre">'object-detection'</span></code>, or <code class="docutils literal notranslate"><span class="pre">'segmentation'</span></code>. This defines the output format for the final label numpy arrays (<code class="docutils literal notranslate"><span class="pre">y_train</span></code> and <code class="docutils literal notranslate"><span class="pre">y_test</span></code>).</p>
+<dl class="last docutils">
+<dt><code class="docutils literal notranslate"><span class="pre">'classification'</span></code></dt>
+<dd>Output is an array of <code class="docutils literal notranslate"><span class="pre">len(classes)</span> <span class="pre">+</span> <span class="pre">1</span></code>. Each array value will be either 1 or 0 based on whether it matches the class at the same index. The additional array element belongs to the background class, which will always be the first element.</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">'object-detection'</span></code></dt>
+<dd>Output is an array of bounding boxes of the form <code class="docutils literal notranslate"><span class="pre">[xmin,</span> <span class="pre">ymin,</span> <span class="pre">width,</span> <span class="pre">height,</span> <span class="pre">class_index]</span></code>. In this case, the values are pixel values measured from the upper left-hand corner (not latitude and longitude values). Each feature is tested against each class, so if a feature matches two or more classes, it will have the corresponding number of bounding boxes created.</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">'segmentation'</span></code></dt>
+<dd>Output is an array of shape <code class="docutils literal notranslate"><span class="pre">(256,</span> <span class="pre">256)</span></code> with values matching the class index label at that position. The classes are applied sequentially according to <code class="docutils literal notranslate"><span class="pre">config.json</span></code> so latter classes will be written over earlier class labels if there is overlap.</dd>
+</dl>
+</dd>
+<dt><strong>seed</strong>: int</dt>
+<dd>Random generator seed. Optional, use to make results reproducible.</dd>
+<dt><strong>split_vals</strong>: list</dt>
+<dd><p class="first">Default: <code class="docutils literal notranslate"><span class="pre">[0.8,</span> <span class="pre">0.2]</span></code></p>
+<p class="last">Percentage of data to put in each category listed in split_names. Must be a list of floats that sum to one and match the length of <code class="docutils literal notranslate"><span class="pre">split-names</span></code>. For train, validate, and test data, a list like <code class="docutils literal notranslate"><span class="pre">[0.7,</span> <span class="pre">0.2,</span> <span class="pre">0.1]</span></code> is suggested.</p>
+</dd>
+<dt><strong>split_names</strong>: list</dt>
+<dd><p class="first">Default: <code class="docutils literal notranslate"><span class="pre">['train',</span> <span class="pre">'test']</span></code></p>
+<p class="last">List of names for each subset of the data. Length of list must match length of <code class="docutils literal notranslate"><span class="pre">split_vals</span></code>.</p>
+</dd>
+<dt><strong>imagery_offset</strong>:  list of ints</dt>
+<dd>An optional list of integers representing the number of pixels to offset imagery. For example <code class="docutils literal notranslate"><span class="pre">[15,</span> <span class="pre">-5]</span></code> will move the images 15 pixels right and 5 pixels up relative to the requested tile bounds.</dd>
+<dt><strong>tms_image_format</strong>: string</dt>
+<dd>An option string that has the downloaded imagery’s format such as <code class="docutils literal notranslate"><span class="pre">.jpg</span></code> or <code class="docutils literal notranslate"><span class="pre">.png</span></code> when it isn’t provided by the endpoint</dd>
+<dt><strong>over_zoom</strong>: int</dt>
+<dd>An integer greater than 0. If set for XYZ tiles, it will fetch tiles from <code class="docutils literal notranslate"><span class="pre">zoom</span></code> + <code class="docutils literal notranslate"><span class="pre">over_zoom</span></code>, to create higher resolution tiles which fill out the bounds of the original zoom level.</dd>
+<dt><strong>band_indices</strong>: list</dt>
+<dd><p class="first">Default: <code class="docutils literal notranslate"><span class="pre">[1,</span> <span class="pre">2,</span> <span class="pre">3]</span></code></p>
+<p class="last">A list of band indices to pull from a TIF. Using the <a class="reference external" href="https://spacenet.ai/spacenet-roads-dataset/">SpaceNet Roads Challenge Data</a> as an example, you can use <code class="docutils literal notranslate"><span class="pre">[5,</span> <span class="pre">3,</span> <span class="pre">2,</span> <span class="pre">7]</span></code> to extract the Red, Green, Blue, and NIR bands respectively.</p>
+</dd>
+</dl>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">label-maker</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Label Maker Documentation</a></li>
+      <li>Next: <a href="examples.html" title="next chapter">Examples</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, Development Seed.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.8.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/parameters.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
