@@ -62,7 +62,7 @@ jobs:
       - run:
           name: Deploy documentation
           command: |
-            pip install -r requirements-dev.txt
+            pip install -r requirements-dev.txt --user
             cd docs
             make html
             cd _build/html

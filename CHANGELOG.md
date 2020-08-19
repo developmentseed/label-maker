@@ -79,32 +79,28 @@ each split ([#149](https://github.com/developmentseed/label-maker/pull/149))
 - Generate preview tiles faster ([#30](https://github.com/developmentseed/label-maker/pull/30))
 - Add support for reading GeoTIFF as the imagery source ([#13](https://github.com/developmentseed/label-maker/pull/13))
 - Refactor testing structure ([#29](https://github.com/developmentseed/label-maker/pull/29))
-- Bug fix: fix logic for matching the correct tiles when creating segmentation
-  labels with the --sparse flag ([#46](https://github.com/developmentseed/label-maker/pull/46))
+- Bug fix: fix logic for matching the correct tiles when creating segmentation labels with the `--sparse` flag ([#46](https://github.com/developmentseed/label-maker/pull/46))
 
 
 [0.2.1](https://github.com/developmentseed/label-maker/releases/tag/0.2.1) (2018-02-24)
 ------------------
-- Lower memory usage of stream_filter.py ([#39](https://github.com/developmentseed/label-maker/pull/39))
+- Lower memory usage of `stream_filter.py` ([#39](https://github.com/developmentseed/label-maker/pull/39))
 - Bug fix: print correct object detection labeling summary ([#33](https://github.com/developmentseed/label-maker/pull/33))
-- Bug fix: uncompress mbtiles line by line to prevent memory usage issues
-  causing large files to fail on the `download` subcommand ([#35](https://github.com/developmentseed/label-maker/pull/35))
+- Bug fix: uncompress mbtiles line by line to prevent memory usage issues causing large files to fail on the `download` subcommand ([#35](https://github.com/developmentseed/label-maker/pull/35))
 
 
 [0.2.0](https://github.com/developmentseed/label-maker/releases/tag/0.2.0) (2018-01-19)
 ------------------
 - Add optional `buffer` property to classes to create more accurate
 object-detection or segmentation labels ([#10](https://github.com/developmentseed/label-maker/pull/10)).
-- Add --sparse flag to limit the size of labels.npz file ([#16](https://github.com/developmentseed/label-maker/pull/16)).
+- Add `--sparse` flag to limit the size of labels.npz file ([#16](https://github.com/developmentseed/label-maker/pull/16)).
 - Add more globally ignored statements to pylint settings ([#24](https://github.com/developmentseed/label-maker/pull/24)).
-- Bug fix: correct a variable name in package.py which prevented
-  object-detection packaging from running ([#19](https://github.com/developmentseed/label-maker/pull/19)).
+- Bug fix: correct a variable name in `package.py` which prevented object-detection packaging from running ([#19](https://github.com/developmentseed/label-maker/pull/19)).
 
 
 [0.1.2](https://github.com/developmentseed/label-maker/releases/tag/0.1.2) (2018-01-11)
 ------------------
-- Bug fix: resolve path issues which prevented it from working outside the
-  github cloned repository ([#2](https://github.com/developmentseed/label-maker/pull/2)).
+- Bug fix: resolve path issues which prevented it from working outside the github cloned repository ([#2](https://github.com/developmentseed/label-maker/pull/2)).
 
 
 [0.1](https://github.com/developmentseed/label-maker/releases/tag/0.1) (2018-01-10)
