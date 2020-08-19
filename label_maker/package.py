@@ -4,6 +4,7 @@
 from os import path as op
 from urllib.parse import urlparse
 import numpy as np
+import rasterio
 from PIL import Image
 
 from label_maker.utils import is_tif, get_image_format
@@ -73,15 +74,17 @@ def package_directory(dest_folder, classes, imagery, ml_type, seed=False,
 
     # open the images and load those plus the labels into the final arrays
     if is_tif(imagery):  # if a TIF is provided, use jpg as tile format
-        image_format = '.jpg'
+        img_dtype = rasterio.open(imagery).profile['dtype']
+        image_format = '.tif'
 
     else:
+        img_dtype = np.uint8
         image_format = get_image_format(imagery, kwargs)
 
     for tile in tiles:
         image_file = op.join(dest_folder, 'tiles', '{}{}'.format(tile, image_format))
         try:
-            img = Image.open(image_file)
+            img = rasterio.open(image_file)
         except FileNotFoundError:
             # we often don't download images for each label (e.g. background tiles)
             continue
@@ -89,8 +92,10 @@ def package_directory(dest_folder, classes, imagery, ml_type, seed=False,
             print('Couldn\'t open {}, skipping'.format(image_file))
             continue
 
-        np_image = np.array(img)
+        i = np.array(img.read())
+        np_image = np.moveaxis(i, 0, 2)
         img.close()
+
 
         x_vals.append(np_image)
         if ml_type == 'classification':
@@ -103,7 +108,9 @@ def package_directory(dest_folder, classes, imagery, ml_type, seed=False,
             y_vals.append(labels[tile][..., np.newaxis])  # Add grayscale channel
 
     # Convert lists to numpy arrays
-    x_vals = np.array(x_vals, dtype=np.uint8)
+
+    #TO-DO flexible x_val dtype
+    x_vals = np.array(x_vals, dtype=img_dtype)
     y_vals = np.array(y_vals, dtype=np.uint8)
 
     # Get number of data samples per split from the float proportions
@@ -128,3 +135,4 @@ def package_directory(dest_folder, classes, imagery, ml_type, seed=False,
 
     np.savez(op.join(dest_folder, 'data.npz'), **save_dict)
     print('Saving packaged file to {}'.format(op.join(dest_folder, 'data.npz')))
+    print('Image dtype written in npz matches input image dtype: {}'.format(img_dtype))

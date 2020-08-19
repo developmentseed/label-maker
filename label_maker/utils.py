@@ -106,6 +106,7 @@ def get_tile_tif(tile, imagery, folder, kwargs):
     bound = bounds(*[int(t) for t in tile.split('-')])
     imagery_offset = kwargs.get('imagery_offset') or [0, 0]
     with rasterio.open(imagery) as src:
+        profile = src.profile
         x_res, y_res = src.transform[0], src.transform[4]
 
         # offset our imagery in the "destination pixel" space
@@ -137,15 +138,19 @@ def get_tile_tif(tile, imagery, folder, kwargs):
         window = ((top, bottom), (left, right))
 
         # read the first three bands (assumed RGB) of the TIF into an array
-        data = np.empty(shape=(3, 256, 256)).astype(src.profile['dtype'])
-        for k in (1, 2, 3):
-            src.read(k, window=window, out=data[k - 1], boundless=True)
+        band_indices = kwargs.get('band_indices', (1, 2, 3))
+        band_count = len(band_indices)
 
+        arr_shape = (band_count, 256, 256)
+        data = np.empty(shape=(arr_shape)).astype(profile['dtype'])
+
+        for i, k in enumerate(band_indices):
+            src.read(k, window=window, out=data[i], boundless=True)
         # save
-        tile_img = op.join(folder, '{}{}'.format(tile, '.jpg'))
-        img = Image.fromarray(np.moveaxis(data, 0, -1), mode='RGB')
-        img.save(tile_img)
-
+        tile_img = op.join(folder, '{}{}'.format(tile, '.tif'))
+        with rasterio.open(tile_img, 'w', driver='GTiff', height=256,
+                width=256, count=band_count, dtype=profile['dtype']) as w:
+                w.write(data)
     return tile_img
 
 def get_tile_wms(tile, imagery, folder, kwargs):

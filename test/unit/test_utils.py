@@ -82,8 +82,8 @@ class TestUtils(unittest.TestCase):
             makedirs(tiles_dir)
 
         get_tile_tif(tile, 'test/fixtures/drone.tif', tiles_dir, {})
-        test_tile = Image.open('test/tiles/{}.jpg'.format(tile))
-        fixture_tile = Image.open('test/fixtures/{}.jpg'.format(tile))
+        test_tile = Image.open('test/tiles/{}.tif'.format(tile))
+        fixture_tile = Image.open('test/fixtures/{}.tif'.format(tile))
         self.assertEqual(test_tile, fixture_tile)
 
     def test_get_tile_tif_offset(self):
@@ -92,13 +92,14 @@ class TestUtils(unittest.TestCase):
         # create tiles directory
         dest_folder = 'test'
         tiles_dir = op.join(dest_folder, 'tiles')
+        print(tiles_dir)
         if not op.isdir(tiles_dir):
             makedirs(tiles_dir)
 
         get_tile_tif(tile, 'test/fixtures/drone.tif', tiles_dir,
                      {'imagery_offset': [128, 64]})
-        test_tile = Image.open('test/tiles/{}.jpg'.format(tile))
-        fixture_tile = Image.open('test/fixtures/{}_offset.jpg'.format(tile))
+        test_tile = Image.open('test/tiles/{}.tif'.format(tile))
+        fixture_tile = Image.open('test/fixtures/{}_offset.tif'.format(tile))
         self.assertEqual(test_tile, fixture_tile)
 
     def test_get_tile_vrt(self):
@@ -111,8 +112,8 @@ class TestUtils(unittest.TestCase):
             makedirs(tiles_dir)
 
         get_tile_tif(tile, 'test/fixtures/drone.vrt', tiles_dir, {})
-        test_tile = Image.open('test/tiles/{}.jpg'.format(tile))
-        fixture_tile = Image.open('test/fixtures/{}.jpg'.format(tile))
+        test_tile = Image.open('test/tiles/{}.tif'.format(tile))
+        fixture_tile = Image.open('test/fixtures/{}.tif'.format(tile))
         self.assertEqual(test_tile, fixture_tile)
 
     def test_get_tile_wms(self):
