@@ -1,6 +1,7 @@
 # pylint: disable=unused-argument
 """Generate an .npz file containing arrays for training machine learning algorithms"""
 
+import concurrent.futures
 from os import makedirs, path as op
 from random import shuffle
 
@@ -72,5 +73,12 @@ def download_images(dest_folder, classes, imagery, ml_type, background_ratio, im
     image_function = get_image_function(imagery)
     kwargs['imagery_offset'] = imagery_offset
 
-    for tile in tiles:
-        image_function(tile, imagery, tiles_dir, kwargs)
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
+        future_to_tile = {executor.submit(image_function, tile, imagery, tiles_dir, kwargs): tile for tile in tiles}
+        for future in concurrent.futures.as_completed(future_to_tile):
+            tile = future_to_tile[future]
+            try:
+                data=future.result()
+            except Exception as exc:
+                print('%r generated as exception: %s' % (tile, exc))
