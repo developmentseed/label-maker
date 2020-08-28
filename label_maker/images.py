@@ -4,6 +4,7 @@
 import concurrent.futures
 from os import makedirs, path as op
 from random import shuffle
+import time
 
 import numpy as np
 
@@ -73,12 +74,6 @@ def download_images(dest_folder, classes, imagery, ml_type, background_ratio, im
     image_function = get_image_function(imagery)
     kwargs['imagery_offset'] = imagery_offset
 
-
-    with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
+    with concurrent.futures.ThreadPoolExecutor(max_workers=50) as executor:
         future_to_tile = {executor.submit(image_function, tile, imagery, tiles_dir, kwargs): tile for tile in tiles}
-        for future in concurrent.futures.as_completed(future_to_tile):
-            tile = future_to_tile[future]
-            try:
-                data=future.result()
-            except Exception as exc:
-                print('%r generated as exception: %s' % (tile, exc))
+        executor.shutdown(wait=True)
