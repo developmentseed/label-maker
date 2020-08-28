@@ -76,9 +76,6 @@ def download_images(dest_folder, classes, imagery, ml_type, background_ratio, th
     image_function = get_image_function(imagery)
     kwargs['imagery_offset'] = imagery_offset
 
-    t = time.perf_counter()
     with concurrent.futures.ThreadPoolExecutor(max_workers=threadcount) as executor:
-        {executor.submit(image_function, tile, imagery, tiles_dir, kwargs): tile for tile in tiles}
+        [executor.submit(image_function, tile, imagery, tiles_dir, kwargs) for tile in tiles]
         executor.shutdown(wait=True)
-    elapsed_time = time.perf_counter() - t
-    print(elapsed_time)
