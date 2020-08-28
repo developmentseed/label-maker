@@ -50,7 +50,7 @@ def parse_args(args):
     subparsers.add_parser('download', parents=[pparser], help='', formatter_class=dhf)
     l = subparsers.add_parser('labels', parents=[pparser], help='', formatter_class=dhf)
     p = subparsers.add_parser('preview', parents=[pparser], help='', formatter_class=dhf)
-    subparsers.add_parser('images', parents=[pparser], help='', formatter_class=dhf)
+    i = subparsers.add_parser('images', parents=[pparser], help='', formatter_class=dhf)
     subparsers.add_parser('package', parents=[pparser], help='', formatter_class=dhf)
 
     # labels has an optional parameter
@@ -59,6 +59,10 @@ def parse_args(args):
     # preview has an optional parameter
     p.add_argument('-n', '--number', default=5, type=int,
                    help='number of examples images to create per class')
+
+    #images has optional parameter
+    i.add_argument('-t', '--threadcount', default=50, type=int,
+                    help= 'thread count to use')
 
     # turn namespace into dictinary
     parsed_args = vars(parser.parse_args(args))
@@ -109,7 +113,8 @@ def cli():
         number = args.get('number')
         preview(dest_folder=dest_folder, number=number, **config)
     elif cmd == 'images':
-        download_images(dest_folder=dest_folder, **config)
+        threadcount = args.get('threadcount')
+        download_images(dest_folder=dest_folder, threadcount=threadcount, **config)
     elif cmd == 'package':
         package_directory(dest_folder=dest_folder, **config)
 
