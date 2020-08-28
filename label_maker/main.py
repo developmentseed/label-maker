@@ -61,7 +61,7 @@ def parse_args(args):
                    help='number of examples images to create per class')
 
     #images has optional parameter
-    i.add_argument('-t', '--threadcount', default=50, type=int,
+    i.add_argument('-t', '--threadcount', default=10, type=int,
                     help= 'thread count to use')
 
     # turn namespace into dictinary
