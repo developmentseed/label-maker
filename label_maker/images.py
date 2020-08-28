@@ -10,7 +10,7 @@ import numpy as np
 
 from label_maker.utils import get_image_function
 
-def download_images(dest_folder, classes, imagery, ml_type, background_ratio, imagery_offset=False, **kwargs):
+def download_images(dest_folder, classes, imagery, ml_type, background_ratio, threadcount, imagery_offset=False, **kwargs):
     """Download satellite images specified by a URL and a label.npz file
     Parameters
     ------------
@@ -30,6 +30,8 @@ def download_images(dest_folder, classes, imagery, ml_type, background_ratio, im
     background_ratio: float
         Determines the number of background images to download in single class problems. Ex. A value
         of 1 will download an equal number of background images to class images.
+    threadcount: int
+        Number of threads to use for faster parallel image download
     imagery_offset: list
         An optional list of integers representing the number of pixels to offset imagery. Ex. [15, -5] will
         move the images 15 pixels right and 5 pixels up relative to the requested tile bounds
@@ -74,6 +76,9 @@ def download_images(dest_folder, classes, imagery, ml_type, background_ratio, im
     image_function = get_image_function(imagery)
     kwargs['imagery_offset'] = imagery_offset
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=50) as executor:
-        future_to_tile = {executor.submit(image_function, tile, imagery, tiles_dir, kwargs): tile for tile in tiles}
+    t = time.perf_counter()
+    with concurrent.futures.ThreadPoolExecutor(max_workers=threadcount) as executor:
+        {executor.submit(image_function, tile, imagery, tiles_dir, kwargs): tile for tile in tiles}
         executor.shutdown(wait=True)
+    elapsed_time = time.perf_counter() - t
+    print(elapsed_time)
