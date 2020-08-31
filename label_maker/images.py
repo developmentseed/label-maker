@@ -4,7 +4,6 @@
 import concurrent.futures
 from os import makedirs, path as op
 from random import shuffle
-import time
 
 import numpy as np
 
