@@ -2,13 +2,7 @@
 import os.path as op
 import label_maker
 
-countries = []
 module_dir = op.dirname(label_maker.__file__)  # Get module home directory
-
-with open(op.join(module_dir, 'countries.txt')) as f:
-    lines = f.readlines()
-    for line in lines:
-        countries.append(line.strip())
 
 class_schema = {
     'type': 'dict',
@@ -22,8 +16,7 @@ lon_schema = {'type': 'float', 'min': -180, 'max': 180}
 
 schema = {
     'geojson': {'type': 'string'},
-    'country': {'type': 'string', 'allowed': countries},
-    'bounding_box': {'type': 'list', 'items': [lon_schema, lat_schema, lon_schema, lat_schema]},
+    'project_bounds_geojson': {'type': 'string'},
     'zoom': {'type': 'integer', 'required': True},
     'classes': {'type': 'list', 'schema': class_schema, 'required': True},
     'imagery': {'type': 'string', 'required': True},

@@ -13,11 +13,7 @@ from shapely.geometry import shape
 from shapely.ops import unary_union
 
 from label_maker.version import __version__
-from label_maker.download import download_mbtiles
-from label_maker.label import make_labels
-from label_maker.preview import preview
-from label_maker.images import download_images
-from label_maker.package import package_directory
+from label_maker.generate_data import make_dataset
 from label_maker.validate import schema
 
 logger = logging.getLogger(__name__)
@@ -92,8 +88,8 @@ def cli():
 
     # custom validation for top level keys
     # require either: country & bounding_box or geojson
-    if 'geojson' not in config.keys() and not ('country' in config.keys() and 'bounding_box' in config.keys()):
-        raise Exception('either "geojson" or "country" and "bounding_box" must be present in the configuration JSON')
+    if 'geojson' not in config.keys() and not ('osm_qa_tiles' in config.keys()):
+        raise Exception('either "geojson" or "osm qa tiles must be present in the configuration JSON')
 
     # for geojson, overwrite other config keys to correct labeling
     if 'geojson' in config.keys():
@@ -104,19 +100,22 @@ def cli():
     if 'http_auth' in config.keys():
         config['http_auth'] = tuple(config['http_auth'])
 
-    if cmd == 'download':
-        download_mbtiles(dest_folder=dest_folder, **config)
-    elif cmd == 'labels':
-        sparse = args.get('sparse', False)
-        make_labels(dest_folder=dest_folder, sparse=sparse, **config)
-    elif cmd == 'preview':
-        number = args.get('number')
-        preview(dest_folder=dest_folder, number=number, **config)
-    elif cmd == 'images':
-        threadcount = args.get('threadcount')
-        download_images(dest_folder=dest_folder, threadcount=threadcount, **config)
-    elif cmd == 'package':
-        package_directory(dest_folder=dest_folder, **config)
+    if cmd == 'data':
+        make_dataset(dest_folder=dest_folder, sparse=sparse, **config)
+
+    # if cmd == 'download':
+    #     download_mbtiles(dest_folder=dest_folder, **config)
+    # elif cmd == 'labels':
+    #     sparse = args.get('sparse', False)
+    #     make_labels(dest_folder=dest_folder, sparse=sparse, **config)
+    # elif cmd == 'preview':
+    #     number = args.get('number')
+    #     preview(dest_folder=dest_folder, number=number, **config)
+    # elif cmd == 'images':
+    #     threadcount = args.get('threadcount')
+    #     download_images(dest_folder=dest_folder, threadcount=threadcount, **config)
+    # elif cmd == 'package':
+    #     package_directory(dest_folder=dest_folder, **config)
 
 if __name__ == "__main__":
     cli()
