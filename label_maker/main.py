@@ -101,7 +101,7 @@ def cli():
         config['http_auth'] = tuple(config['http_auth'])
 
     if cmd == 'data':
-        make_dataset(dest_folder=dest_folder, sparse=sparse, **config)
+        make_dataset(dest_folder=dest_folder, sparse=sparse, threadcount=threadcount, **config)
 
     # if cmd == 'download':
     #     download_mbtiles(dest_folder=dest_folder, **config)
