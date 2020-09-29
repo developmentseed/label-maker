@@ -85,6 +85,7 @@ def download_tile_tms(tile, imagery, folder, kwargs):
                         img = img.reshape((256, 256, 4))
                     img = img[:, :, :3]
                     img = np.rollaxis(img, 2, 0)
+                    print(img.shape)
                     w.write(img, window=w_lst[num])
     else:
         r = requests.get(url(tile, imagery),

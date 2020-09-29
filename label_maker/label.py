@@ -9,8 +9,11 @@ from functools import partial
 
 import numpy as np
 import mapbox_vector_tile
-from shapely.geometry import shape, mapping, Polygon
+import xarray as xr
+from shapely.geometry import shape, mapping, box, Polygon
 from shapely.errors import TopologicalError
+from shapely.ops import unary_union
+from supermercado import burntiles
 from rasterio.features import rasterize
 from geojson import Feature, FeatureCollection as fc
 from mercantile import tiles, feature, Tile
@@ -21,12 +24,49 @@ import label_maker
 from label_maker.utils import class_match
 from label_maker.filter import create_filter
 from label_maker.palette import class_color
+from label_maker.main import get_bounds
 
 # declare a global accumulator so the workers will have access
 tile_results = dict()
 
 # clip all geometries to a tile
 clip_mask = Polygon(((0, 0), (0, 255), (255, 255), (255, 0), (0, 0)))
+
+def get_envelope(feature_collection):
+    # goal is for this to contain a list containing one feature, to match the generic case
+    """Get a envelope box for a FeatureCollection"""
+    shape_lst = [shape(f['geometry']) for f in feature_collection['features']]
+    envelope = unary_union(shape_lst).envelope
+    feature = dict(type="Feature", properties={}, geometry=mapping(envelope))
+    return [feature]
+
+def id_tiles(features, **kwargs):
+    #make geojson path optional otherwise if labels_geojson will use envolop of the lables_geojson
+    """
+    returns list of x,y,z tiles that comprise the project bounds geojson
+    """
+    tiles = burntiles.burn(features, kwargs.get('zoom'))
+    candidate_tiles = [mercantile.Tile(*tile) for tile in tiles]
+    return candidate_tiles
+    #subset the tiles based on background ratio
+
+def label_tile_match_gj(possible_tiles, labels_geojson):
+    #TO-DO add sparse, add backgroundratio
+    # read in labels_geojson
+    with open(labels_geojson) as f:
+        gj = geojson.load(f)
+        feature_lst = gj['features']
+    match_dict = {}
+
+    for tile in possible_tiles:
+        #potential performance area of improvement
+        tile_geom = box(*mercantile.bounds(tile))
+        match = [feature for feature in feature_lst if tile_geom.intersects(shape(feature['geometry']))] #need to keep properties, not just geometry
+        if match:
+            match_dict.update({tile:match})
+    return match_dict
+
+
 
 def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, sparse, **kwargs):
     """Create label data from OSM QA tiles for specified classes
@@ -68,27 +108,45 @@ def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, spar
     mbtiles_file = op.join(dest_folder, '{}.mbtiles'.format(country))
     mbtiles_file_zoomed = op.join(dest_folder, '{}-z{!s}.mbtiles'.format(country, zoom))
 
-    if not op.exists(mbtiles_file_zoomed):
-        filtered_geo = kwargs.get('geojson') or op.join(dest_folder, '{}.geojson'.format(country))
-        fast_parse = []
-        if not op.exists(filtered_geo):
-            fast_parse = ['-P']
-            print('Retiling QA Tiles to zoom level {} (takes a bit)'.format(zoom))
-            ps = Popen(['tippecanoe-decode', '-c', '-f', mbtiles_file], stdout=PIPE)
-            stream_filter_fpath = op.join(op.dirname(label_maker.__file__), 'stream_filter.py')
-            run([sys.executable, stream_filter_fpath, json.dumps(bounding_box)],
-                stdin=ps.stdout, stdout=open(filtered_geo, 'w'))
-            ps.wait()
-        run(['tippecanoe', '--no-feature-limit', '--no-tile-size-limit'] + fast_parse +
-            ['-l', 'osm', '-f', '-z', str(zoom), '-Z', str(zoom), '-o',
-             mbtiles_file_zoomed, filtered_geo])
+
+    if op.splitext(kwargs.get('input'))[1] == '.geojson':
+        #geojson_bounds = kwargs.get('geojson_bounds', get_bounds(kwargs.get('input')))
+
+        if kwargs.get('geojson_bounds'):
+            with open(kwargs.get('geojson_bounds')) as f:
+                gj = geojson.load(f)
+                geojson_bounds = gj['features']
+        else:
+            geojson_bounds = get_envelope(kwargs.get('input'))
+
+
+        candidate_tiles = id_tiles(geojson_bounds)
+        label_tiles_match_dict = label_tile_match_gj(candidate_tiles, kwargs.get('input'))
+
+
+
+
+    # if not op.exists(mbtiles_file_zoomed):
+    #     filtered_geo = kwargs.get('geojson') or op.join(dest_folder, '{}.geojson'.format(country))
+    #     fast_parse = []
+        # if not op.exists(filtered_geo):
+        #     fast_parse = ['-P']
+        #     print('Retiling QA Tiles to zoom level {} (takes a bit)'.format(zoom))
+        #     ps = Popen(['tippecanoe-decode', '-c', '-f', mbtiles_file], stdout=PIPE)
+        #     stream_filter_fpath = op.join(op.dirname(label_maker.__file__), 'stream_filter.py')
+        #     run([sys.executable, stream_filter_fpath, json.dumps(bounding_box)],
+        #         stdin=ps.stdout, stdout=open(filtered_geo, 'w'))
+        #     ps.wait()
+        # run(['tippecanoe', '--no-feature-limit', '--no-tile-size-limit'] + fast_parse +
+        #     ['-l', 'osm', '-f', '-z', str(zoom), '-Z', str(zoom), '-o',
+        #      mbtiles_file_zoomed, filtered_geo])
 
     # Call tilereduce
     print('Determining labels for each tile')
-    mbtiles_to_reduce = mbtiles_file_zoomed
-    tilereduce(dict(zoom=zoom, source=mbtiles_to_reduce, bbox=bounding_box,
-                    args=dict(ml_type=ml_type, classes=classes)),
-               _mapper, _callback, _done)
+    # mbtiles_to_reduce = mbtiles_file_zoomed
+    # tilereduce(dict(zoom=zoom, source=mbtiles_to_reduce, bbox=bounding_box,
+    #                 args=dict(ml_type=ml_type, classes=classes)),
+    #            _mapper, _callback, _done)
 
     # Add empty labels to any tiles which didn't have data
     empty_label = _create_empty_label(ml_type, classes)
@@ -157,6 +215,11 @@ def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, spar
                 img = Image.fromarray(visible_label.astype(np.uint8))
                 print('Writing {}'.format(label_file))
                 img.save(op.join(label_folder, label_file))
+
+def _mapper_tile(tile, data, args):
+    if ml_type == 'classification':
+        class_counts = np.zeros(len(classes) + 1, dtype=np.int)
+
 
 
 def _mapper(x, y, z, data, args):
