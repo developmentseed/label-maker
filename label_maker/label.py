@@ -217,9 +217,20 @@ def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, spar
                 img.save(op.join(label_folder, label_file))
 
 def _mapper_tile(tile, data, args):
+
+    ml_type = args.get('ml_type')
+    classes = args.get('classes')
+
     if ml_type == 'classification':
         class_counts = np.zeros(len(classes) + 1, dtype=np.int)
+        for i, cl in enumerate(classes):
+            ff = create_filter(cl.get('filter'))
+            class_counts[i + 1] = int(bool([f for f in tile['osm']['features'] if ff(f)])) #this needs to change since not using mbtiles
+            # if there are no classes, activate the background
+            if np.sum(class_counts) == 0:
+                class_counts[0] = 1
 
+        return ('{!s}-{!s}-{!s}'.format(tile.x, tile.y, tile.z), class_counts)
 
 
 def _mapper(x, y, z, data, args):
