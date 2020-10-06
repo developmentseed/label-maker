@@ -5,9 +5,11 @@ import sys
 from os import makedirs, path as op
 from subprocess import run, Popen, PIPE
 import json
+import geojson
 from functools import partial
 
 import numpy as np
+import mercantile
 import mapbox_vector_tile
 import xarray as xr
 from shapely.geometry import shape, mapping, box, Polygon
@@ -50,7 +52,7 @@ def id_tiles(features, **kwargs):
     return candidate_tiles
     #subset the tiles based on background ratio
 
-def label_tile_match_gj(possible_tiles, labels_geojson):
+def label_tile_match_gj(possible_tiles, labels_geojson, **kwargs):
     #TO-DO add sparse, add backgroundratio
     # read in labels_geojson
     with open(labels_geojson) as f:
@@ -58,15 +60,12 @@ def label_tile_match_gj(possible_tiles, labels_geojson):
         feature_lst = gj['features']
     match_dict = {}
 
-    for tile in possible_tiles:
-        #potential performance area of improvement
-        tile_geom = box(*mercantile.bounds(tile))
-        match = [feature for feature in feature_lst if tile_geom.intersects(shape(feature['geometry']))] #need to keep properties, not just geometry
-        if match:
-            match_dict.update({tile:match})
-    return match_dict
-
-
+    for feat in feature_lst:
+        c = shape(feat['geometry']).centroid
+        tile_match = mercantile.tile(c.y, c.x, kwargs.get('zoom'))
+        if not match_dict.get(tile_match):
+            match_dict[tile_match] = []
+        match_dict[tile_match] += [feat]
 
 def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, sparse, **kwargs):
     """Create label data from OSM QA tiles for specified classes
@@ -115,7 +114,7 @@ def make_labels(dest_folder, zoom, country, classes, ml_type, bounding_box, spar
         if kwargs.get('geojson_bounds'):
             with open(kwargs.get('geojson_bounds')) as f:
                 gj = geojson.load(f)
-                geojson_bounds = gj['features']
+                geojson_bounds = gj['features'] #fix variable name
         else:
             geojson_bounds = get_envelope(kwargs.get('input'))
 
