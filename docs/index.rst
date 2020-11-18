@@ -108,9 +108,14 @@ Downloads all imagery tiles needed to create the training data. Requires the ``l
 The number of background tiles added depends on the `background_ratio` parameter specified in the `config.json` file.
 A background_ratio of 0 will return no background tiles. 
 
+Accepts one additional flag:
+
+	``-t`` or ``--threadcount``: int
+		Specifies of threads used to download imagery tiles in paralle. Defaults to ``10``.
+
 .. code-block:: bash
 
-	$ label-maker images
+	$ label-maker images -t 50
 	Downloading 1189 tiles to data/tiles
 
 CLI Step 5: package
