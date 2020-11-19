@@ -1,3 +1,7 @@
+[0.9.1](https://github.com/developmentseed/label-maker/releases/tag/0.9.1) (2020-11-18)
+------------------
+- Add the ability to specify the number of threads to use to downlaod images ([#182](https://github.com/developmentseed/label-maker/pull/182))
+
 [0.9.0](https://github.com/developmentseed/label-maker/releases/tag/0.9.0) (2020-08-19)
 ------------------
 - Add the ability to parse non-polygons from the GeoJSON file ([#170](https://github.com/developmentseed/label-maker/pull/170))
