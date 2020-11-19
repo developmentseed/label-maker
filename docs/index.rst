@@ -111,7 +111,7 @@ A background_ratio of 0 will return no background tiles.
 Accepts one additional flag:
 
 	``-t`` or ``--threadcount``: int
-		Specifies of threads used to download imagery tiles in paralle. Defaults to ``10``.
+		Specifies the number of threads used to download imagery tiles in parallel. Defaults to ``10``.
 
 .. code-block:: bash
 
